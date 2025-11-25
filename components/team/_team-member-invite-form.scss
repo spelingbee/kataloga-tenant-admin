@@ -1,0 +1,201 @@
+@use '../../assets/scss/variables' as *;
+
+.team-invite-form {
+  background: $bg-primary;
+  border-radius: $radius-lg;
+  max-width: 500px;
+  width: 100%;
+}
+
+.team-invite-form__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+}
+
+.team-invite-form__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.team-invite-form__close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: $text-secondary;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm;
+  transition: all $transition-base;
+
+  &:hover {
+    background: $bg-secondary;
+    color: $text-primary;
+  }
+}
+
+.team-invite-form__form {
+  padding: $spacing-lg;
+}
+
+.team-invite-form__field {
+  margin-bottom: $spacing-lg;
+}
+
+.team-invite-form__label {
+  display: block;
+  margin-bottom: $spacing-xs;
+  font-weight: 500;
+  color: $text-primary;
+  font-size: 0.875rem;
+}
+
+.team-invite-form__required {
+  color: $error-color;
+}
+
+.team-invite-form__input {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 0.875rem;
+  color: $text-primary;
+  background: $bg-primary;
+  transition: border-color $transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.team-invite-form__input--error {
+  border-color: $error-color;
+}
+
+.team-invite-form__select {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 0.875rem;
+  color: $text-primary;
+  background: $bg-primary;
+  transition: border-color $transition-base;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.team-invite-form__select--error {
+  border-color: $error-color;
+}
+
+.team-invite-form__error {
+  margin-top: $spacing-xs;
+  font-size: 0.75rem;
+  color: $error-color;
+  margin-bottom: 0;
+}
+
+.team-invite-form__help {
+  margin-top: $spacing-xs;
+  font-size: 0.75rem;
+  color: $text-secondary;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.team-invite-form__submit-error {
+  padding: $spacing-sm $spacing-md;
+  background: lighten($error-color, 40%);
+  border: 1px solid $error-color;
+  border-radius: $radius-md;
+  color: darken($error-color, 10%);
+  font-size: 0.875rem;
+  margin-bottom: $spacing-md;
+}
+
+.team-invite-form__actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  margin-top: $spacing-xl;
+}
+
+.team-invite-form__cancel-btn {
+  padding: $spacing-sm $spacing-lg;
+  background: $bg-secondary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  color: $text-primary;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:hover:not(:disabled) {
+    background: $border-color;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.team-invite-form__submit-btn {
+  padding: $spacing-sm $spacing-lg;
+  background: $primary-color;
+  border: none;
+  border-radius: $radius-md;
+  color: $bg-primary;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background $transition-base;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  min-width: 140px;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: darken($primary-color, 10%);
+  }
+
+  &:disabled {
+    background: $border-color;
+    cursor: not-allowed;
+  }
+}
+
+.team-invite-form__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: $bg-primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,151 @@
+@use '../../assets/scss/variables' as *;
+
+.audit-log-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.audit-log-details__section {
+  padding: $spacing-md;
+  background: $bg-secondary;
+  border-radius: $radius-md;
+}
+
+.audit-log-details__section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $border-color;
+}
+
+.audit-log-details__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-md;
+}
+
+.audit-log-details__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.audit-log-details__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.audit-log-details__value {
+  font-size: 0.875rem;
+  color: $text-primary;
+}
+
+.audit-log-details__value--mono {
+  font-family: monospace;
+  background: $bg-primary;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: 0.75rem;
+}
+
+.audit-log-details__action-badge {
+  display: inline-block;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.audit-log-details__action-badge--create {
+  background: rgba(16, 185, 129, 0.1);
+  color: $success-color;
+}
+
+.audit-log-details__action-badge--update {
+  background: rgba(59, 130, 246, 0.1);
+  color: $info-color;
+}
+
+.audit-log-details__action-badge--delete {
+  background: rgba(239, 68, 68, 0.1);
+  color: $error-color;
+}
+
+.audit-log-details__changes {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.audit-log-details__change-item {
+  padding: $spacing-md;
+  background: $bg-primary;
+  border-radius: $radius-sm;
+  border-left: 3px solid $primary-color;
+}
+
+.audit-log-details__change-key {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.audit-log-details__change-values {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.audit-log-details__change-before {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.audit-log-details__change-after {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.audit-log-details__change-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-secondary;
+  text-transform: uppercase;
+  min-width: 60px;
+}
+
+.audit-log-details__change-value {
+  font-size: 0.875rem;
+  color: $text-primary;
+  padding: $spacing-xs $spacing-sm;
+  background: $bg-secondary;
+  border-radius: $radius-sm;
+  flex: 1;
+}
+
+.audit-log-details__raw {
+  padding: $spacing-md;
+  background: $bg-primary;
+  border-radius: $radius-sm;
+  overflow-x: auto;
+}
+
+.audit-log-details__json {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: $text-primary;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

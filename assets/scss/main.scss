@@ -1,0 +1,18 @@
+// ============================================
+// Main SCSS Entry Point - Tenant Admin Dashboard
+// ============================================
+
+// Variables and abstractions
+@use './variables' as *;
+@use './abstracts/mixins' as *;
+@use './abstracts/functions' as *;
+
+// Base styles
+@use './base/reset';
+@use './base/typography';
+
+// Global utilities
+@use './utilities';
+
+// Component styles are imported in individual components
+// using @use directive, not here

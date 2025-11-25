@@ -1,0 +1,281 @@
+@use '../../assets/scss/variables' as *;
+
+.bulk-menu-operations {
+  padding: $spacing-lg;
+  background: $bg-primary;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+}
+
+.bulk-menu-operations__header {
+  margin-bottom: $spacing-lg;
+}
+
+.bulk-menu-operations__title {
+  margin: 0 0 $spacing-xs 0;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.bulk-menu-operations__subtitle {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.bulk-menu-operations__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.bulk-menu-operations__btn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $text-white;
+  background: $primary-color;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.bulk-menu-operations__btn--activate {
+  background: $success-color;
+  
+  &:hover {
+    background: darken($success-color, 5%);
+  }
+}
+
+.bulk-menu-operations__btn--deactivate {
+  background: $warning-color;
+  
+  &:hover {
+    background: darken($warning-color, 5%);
+  }
+}
+
+.bulk-menu-operations__btn--price {
+  background: $info-color;
+  
+  &:hover {
+    background: darken($info-color, 5%);
+  }
+}
+
+.bulk-menu-operations__btn--category {
+  background: $secondary-color;
+  
+  &:hover {
+    background: darken($secondary-color, 5%);
+  }
+}
+
+.bulk-menu-operations__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-lg;
+}
+
+.bulk-menu-operations__dialog {
+  background: $bg-primary;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.bulk-menu-operations__dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+  
+  h4 {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+  }
+}
+
+.bulk-menu-operations__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: $text-secondary;
+  transition: all $transition-base;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  &:hover {
+    background: $bg-secondary;
+    color: $text-primary;
+  }
+}
+
+.bulk-menu-operations__dialog-body {
+  padding: $spacing-lg;
+  
+  p {
+    margin: 0 0 $spacing-md 0;
+    font-size: $font-size-base;
+    color: $text-primary;
+  }
+}
+
+.bulk-menu-operations__dialog-note {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.bulk-menu-operations__form-group {
+  margin-bottom: $spacing-lg;
+}
+
+.bulk-menu-operations__label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+.bulk-menu-operations__select {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: border-color $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.bulk-menu-operations__input {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  transition: border-color $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.bulk-menu-operations__error {
+  margin: $spacing-sm 0 0 0;
+  font-size: $font-size-sm;
+  color: $error-color;
+}
+
+.bulk-menu-operations__dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  border-top: 1px solid $border-color;
+}
+
+.bulk-menu-operations__dialog-btn {
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.bulk-menu-operations__dialog-btn--cancel {
+  color: $text-primary;
+  background: $bg-secondary;
+  
+  &:hover {
+    background: darken($bg-secondary, 5%);
+  }
+}
+
+.bulk-menu-operations__dialog-btn--confirm {
+  color: $text-white;
+  background: $primary-color;
+  
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .bulk-menu-operations__actions {
+    flex-direction: column;
+  }
+  
+  .bulk-menu-operations__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

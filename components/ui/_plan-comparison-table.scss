@@ -1,0 +1,220 @@
+@use '../../assets/scss/variables' as *;
+
+.plan-comparison {
+  background: $bg-primary;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-sm;
+}
+
+.plan-comparison__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 $spacing-xs;
+  text-align: center;
+}
+
+.plan-comparison__subtitle {
+  font-size: 1rem;
+  color: $text-secondary;
+  margin: 0 0 $spacing-xl;
+  text-align: center;
+}
+
+.plan-comparison__table {
+  overflow-x: auto;
+}
+
+.plan-comparison__plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+  min-width: 800px;
+}
+
+.plan-comparison__plan {
+  background: $bg-secondary;
+  border: 2px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: $shadow-md;
+  }
+}
+
+.plan-comparison__plan--current {
+  border-color: $primary-color;
+  background: lighten($primary-color, 45%);
+}
+
+.plan-comparison__plan-header {
+  text-align: center;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: $spacing-lg;
+}
+
+.plan-comparison__plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 $spacing-md;
+}
+
+.plan-comparison__plan-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.plan-comparison__plan-amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.plan-comparison__plan-cycle {
+  font-size: 0.875rem;
+  color: $text-secondary;
+}
+
+.plan-comparison__current-badge {
+  display: inline-block;
+  margin-top: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  background: $primary-color;
+  color: $bg-primary;
+  border-radius: $radius-sm;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.plan-comparison__plan-limits {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: $spacing-lg;
+}
+
+.plan-comparison__limit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plan-comparison__limit-label {
+  font-size: 0.875rem;
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+.plan-comparison__limit-value {
+  font-size: 0.875rem;
+  color: $text-primary;
+  font-weight: 600;
+}
+
+.plan-comparison__plan-features {
+  flex: 1;
+  margin-bottom: $spacing-lg;
+}
+
+.plan-comparison__features-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0 0 $spacing-md;
+}
+
+.plan-comparison__features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.plan-comparison__feature-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.plan-comparison__feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.plan-comparison__feature-icon--enabled {
+  background: $success-color;
+  color: $bg-primary;
+}
+
+.plan-comparison__feature-icon--disabled {
+  background: $bg-secondary;
+  color: $text-light;
+  border: 1px solid $border-color;
+}
+
+.plan-comparison__feature-text {
+  font-size: 0.875rem;
+  color: $text-primary;
+}
+
+.plan-comparison__select-btn {
+  width: 100%;
+  padding: $spacing-sm $spacing-lg;
+  background: $primary-color;
+  color: $bg-primary;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-base;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.plan-comparison__current-btn {
+  width: 100%;
+  padding: $spacing-sm $spacing-lg;
+  background: $bg-secondary;
+  color: $text-secondary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .plan-comparison__plans {
+    grid-template-columns: 1fr;
+    min-width: auto;
+  }
+
+  .plan-comparison__table {
+    overflow-x: visible;
+  }
+}

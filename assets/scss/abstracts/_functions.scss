@@ -1,0 +1,26 @@
+// ============================================
+// Functions - Tenant Admin Dashboard
+// ============================================
+
+@use 'sass:math';
+@use 'sass:color';
+
+// Convert px to rem
+@function rem($px) {
+  @return math.div($px, 16) * 1rem;
+}
+
+// Lighten color
+@function lighten-color($color, $amount: 10%) {
+  @return color.adjust($color, $lightness: $amount);
+}
+
+// Darken color
+@function darken-color($color, $amount: 10%) {
+  @return color.adjust($color, $lightness: -$amount);
+}
+
+// Alpha transparency
+@function alpha($color, $opacity) {
+  @return color.adjust($color, $alpha: -1 + $opacity);
+}

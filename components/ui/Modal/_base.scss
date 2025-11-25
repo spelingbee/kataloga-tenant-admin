@@ -1,0 +1,58 @@
+@use '../../../assets/scss/variables' as *;
+
+// Base styles shared by all modal variants
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: $bg-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-modal;
+  padding: $spacing-md;
+}
+
+.modal {
+  background: $bg-primary;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xl;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.modal--sm {
+  max-width: 400px;
+}
+
+.modal--md {
+  max-width: 600px;
+}
+
+.modal--lg {
+  max-width: 800px;
+}
+
+.modal--xl {
+  max-width: 1200px;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity $transition-base;
+}
+
+.modal-enter-active .modal,
+.modal-leave-active .modal {
+  transition: transform $transition-base;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal,
+.modal-leave-to .modal {
+  transform: scale(0.95);
+}

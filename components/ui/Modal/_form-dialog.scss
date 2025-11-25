@@ -1,0 +1,93 @@
+@use '../../../assets/scss/variables' as *;
+
+.form-dialog {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.form-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+}
+
+.form-dialog__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.form-dialog__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: $text-light;
+  font-size: $font-size-3xl;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $bg-secondary;
+    color: $text-primary;
+  }
+}
+
+.form-dialog__body {
+  flex: 1;
+  padding: $spacing-lg;
+  overflow-y: auto;
+}
+
+.form-dialog__footer {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  padding: $spacing-lg;
+  border-top: 1px solid $border-color;
+}
+
+.form-dialog__button {
+  padding: $spacing-sm $spacing-lg;
+  border: none;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.form-dialog__button--primary {
+  background: $primary-color;
+  color: $text-white;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+  }
+}
+
+.form-dialog__button--secondary {
+  background: $bg-secondary;
+  color: $text-primary;
+  border: 1px solid $border-color;
+
+  &:hover {
+    background: $bg-tertiary;
+  }
+}

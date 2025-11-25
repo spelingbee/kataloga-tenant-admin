@@ -1,0 +1,211 @@
+@use '../../assets/scss/variables' as *;
+
+.category-form {
+  width: 100%;
+  max-width: 600px;
+  background: $bg-primary;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xl;
+}
+
+.category-form__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1px solid $border-color;
+}
+
+.category-form__title {
+  margin: 0;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.category-form__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: $radius-md;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  &:hover {
+    background: $bg-secondary;
+    color: $text-primary;
+  }
+}
+
+.category-form__form {
+  padding: $spacing-xl;
+}
+
+.category-form__field {
+  margin-bottom: $spacing-lg;
+}
+
+.category-form__label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+.category-form__required {
+  color: $error-color;
+}
+
+.category-form__input {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.category-form__input--error {
+  border-color: $error-color;
+  
+  &:focus {
+    box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+  }
+}
+
+.category-form__textarea {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  color: $text-primary;
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  resize: vertical;
+  transition: all $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.category-form__error {
+  margin: $spacing-xs 0 0 0;
+  font-size: $font-size-sm;
+  color: $error-color;
+}
+
+.category-form__submit-error {
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  font-size: $font-size-sm;
+  color: $error-color;
+  background: rgba($error-color, 0.1);
+  border: 1px solid rgba($error-color, 0.3);
+  border-radius: $radius-md;
+}
+
+.category-form__actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $border-color;
+}
+
+.category-form__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.category-form__btn--cancel {
+  color: $text-primary;
+  background: $bg-secondary;
+  border: 1px solid $border-color;
+  
+  &:hover {
+    background: $bg-tertiary;
+  }
+  
+  &:disabled {
+    &:hover {
+      background: $bg-secondary;
+    }
+  }
+}
+
+.category-form__btn--submit {
+  color: $text-white;
+  background: $primary-color;
+  
+  &:hover {
+    background: $primary-dark;
+  }
+  
+  &:disabled {
+    &:hover {
+      background: $primary-color;
+    }
+  }
+}
+
+.category-form__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($text-white, 0.3);
+  border-top-color: $text-white;
+  border-radius: $radius-full;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

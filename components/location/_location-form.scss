@@ -1,0 +1,211 @@
+@use '../../assets/scss/variables' as *;
+
+.location-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.location-form__title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin: 0 0 $spacing-xl 0;
+}
+
+.location-form__form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.location-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.location-form__label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+.location-form__required {
+  color: $error-color;
+}
+
+.location-form__input {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+  }
+
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.location-form__input--error {
+  border-color: $error-color;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+.location-form__error {
+  font-size: $font-size-sm;
+  color: $error-color;
+  margin: 0;
+}
+
+.location-form__checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-base;
+  color: $text-primary;
+  cursor: pointer;
+}
+
+.location-form__checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.location-form__help {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.location-form__map {
+  margin: $spacing-md 0;
+}
+
+.location-form__map-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2xl;
+  background: $bg-secondary;
+  border: 2px dashed $border-color;
+  border-radius: $radius-lg;
+  text-align: center;
+}
+
+.location-form__map-icon {
+  font-size: 3rem;
+  margin-bottom: $spacing-md;
+}
+
+.location-form__map-text {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+  margin: 0 0 $spacing-xs 0;
+}
+
+.location-form__map-subtext {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.location-form__actions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.location-form__btn {
+  flex: 1;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.location-form__btn--cancel {
+  background: $bg-secondary;
+  color: $text-primary;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: $bg-tertiary;
+    border-color: $border-dark;
+  }
+}
+
+.location-form__btn--submit {
+  background: $primary-color;
+  color: $text-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+  }
+}
+
+.location-form__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: $text-white;
+  border-radius: $radius-full;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.location-form__general-error {
+  padding: $spacing-md;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid $error-color;
+  border-radius: $radius-md;
+  color: $error-color;
+  font-size: $font-size-sm;
+  text-align: center;
+}
+
+@media (max-width: $breakpoint-md) {
+  .location-form {
+    max-width: 100%;
+  }
+
+  .location-form__actions {
+    flex-direction: column;
+  }
+
+  .location-form__btn {
+    width: 100%;
+  }
+}
