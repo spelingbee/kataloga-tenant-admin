@@ -343,7 +343,7 @@ const handleCategoryChange = async () => {
   try {
     const selectedIds = Array.from(menuStore.selectedItems)
     await menuStore.bulkUpdateItems(menuStore.currentMenu.id, selectedIds, {
-      categoryId: selectedCategoryId.value || null
+      categoryId: selectedCategoryId.value || undefined
     })
     
     closeCategoryDialog()

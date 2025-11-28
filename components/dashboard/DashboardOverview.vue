@@ -83,28 +83,28 @@
       <div class="quick-actions">
         <h2 class="quick-actions__title">Quick Actions</h2>
         <div class="quick-actions__grid">
-          <button class="action-button" @click="navigateTo('/menu/items/new')">
+          <button class="action-button" @click="router.push('/menu/items/new')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             <span>Add Menu Item</span>
           </button>
 
-          <button class="action-button" @click="navigateTo('/categories')">
+          <button class="action-button" @click="router.push('/categories')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
             <span>Manage Categories</span>
           </button>
 
-          <button class="action-button" @click="navigateTo('/menu')">
+          <button class="action-button" @click="router.push('/menu')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             <span>View All Items</span>
           </button>
 
-          <button v-if="hasAnalyticsAccess" class="action-button" @click="navigateTo('/analytics')">
+          <button v-if="hasAnalyticsAccess" class="action-button" @click="router.push('/analytics')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -118,7 +118,7 @@
         :plan-name="planName"
         :current="currentUsage"
         :max="maxLimits"
-        @upgrade="navigateTo('/subscription')"
+        @upgrade="router.push('/subscription')"
       />
 
       <!-- Recent Activity -->

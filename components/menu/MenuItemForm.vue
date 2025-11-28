@@ -181,7 +181,7 @@
         class="menu-item-form__button menu-item-form__button--primary"
         :disabled="loading || !isFormValid"
       >
-        <LoadingSpinner v-if="loading" size="small" />
+        <LoadingSpinner v-if="loading" size="sm" />
         <span v-else>{{ submitLabel }}</span>
       </button>
     </div>

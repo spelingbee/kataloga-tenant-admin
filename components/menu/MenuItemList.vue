@@ -157,7 +157,7 @@
       </svg>
       <h3>No menu items found</h3>
       <p>Get started by adding your first menu item</p>
-      <button class="menu-item-list__add-btn" @click="navigateTo('/menu/items/new')">
+      <button class="menu-item-list__add-btn" @click="handleAddItem">
         Add Menu Item
       </button>
     </div>
@@ -512,6 +512,10 @@ const deleteItem = async (itemId: string) => {
 const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text
   return text.substring(0, maxLength) + '...'
+}
+
+const handleAddItem = () => {
+  router.push('/menu/items/new')
 }
 
 // Load data on mount

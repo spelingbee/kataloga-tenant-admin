@@ -26,12 +26,22 @@ class ApiService {
    * Setup request and response interceptors
    */
   private setupInterceptors(): void {
-    // Request interceptor - add auth token
+    // Request interceptor - add auth token and tenant header
     this.axiosInstance.interceptors.request.use(
       (config) => {
         if (this.accessToken) {
           config.headers.Authorization = `Bearer ${this.accessToken}`
         }
+        
+        // Add tenant slug from subdomain to headers
+        if (import.meta.client) {
+          const { getTenantSlug } = useTenant()
+          const tenantSlug = getTenantSlug()
+          if (tenantSlug) {
+            config.headers['X-Tenant-Slug'] = tenantSlug
+          }
+        }
+        
         return config
       },
       (error) => {
@@ -61,7 +71,7 @@ class ApiService {
           } catch (refreshError) {
             // Refresh failed - redirect to login
             this.clearToken()
-            if (process.client) {
+            if (import.meta.client) {
               navigateTo('/login')
             }
             return Promise.reject(refreshError)
@@ -87,7 +97,7 @@ class ApiService {
    */
   setToken(token: string): void {
     this.accessToken = token
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.setItem('tenant_access_token', token)
     }
   }
@@ -96,7 +106,7 @@ class ApiService {
    * Get current access token
    */
   getToken(): string | null {
-    if (!this.accessToken && process.client) {
+    if (!this.accessToken && import.meta.client) {
       this.accessToken = localStorage.getItem('tenant_access_token')
     }
     return this.accessToken
@@ -107,7 +117,7 @@ class ApiService {
    */
   clearToken(): void {
     this.accessToken = null
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.removeItem('tenant_access_token')
       localStorage.removeItem('tenant_refresh_token')
     }
@@ -117,7 +127,7 @@ class ApiService {
    * Refresh access token
    */
   private async refreshToken(): Promise<void> {
-    if (!process.client) return
+    if (!import.meta.client) return
 
     const refreshToken = localStorage.getItem('tenant_refresh_token')
     if (!refreshToken) {

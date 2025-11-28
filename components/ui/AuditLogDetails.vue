@@ -132,8 +132,8 @@ const formatResource = (resource: string | null) => {
   return resource.replace(/_/g, ' ').toUpperCase();
 };
 
-const formatKey = (key: string) => {
-  return key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+const formatKey = (key: string | number) => {
+  return String(key).replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 };
 
 const formatValue = (value: any) => {

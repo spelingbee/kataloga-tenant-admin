@@ -4,7 +4,7 @@
  */
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Skip middleware on server-side
-  if (process.server) return
+  if (import.meta.server) return
 
   const authStore = useAuthStore()
   const api = useApi()

@@ -37,16 +37,21 @@ export const useAuthStore = defineStore('auth', {
     async login(email: string, password: string): Promise<void> {
       this.loading = true
       const api = useApi()
+      const { requireTenantSlug } = useTenant()
 
       try {
+        // Extract tenant slug from subdomain
+        const tenantSlug = requireTenantSlug()
+        
         const response = await api.post<LoginResponse>('/auth/login', {
           email,
           password,
+          tenantSlug,
         })
 
         // Store tokens
         api.setToken(response.accessToken)
-        if (process.client) {
+        if (import.meta.client) {
           localStorage.setItem('tenant_refresh_token', response.refreshToken)
         }
 
@@ -70,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
       
       try {
         // Get refresh token for revocation
-        const refreshToken = process.client 
+        const refreshToken = import.meta.client 
           ? localStorage.getItem('tenant_refresh_token') 
           : null
 

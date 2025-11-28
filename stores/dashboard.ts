@@ -53,7 +53,7 @@ export const useDashboardStore = defineStore('dashboard', {
         })
         
         // Fetch categories count
-        const categoriesResponse = await api.get<any>('/categories', {
+        const categoriesResponse = await api.get<any>('/tenant-admin/categories', {
           params: { page: 1, limit: 1 }
         })
 

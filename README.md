@@ -47,6 +47,24 @@ A comprehensive management interface for restaurant/cafe owners built with Nuxt 
 
 ## 🚀 Quick Start
 
+### ⚠️ Important: Tenant URL Access
+
+This application uses **subdomain-based tenant resolution**. You must access it via a tenant-specific subdomain:
+
+**Development:**
+```
+http://demo-restaurant.localhost:3003
+http://your-tenant.localhost:3003
+```
+
+**Production:**
+```
+https://demo-restaurant.yourdomain.com
+https://your-tenant.yourdomain.com
+```
+
+📖 **See [TENANT_LOGIN_QUICK_START.md](./TENANT_LOGIN_QUICK_START.md) for detailed setup instructions**
+
 ### Prerequisites
 
 - **Node.js**: 18.x or higher ([Download](https://nodejs.org/))

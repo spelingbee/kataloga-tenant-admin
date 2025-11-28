@@ -23,7 +23,7 @@
             <span>Individual location statistics</span>
           </div>
         </div>
-        <button class="locations-page__locked-btn" @click="navigateTo('/subscription')">
+        <button class="locations-page__locked-btn" @click="handleUpgrade">
           Upgrade Plan
         </button>
       </div>
@@ -75,11 +75,16 @@ definePageMeta({
   layout: 'default',
 })
 
+const router = useRouter()
 const locationStore = useLocationStore()
 const { hasMultiLocation, requireFeature } = useFeatureAccess()
 
 const showForm = ref(false)
 const selectedLocation = ref<Location | null>(null)
+
+const handleUpgrade = () => {
+  router.push('/subscription')
+}
 
 const notification = reactive({
   show: false,

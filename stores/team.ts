@@ -70,7 +70,7 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        const response = await api.get<PaginatedResponse<User>>('/users', {
+        const response = await api.get<PaginatedResponse<User>>('/tenant-admin/users', {
           params: { page, limit },
         })
 
@@ -96,7 +96,7 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        const response = await api.get<any>('/users/limits')
+        const response = await api.get<any>('/tenant-admin/users/limits')
         this.limits = response.users
       } catch (error: any) {
         console.error('Failed to fetch limits:', error)
@@ -112,7 +112,7 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        const user = await api.post<User>('/users', {
+        const user = await api.post<User>('/tenant-admin/users', {
           ...data,
           isActive: true,
         })
@@ -146,7 +146,7 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        const user = await api.patch<User>(`/users/${userId}/role`, { role })
+        const user = await api.patch<User>(`/tenant-admin/users/${userId}/role`, { role })
 
         // Update in members list
         const index = this.members.findIndex((m) => m.id === userId)
@@ -172,7 +172,7 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        await api.delete(`/users/${userId}`)
+        await api.delete(`/tenant-admin/users/${userId}`)
 
         // Remove from members list
         this.members = this.members.filter((m) => m.id !== userId)
@@ -201,7 +201,7 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        const user = await api.patch<User>(`/users/${userId}/deactivate`)
+        const user = await api.patch<User>(`/tenant-admin/users/${userId}/deactivate`)
 
         // Update in members list
         const index = this.members.findIndex((m) => m.id === userId)

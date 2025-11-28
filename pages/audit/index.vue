@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { useFeatureAccess } from '~/composables/useFeatureAccess';
+import { FeatureKey } from '~/types';
 
 definePageMeta({
   middleware: 'auth',
@@ -22,9 +23,9 @@ const { hasFeature, redirectToUpgrade } = useFeatureAccess();
 
 // Check if user has access to audit trail feature
 onMounted(async () => {
-  const hasAccess = await hasFeature('audit_trail');
+  const hasAccess = await hasFeature(FeatureKey.AUDIT_TRAIL);
   if (!hasAccess) {
-    redirectToUpgrade('audit_trail');
+    redirectToUpgrade(FeatureKey.AUDIT_TRAIL);
   }
 });
 </script>
