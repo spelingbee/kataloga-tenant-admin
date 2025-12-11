@@ -369,22 +369,28 @@ const debouncedSearch = () => {
  * Load menu items with current filters
  */
 const loadMenuItems = async () => {
-  if (!menuStore.currentMenu) {
-    await menuStore.fetchMenus()
-  }
-  
-  if (menuStore.currentMenu) {
-    const params = {
-      page: currentPage.value,
-      limit: 20,
-      search: searchQuery.value || undefined,
-      categoryId: filters.value.categoryId || undefined,
-      isActive: filters.value.isActive ? filters.value.isActive === 'true' : undefined,
-      minPrice: filters.value.minPrice,
-      maxPrice: filters.value.maxPrice,
+  try {
+    // First fetch menus to get the current menu
+    if (!menuStore.currentMenu) {
+      await menuStore.fetchMenus()
     }
     
-    await menuStore.fetchMenuItems(menuStore.currentMenu.id, params)
+    // If we have a current menu, fetch its items
+    if (menuStore.currentMenu) {
+      const params = {
+        page: currentPage.value,
+        limit: 20,
+        search: searchQuery.value || undefined,
+        categoryId: filters.value.categoryId || undefined,
+        isActive: filters.value.isActive ? filters.value.isActive === 'true' : undefined,
+        minPrice: filters.value.minPrice,
+        maxPrice: filters.value.maxPrice,
+      }
+      
+      await menuStore.fetchMenuItems(menuStore.currentMenu.id, params)
+    }
+  } catch (error) {
+    console.error('Error loading menu items:', error)
   }
 }
 
@@ -489,8 +495,10 @@ const handleBulkError = (message: string) => {
 /**
  * Item actions
  */
+const { navigateToTenant } = useNavigation()
+
 const editItem = (itemId: string) => {
-  router.push(`/menu/items/${itemId}`)
+  navigateToTenant(`/menu/items/${itemId}`)
 }
 
 const deleteItem = async (itemId: string) => {
@@ -515,13 +523,20 @@ const truncateText = (text: string, maxLength: number): string => {
 }
 
 const handleAddItem = () => {
-  router.push('/menu/items/new')
+  navigateToTenant('/menu/items/new')
 }
 
 // Load data on mount
 onMounted(async () => {
-  await categoryStore.fetchCategories()
-  await loadMenuItems()
+  try {
+    console.log('MenuItemList: Starting to load data')
+    await categoryStore.fetchCategories()
+    console.log('MenuItemList: Categories loaded')
+    await loadMenuItems()
+    console.log('MenuItemList: Menu items loaded, count:', menuItems.value.length)
+  } catch (error) {
+    console.error('Error loading initial data:', error)
+  }
 })
 </script>
 

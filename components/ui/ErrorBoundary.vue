@@ -51,9 +51,11 @@ const handleRetry = () => {
   // Force re-render by triggering a key change in parent if needed
 }
 
+const { navigateToTenant } = useNavigation()
+
 const handleGoHome = () => {
   error.value = null
-  router.push('/')
+  navigateToTenant('/')
 }
 
 // Reset error when route changes

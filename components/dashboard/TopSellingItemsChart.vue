@@ -79,9 +79,11 @@ const formatCurrency = (value: number): string => {
   }).format(value)
 }
 
+const { tenantPath } = useNavigation()
+
 const viewItemHistory = (item: TopSellingItem) => {
   router.push({
-    path: `/analytics/items/${item.menuItemId}`,
+    path: tenantPath(`/analytics/items/${item.menuItemId}`),
     query: { name: item.menuItemName },
   })
 }

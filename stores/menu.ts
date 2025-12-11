@@ -72,12 +72,37 @@ export const useMenuStore = defineStore('menu', {
       const api = useApi()
 
       try {
-        const response = await api.get<Menu[]>('/menu')
-        this.menus = response
+        const response = await api.get<{data: Menu[], meta: any}>('/menu')
+        
+        console.log('Menu API response:', response)
+        
+        // Handle the response format from backend
+        if (response.data && Array.isArray(response.data)) {
+          this.menus = response.data
+        } else if (Array.isArray(response)) {
+          // Fallback for direct array response
+          this.menus = response
+        } else {
+          this.menus = []
+        }
+        
+        console.log('Loaded menus:', this.menus)
         
         // Set first menu as current if none selected
-        if (!this.currentMenu && response.length > 0) {
-          this.currentMenu = response[0]
+        if (!this.currentMenu && this.menus.length > 0) {
+          this.currentMenu = this.menus[0]
+          
+          console.log('Set current menu:', this.currentMenu)
+          
+          // If the menu has items, populate them directly
+          if (this.currentMenu.items && this.currentMenu.items.length > 0) {
+            this.menuItems = this.currentMenu.items
+            this.totalItems = this.currentMenu.items.length
+            this.currentPage = 1
+            this.totalPages = 1
+            
+            console.log('Populated menu items from menu data:', this.menuItems.length, 'items')
+          }
         }
       } catch (error: any) {
         this.error = error.response?.data?.message || 'Failed to fetch menus'
@@ -125,9 +150,51 @@ export const useMenuStore = defineStore('menu', {
         this.currentPage = response.page
         this.totalPages = response.totalPages
       } catch (error: any) {
-        this.error = error.response?.data?.message || 'Failed to fetch menu items'
-        console.error('Error fetching menu items:', error)
-        throw error
+        // If the specific endpoint fails, try to get items from the current menu
+        console.warn('Failed to fetch menu items from dedicated endpoint, using menu data:', error)
+        
+        if (this.currentMenu && this.currentMenu.items) {
+          let items = [...this.currentMenu.items]
+          
+          // Apply filters if provided
+          if (params?.search) {
+            const searchLower = params.search.toLowerCase()
+            items = items.filter(item => 
+              item.name.toLowerCase().includes(searchLower) ||
+              (item.description && item.description.toLowerCase().includes(searchLower))
+            )
+          }
+          
+          if (params?.categoryId) {
+            items = items.filter(item => item.categoryId === params.categoryId)
+          }
+          
+          if (params?.isActive !== undefined) {
+            items = items.filter(item => item.isActive === params.isActive)
+          }
+          
+          if (params?.minPrice !== undefined) {
+            items = items.filter(item => item.price >= params.minPrice!)
+          }
+          
+          if (params?.maxPrice !== undefined) {
+            items = items.filter(item => item.price <= params.maxPrice!)
+          }
+          
+          // Apply pagination
+          const page = params?.page || 1
+          const limit = params?.limit || 20
+          const startIndex = (page - 1) * limit
+          const endIndex = startIndex + limit
+          
+          this.menuItems = items.slice(startIndex, endIndex)
+          this.totalItems = items.length
+          this.currentPage = page
+          this.totalPages = Math.ceil(items.length / limit)
+        } else {
+          this.error = error.response?.data?.message || 'Failed to fetch menu items'
+          throw error
+        }
       } finally {
         this.loading = false
       }
