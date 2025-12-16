@@ -79,7 +79,53 @@
         </div>
       </div>
 
-      <!-- Quick Actions -->
+      <!-- Main Actions (Prominently displayed for Mini App) -->
+      <div class="main-actions">
+        <h2 class="main-actions__title">Main Features</h2>
+        <div class="main-actions__grid">
+          <!-- Orders - Most important for Mini App -->
+          <button class="main-action-button main-action-button--primary" @click="navigateToTenant('/orders')">
+            <div class="main-action-button__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="main-action-button__content">
+              <h3 class="main-action-button__title">Orders</h3>
+              <p class="main-action-button__subtitle">Manage incoming orders</p>
+            </div>
+          </button>
+
+          <!-- Menu Management -->
+          <button class="main-action-button main-action-button--secondary" @click="navigateToTenant('/menu')">
+            <div class="main-action-button__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <div class="main-action-button__content">
+              <h3 class="main-action-button__title">Menu</h3>
+              <p class="main-action-button__subtitle">Manage your menu items</p>
+            </div>
+          </button>
+
+          <!-- Settings -->
+          <button class="main-action-button main-action-button--secondary" @click="navigateToTenant('/settings')">
+            <div class="main-action-button__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div class="main-action-button__content">
+              <h3 class="main-action-button__title">Settings</h3>
+              <p class="main-action-button__subtitle">Configure your restaurant</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Actions (Secondary features) -->
       <div class="quick-actions">
         <h2 class="quick-actions__title">Quick Actions</h2>
         <div class="quick-actions__grid">
@@ -97,13 +143,6 @@
             <span>Manage Categories</span>
           </button>
 
-          <button class="action-button" @click="navigateToTenant('/menu')">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <span>View All Items</span>
-          </button>
-
           <button v-if="hasAnalyticsAccess" class="action-button" @click="navigateToTenant('/analytics')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -113,8 +152,9 @@
         </div>
       </div>
 
-      <!-- Plan Limits -->
+      <!-- Plan Limits (hidden in mini app mode) -->
       <PlanLimitIndicator
+        v-if="features.showSubscriptionPlans"
         :plan-name="planName"
         :current="currentUsage"
         :max="maxLimits"
@@ -158,6 +198,16 @@ const dashboardStore = useDashboardStore()
 const authStore = useAuthStore()
 const router = useRouter()
 const { navigateToTenant } = useNavigation()
+
+// Mini App mode features (inline for simplicity)
+const features = computed(() => ({
+  showRolesManagement: false, // Hidden in mini app mode
+  showLocationsManagement: false, // Hidden in mini app mode
+  showSubscriptionPlans: false, // Hidden in mini app mode
+  showOrders: true,
+  showMenu: true,
+  showSettings: true,
+}))
 
 // Computed properties
 const loading = computed(() => dashboardStore.loading)
@@ -401,6 +451,102 @@ onMounted(async () => {
   font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   color: $text-primary;
+}
+
+.main-actions {
+  padding: $spacing-lg;
+  background: $bg-primary;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+.main-actions__title {
+  margin: 0 0 $spacing-lg 0;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+}
+
+.main-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $spacing-lg;
+}
+
+.main-action-button {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: $bg-secondary;
+  border: 2px solid $border-color;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  transition: all $transition-base;
+  text-align: left;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.main-action-button--primary {
+  border-color: $primary-color;
+  background: rgba($primary-color, 0.05);
+  
+  &:hover {
+    border-color: darken($primary-color, 10%);
+    background: rgba($primary-color, 0.1);
+  }
+  
+  .main-action-button__icon {
+    background: $primary-color;
+    color: $text-white;
+  }
+}
+
+.main-action-button--secondary {
+  &:hover {
+    border-color: $primary-color;
+  }
+  
+  .main-action-button__icon {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+}
+
+.main-action-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+  flex-shrink: 0;
+  
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.main-action-button__content {
+  flex: 1;
+}
+
+.main-action-button__title {
+  margin: 0 0 $spacing-xs 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.main-action-button__subtitle {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: $text-secondary;
 }
 
 .quick-actions {

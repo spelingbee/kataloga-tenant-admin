@@ -164,7 +164,7 @@ import TeamMemberInviteForm from '~/components/team/TeamMemberInviteForm.vue'
 import Modal from '~/components/ui/Modal.vue'
 
 definePageMeta({
-  middleware: 'auth',
+  middleware: ['auth'],
 })
 
 const teamStore = useTeamStore()
@@ -249,6 +249,15 @@ const handlePageChange = (page: number): void => {
 }
 
 onMounted(() => {
+  // In Mini App mode, redirect to dashboard
+  const isMiniAppMode = true // This could be configurable later
+  if (isMiniAppMode) {
+    const route = useRoute()
+    const tenantSlug = route.params.tenant as string
+    navigateTo(`/${tenantSlug}`)
+    return
+  }
+  
   // Check feature access and show modal if needed
   if (!hasMultiUser.value) {
     requireFeature(FeatureKey.MULTI_USER)

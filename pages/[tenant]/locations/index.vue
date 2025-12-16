@@ -71,7 +71,7 @@ import LocationForm from '~/components/location/LocationForm.vue'
 
 // Define page meta
 definePageMeta({
-  middleware: 'auth',
+  middleware: ['auth'],
   layout: 'default',
 })
 
@@ -155,6 +155,15 @@ const handleDelete = async (locationId: string) => {
 }
 
 onMounted(async () => {
+  // In Mini App mode, redirect to dashboard
+  const isMiniAppMode = true // This could be configurable later
+  if (isMiniAppMode) {
+    const route = useRoute()
+    const tenantSlug = route.params.tenant as string
+    await navigateToTenant('/')
+    return
+  }
+  
   // Check feature access and show modal if needed
   if (!hasMultiLocation.value) {
     requireFeature(FeatureKey.MULTI_LOCATION)
@@ -169,7 +178,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@use '../../assets/scss/variables' as *;
+@use '@/assets/scss/variables' as *;
 
 .locations-page {
   padding: $spacing-xl;

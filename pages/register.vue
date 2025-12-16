@@ -2,11 +2,46 @@
   <div class="register-page">
     <div class="register-card">
       <div class="register-card__header">
-        <h1 class="register-card__title">Tenant Registration</h1>
-        <p class="register-card__subtitle">Create your restaurant account</p>
+        <h1 class="register-card__title">Quick Setup Available!</h1>
+        <p class="register-card__subtitle">Get started faster with our new onboarding wizard</p>
       </div>
 
-      <form class="register-form" @submit.prevent="handleRegister">
+      <div class="register-options">
+        <NuxtLink to="/onboarding" class="register-option register-option--primary">
+          <div class="register-option__icon">🚀</div>
+          <h3 class="register-option__title">Quick Setup (Recommended)</h3>
+          <p class="register-option__description">
+            Get your restaurant online in 5 minutes with our guided setup
+          </p>
+          <div class="register-option__features">
+            <div class="feature">✓ Step-by-step guidance</div>
+            <div class="feature">✓ Telegram bot integration</div>
+            <div class="feature">✓ Instant dashboard access</div>
+          </div>
+        </NuxtLink>
+
+        <div class="register-divider">
+          <span>or</span>
+        </div>
+
+        <button 
+          type="button" 
+          class="register-option register-option--secondary"
+          @click="showAdvancedForm = true"
+        >
+          <div class="register-option__icon">⚙️</div>
+          <h3 class="register-option__title">Advanced Setup</h3>
+          <p class="register-option__description">
+            Use the traditional registration form
+          </p>
+        </button>
+      </div>
+
+      <form 
+        v-if="showAdvancedForm" 
+        class="register-form" 
+        @submit.prevent="handleRegister"
+      >
         <div class="form-group">
           <label for="firstName" class="form-group__label">First Name</label>
           <input
@@ -122,6 +157,8 @@ definePageMeta({
   layout: false,
   middleware: []
 })
+
+const showAdvancedForm = ref(false)
 
 const formData = ref({
   firstName: '',
@@ -242,7 +279,7 @@ const handleRegister = async () => {
 
 .register-card {
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   padding: $spacing-xl;
   background: $bg-primary;
   border-radius: $radius-lg;
@@ -362,6 +399,98 @@ const handleRegister = async () => {
   
   &:hover {
     text-decoration: underline;
+  }
+}
+
+.register-options {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.register-option {
+  display: block;
+  padding: $spacing-lg;
+  text-decoration: none;
+  border: 2px solid $border-color;
+  border-radius: $radius-lg;
+  transition: all $transition-base;
+  cursor: pointer;
+  background: $bg-primary;
+  
+  &:hover {
+    border-color: $primary-color;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.register-option--primary {
+  border-color: $primary-color;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($primary-color, 0.15) 100%);
+  }
+}
+
+.register-option--secondary {
+  border: 2px solid $border-color;
+  
+  &:hover {
+    border-color: $secondary-color;
+  }
+}
+
+.register-option__icon {
+  font-size: 2rem;
+  margin-bottom: $spacing-sm;
+}
+
+.register-option__title {
+  margin: 0 0 $spacing-xs 0;
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.register-option__description {
+  margin: 0 0 $spacing-md 0;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.register-option__features {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.feature {
+  font-size: $font-size-sm;
+  color: $success-color;
+  font-weight: 500;
+}
+
+.register-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: $spacing-md 0;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $border-color;
+  }
+  
+  span {
+    padding: 0 $spacing-md;
+    color: $text-secondary;
+    font-size: $font-size-sm;
   }
 }
 </style>
