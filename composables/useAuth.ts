@@ -59,16 +59,21 @@ export const useAuth = () => {
    * Initialize auth state from stored token
    */
   const initAuth = async (): Promise<void> => {
-    const token = api.getToken()
-    if (token) {
-      try {
-        await fetchUser()
-      } catch (error) {
-        // Token invalid, clear it
-        api.clearToken()
-        authStore.user = null
-        authStore.isAuthenticated = false
+    try {
+      const token = api.getToken()
+      if (token) {
+        try {
+          await fetchUser()
+        } catch (error) {
+          // Token invalid, clear it
+          api.clearToken()
+          authStore.user = null
+          authStore.isAuthenticated = false
+        }
       }
+    } catch (error) {
+      console.error('Auth initialization error - API not available:', error)
+      // API service not ready yet, skip initialization
     }
   }
 

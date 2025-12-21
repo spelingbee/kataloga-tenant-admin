@@ -1,441 +1,483 @@
-# Tenant Admin Dashboard
+# 🏢 Tenant Admin Dashboard - Kataloga
 
-A comprehensive management interface for restaurant/cafe owners built with Nuxt 3, Vue 3, TypeScript, and SCSS.
+Nuxt.js административная панель для владельцев ресторанов и магазинов - управление меню, заказами, аналитикой и настройками.
 
-## 📋 Table of Contents
+## 🆕 Новая API инфраструктура
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Quick Start](#quick-start)
-- [Project Structure](#project-structure)
-- [Documentation](#documentation)
-- [Development](#development)
-- [Contributing](#contributing)
+Проект переходит на стандартизированный формат API ответов (`ApiResponse<T>`) с расширенными возможностями для административной панели.
 
-## ✨ Features
+📖 **[Подробная документация Enhanced API Infrastructure](./docs/ENHANCED_API_INFRASTRUCTURE.md)**
 
-### Core Features (All Plans)
-- **Menu Management**: Create, edit, and manage menu items with images
-- **Category Management**: Organize menu items into categories with drag-and-drop reordering
-- **Dish Availability**: Control which dishes are visible to customers
-- **Image Upload**: Upload and manage menu item images
+### ✨ Ключевые особенности:
+- ✅ **Стандартизированный формат ответов** - единый `ApiResponse<T>` для всех API
+- ✅ **Автоматическое разворачивание данных** - чистые данные без API оберток
+- ✅ **Поддержка файловых операций** - скачивание отчетов Excel/PDF
+- ✅ **Массовые операции** - bulk операции с обработкой частичных ошибок
+- ✅ **Очередь запросов** - бесшовное обновление токенов без потери данных
+- ✅ **Обратная совместимость** - автоматическая нормализация legacy API
+- ✅ **Property-based тестирование** - генеративное тестирование с fast-check
+- ✅ **Расширенная валидация** - поддержка dot-notation для вложенных полей
 
-### PRO Plan Features
-- **Sales Analytics**: View sales data and performance metrics
-- **Multi-Location Support**: Manage up to 3 restaurant locations
-- **Audit Trail**: Track all changes to menu and settings
-- **Multi-User Access**: Invite up to 5 team members
-- **Basic Data Export**: Export data to CSV
+### 🔧 Технологический стек
+- **Nuxt 3** - Full-stack фреймворк
+- **Vue 3** - Реактивный UI фреймворк  
+- **TypeScript** - Типизированный JavaScript
+- **Pinia** - Управление состоянием
+- **Axios** - HTTP клиент с интерцепторами
+- **Vitest** - Современное тестирование
+- **Fast-check** - Property-based тестирование
+- **SCSS** - Стилизация
 
-### BUSINESS Plan Features
-- **Advanced Reporting**: Comprehensive business intelligence reports
-- **API Access**: Integrate with third-party services
-- **Custom Branding**: White-label the customer-facing menu
-- **Unlimited Locations**: Manage unlimited restaurant locations
-- **Unlimited Users**: Invite unlimited team members
-- **Priority Support**: Get priority customer support
+## 📋 Содержание
 
-## 🛠 Tech Stack
+- [Быстрый старт](#быстрый-старт)
+- [Функциональность](#функциональность)
+- [Структура проекта](#структура-проекта)
+- [Роли и доступы](#роли-и-доступы)
+- [Тестирование](#тестирование)
+- [Развертывание](#развертывание)
 
-- **Framework**: [Nuxt 3](https://nuxt.com/) - Vue.js framework with SSR/SSG
-- **UI Library**: [Vue 3](https://vuejs.org/) with Composition API
-- **State Management**: [Pinia](https://pinia.vuejs.org/) - Vue store library
-- **Styling**: SCSS with BEM methodology
-- **HTTP Client**: [Axios](https://axios-http.com/) - Promise-based HTTP client
-- **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
-- **Build Tool**: [Vite](https://vitejs.dev/) - Fast build tool
+## 🚀 Быстрый старт
 
-## 🚀 Quick Start
+### Предварительные требования
 
-### ⚠️ Important: Tenant URL Access
+- Node.js 18+
+- pnpm 8+
+- Запущенный backend API
+- Заполненная база данных с тестовыми тенантами
 
-This application uses **subdomain-based tenant resolution**. You must access it via a tenant-specific subdomain:
+### Установка
 
-**Development:**
-```
-http://demo-restaurant.localhost:3003
-http://your-tenant.localhost:3003
-```
-
-**Production:**
-```
-https://demo-restaurant.yourdomain.com
-https://your-tenant.yourdomain.com
-```
-
-📖 **See [TENANT_LOGIN_QUICK_START.md](./TENANT_LOGIN_QUICK_START.md) for detailed setup instructions**
-
-### Prerequisites
-
-- **Node.js**: 18.x or higher ([Download](https://nodejs.org/))
-- **pnpm**: Recommended package manager ([Install](https://pnpm.io/installation))
-- **Backend API**: Running NestJS backend (see backend documentation)
-
-### Installation
-
-1. **Clone the repository**:
 ```bash
-git clone <repository-url>
-cd apps/tenant-admin
-```
-
-2. **Install dependencies**:
-```bash
+# Установка зависимостей
 pnpm install
+
+# Настройка переменных окружения
+cp .env.example .env.development
+# Отредактируйте .env.development
 ```
 
-3. **Configure environment**:
-```bash
-cp .env.example .env
-```
+### Конфигурация
 
-Edit `.env` and set your backend API URL:
 ```env
+# API Configuration
 NUXT_PUBLIC_API_BASE_URL=http://localhost:3000
-NODE_ENV=development
+
+# App Configuration
+NUXT_PUBLIC_APP_NAME="Kataloga Admin"
+NUXT_PUBLIC_APP_DESCRIPTION="Административная панель для управления рестораном"
+
+# Features
+NUXT_PUBLIC_ENABLE_ANALYTICS=true
+NUXT_PUBLIC_ENABLE_MULTI_LOCATION=true
 ```
 
-4. **Start development server**:
-```bash
-pnpm dev
-```
-
-The application will be available at `http://localhost:3003`
-
-### First Time Setup
-
-1. **Ensure backend is running**: The backend API must be running on the configured URL
-2. **Create a tenant account**: Register through the tenant registration flow
-3. **Login**: Use your credentials to access the dashboard
-4. **Explore features**: Start by creating categories and menu items
-
-## 📁 Project Structure
-
-```
-apps/tenant-admin/
-├── assets/
-│   └── scss/                      # SCSS styles
-│       ├── main.scss              # Main entry point
-│       ├── _variables.scss        # Design tokens (colors, spacing, etc.)
-│       ├── _utilities.scss        # Global utility classes
-│       ├── abstracts/             # Mixins and functions
-│       │   ├── _mixins.scss
-│       │   └── _functions.scss
-│       └── base/                  # Base styles
-│           ├── _reset.scss
-│           └── _typography.scss
-├── components/                    # Vue components
-│   ├── ui/                        # Reusable UI components
-│   │   ├── DataTable/             # Complex components in folders
-│   │   ├── Modal/
-│   │   ├── FeatureGuard.vue       # Feature access control
-│   │   └── LoadingSpinner.vue
-│   ├── menu/                      # Menu-related components
-│   ├── category/                  # Category components
-│   ├── location/                  # Location components (PRO/BUSINESS)
-│   ├── dashboard/                 # Dashboard components
-│   └── team/                      # Team management (PRO/BUSINESS)
-├── composables/                   # Vue composables (reusable logic)
-│   ├── useApi.ts                  # API client
-│   ├── useAuth.ts                 # Authentication
-│   ├── useFeatureAccess.ts        # Feature access control
-│   └── useToast.ts                # Toast notifications
-├── docs/                          # Documentation
-│   ├── DEVELOPER_GUIDE.md         # Comprehensive developer guide
-│   ├── API_INTEGRATION.md         # API integration guide
-│   ├── SCSS_STYLE_GUIDE.md        # SCSS guidelines
-│   ├── FEATURE_ACCESS_CONTROL.md  # Feature access documentation
-│   └── USER_GUIDE.md              # User documentation
-├── middleware/                    # Route middleware
-│   └── auth.ts                    # Authentication guard
-├── pages/                         # Nuxt pages (auto-routing)
-│   ├── index.vue                  # Dashboard
-│   ├── login.vue                  # Login page
-│   ├── menu/                      # Menu management
-│   ├── categories/                # Category management
-│   ├── locations/                 # Location management (PRO/BUSINESS)
-│   ├── analytics/                 # Analytics (PRO/BUSINESS)
-│   ├── team/                      # Team management (PRO/BUSINESS)
-│   └── subscription/              # Subscription info
-├── plugins/                       # Nuxt plugins
-│   ├── api.client.ts              # API plugin
-│   ├── auth.client.ts             # Auth plugin
-│   ├── feature-access.client.ts   # Feature access plugin
-│   └── toast.client.ts            # Toast plugin
-├── services/                      # API services
-│   └── api.service.ts             # HTTP client singleton
-├── stores/                        # Pinia stores (state management)
-│   ├── auth.ts                    # Authentication state
-│   ├── menu.ts                    # Menu state
-│   ├── category.ts                # Category state
-│   ├── location.ts                # Location state
-│   ├── analytics.ts               # Analytics state
-│   ├── subscription.ts            # Subscription state
-│   └── team.ts                    # Team state
-├── types/                         # TypeScript type definitions
-│   └── index.ts
-├── app.vue                        # Root component
-├── nuxt.config.ts                 # Nuxt configuration
-├── package.json                   # Dependencies and scripts
-├── tsconfig.json                  # TypeScript configuration
-├── .env                           # Environment variables
-└── README.md                      # This file
-```
-
-## 📚 Documentation
-
-### For Developers
-
-- **[Developer Guide](./docs/DEVELOPER_GUIDE.md)**: Comprehensive guide covering architecture, patterns, and best practices
-- **[API Integration](./docs/API_INTEGRATION.md)**: How to integrate with the backend API
-- **[SCSS Style Guide](./docs/SCSS_STYLE_GUIDE.md)**: SCSS guidelines and component styling patterns
-- **[Feature Access Control](./docs/FEATURE_ACCESS_CONTROL.md)**: Plan-based feature access implementation
-
-### For Users
-
-- **[User Guide](./docs/USER_GUIDE.md)**: Complete user documentation
-- **[Menu Management Guide](./docs/MENU_MANAGEMENT_GUIDE.md)**: How to manage menus and items
-- **[Category Management Guide](./docs/CATEGORY_MANAGEMENT_GUIDE.md)**: How to organize categories
-- **[Location Management Guide](./docs/LOCATION_MANAGEMENT_GUIDE.md)**: Multi-location setup (PRO/BUSINESS)
-- **[Analytics Guide](./docs/ANALYTICS_GUIDE.md)**: Understanding sales analytics (PRO/BUSINESS)
-- **[Team Management Guide](./docs/TEAM_MANAGEMENT_GUIDE.md)**: Managing team members (PRO/BUSINESS)
-- **[Plan Features & Limits](./docs/PLAN_FEATURES_LIMITS.md)**: Feature comparison and limits
-
-## 💻 Development
-
-### Available Scripts
+### Запуск
 
 ```bash
-# Start development server (http://localhost:3003)
+# Разработка
 pnpm dev
 
-# Build for production
+# Продакшн
 pnpm build
-
-# Preview production build
-pnpm preview
-
-# Generate static site
-pnpm generate
-
-# Type check
-pnpm postinstall
+pnpm start
 ```
 
-### Development Workflow
+Приложение будет доступно по адресу: `http://localhost:3000`
 
-1. **Create a feature branch**:
+## 🔐 Тестовые аккаунты
+
+После заполнения базы данных доступны следующие аккаунты для тестирования:
+
+### FREE План
+**Pizza Palace**
+- **Email**: admin@pizzapalace.com
+- **Пароль**: password123
+- **URL**: `/pizza-palace`
+- **Возможности**: Базовое управление меню
+
+### PRO План
+**Burger King Test**
+- **Админ**: admin@burgerking.com / password123
+- **Менеджер**: manager@burgerking.com / password123
+- **URL**: `/burger-king-test`
+- **Возможности**: + Аналитика, мульти-локации, аудит
+
+### BUSINESS План
+**Sushi Master**
+- **Админ**: admin@sushimaster.com / password123
+- **Повар**: chef@sushimaster.com / password123
+- **URL**: `/sushi-master`
+- **Возможности**: + Расширенная отчетность, API, брендинг
+
+### Дополнительные тенанты
+**Русскоязычные тенанты:**
+- **Пиццерия**: owner@pizza.kg / password123 (`/vkusnaya-pizza`)
+- **Азиатская кухня**: owner@asian.kg / password123 (`/asian-kitchen`)
+- **Цветочный магазин**: owner@flowers.kg / password123 (`/flower-bouquet`)
+
+## 🎯 Функциональность
+
+### 📊 Дашборд
+- Обзор ключевых метрик
+- График продаж
+- Популярные товары
+- Последние заказы
+- Уведомления и задачи
+
+### 🍽️ Управление меню
+- **Категории**: Создание, редактирование, сортировка
+- **Позиции меню**: Добавление товаров с фото и описанием
+- **Доступность**: Управление наличием по локациям
+- **Цены**: Гибкое ценообразование
+
+### 📦 Управление заказами
+- Просмотр всех заказов
+- Изменение статусов заказов
+- Фильтрация по статусу, дате, клиенту
+- Печать чеков и накладных
+- Уведомления о новых заказах
+
+### 📍 Мульти-локации (PRO+)
+- Управление несколькими филиалами
+- Настройка доступности товаров по локациям
+- Отдельная аналитика по локациям
+- Управление персоналом по локациям
+
+### 📈 Аналитика (PRO+)
+- **Продажи**: Графики продаж по дням/неделям/месяцам
+- **Товары**: Популярные и убыточные позиции
+- **Клиенты**: Анализ клиентской базы
+- **Доходы**: Отчеты по доходам и прибыли
+
+### 📋 Расширенная отчетность (BUSINESS)
+- Детальные отчеты по продажам
+- Экспорт данных в Excel/CSV
+- Настраиваемые периоды отчетов
+- Сравнительная аналитика
+
+### 👥 Управление пользователями
+- Добавление сотрудников
+- Назначение ролей и прав доступа
+- Управление клиентской базой
+- История активности пользователей
+
+### ⚙️ Настройки
+- **Профиль тенанта**: Название, описание, контакты
+- **Telegram бот**: Настройка интеграции
+- **WhatsApp**: Настройка уведомлений
+- **Email**: Шаблоны писем
+- **Платежи**: Настройка способов оплаты
+
+### 🔍 Аудит (PRO+)
+- Журнал всех действий пользователей
+- Отслеживание изменений данных
+- Фильтрация по пользователям и действиям
+- Экспорт логов
+
+## 📁 Структура проекта
+
+```
+├── components/          # Vue компоненты
+│   ├── dashboard/      # Компоненты дашборда
+│   ├── menu/           # Управление меню
+│   ├── orders/         # Управление заказами
+│   ├── analytics/      # Аналитика и отчеты
+│   ├── users/          # Управление пользователями
+│   ├── settings/       # Настройки
+│   └── ui/             # UI компоненты
+├── layouts/            # Макеты страниц
+├── middleware/         # Middleware для авторизации
+├── pages/              # Страницы приложения
+│   └── [tenant]/       # Динамические маршруты по тенантам
+├── plugins/            # Плагины Nuxt
+├── stores/             # Pinia хранилища
+├── types/              # TypeScript типы
+└── utils/              # Утилиты
+```
+
+### Маршрутизация
+
+Приложение использует динамическую маршрутизацию по тенантам:
+
+```
+/[tenant]/                    # Дашборд тенанта
+/[tenant]/menu               # Управление меню
+/[tenant]/menu/categories    # Управление категориями
+/[tenant]/menu/items         # Управление позициями
+/[tenant]/orders             # Управление заказами
+/[tenant]/analytics          # Аналитика
+/[tenant]/users              # Управление пользователями
+/[tenant]/settings           # Настройки
+/[tenant]/audit              # Журнал аудита (PRO+)
+```
+
+## 👤 Роли и доступы
+
+### TENANT_ADMIN (Администратор)
+- Полный доступ ко всем функциям тенанта
+- Управление пользователями и настройками
+- Просмотр всей аналитики и отчетов
+- Настройка интеграций
+
+### TENANT_STAFF (Сотрудник)
+- Управление заказами
+- Просмотр меню (без редактирования)
+- Базовая аналитика
+- Ограниченный доступ к настройкам
+
+### Ограничения по планам
+
+#### FREE План
+- ✅ Базовое управление меню
+- ✅ Управление заказами
+- ❌ Аналитика
+- ❌ Мульти-локации
+- ❌ Аудит
+
+#### PRO План
+- ✅ Все функции FREE
+- ✅ Аналитика продаж
+- ✅ До 3 локаций
+- ✅ Журнал аудита
+- ✅ До 5 пользователей
+
+#### BUSINESS План
+- ✅ Все функции PRO
+- ✅ Расширенная отчетность
+- ✅ Неограниченные локации
+- ✅ API доступ
+- ✅ Кастомный брендинг
+- ✅ Неограниченные пользователи
+
+## 🧪 Тестирование
+
+### Юнит тесты
+
 ```bash
-git checkout -b feature/your-feature-name
+# Запуск тестов
+pnpm test
+
+# Тесты с покрытием
+pnpm test:coverage
 ```
 
-2. **Make your changes**: Follow the coding guidelines below
+### E2E тесты
 
-3. **Test your changes**: Ensure everything works on multiple screen sizes
-
-4. **Commit your changes**:
 ```bash
-git add .
-git commit -m "feat: add your feature description"
+# Интеграционные тесты
+pnpm test:e2e
 ```
 
-5. **Push and create PR**:
-```bash
-git push origin feature/your-feature-name
-```
+### Тестовые сценарии
 
-### Coding Guidelines
+1. **Регистрация нового тенанта**
+   - Переход на `/register`
+   - Заполнение формы регистрации
+   - Подтверждение email
+   - Настройка профиля
 
-#### SCSS Guidelines
+2. **Онбординг**
+   - Переход на `/onboarding`
+   - Пошаговая настройка тенанта
+   - Создание первого меню
+   - Настройка интеграций
 
-This project follows **strict SCSS guidelines**:
+3. **Управление меню**
+   - Создание категорий
+   - Добавление товаров
+   - Загрузка изображений
+   - Настройка доступности
 
-1. ✅ **BEM Methodology**: Use BEM naming without nested selectors
-2. ✅ **Variables Required**: No hardcoded values (colors, spacing, etc.)
-3. ✅ **Component Co-location**: Styles live next to components
-4. ✅ **DART SASS**: Use `@use` instead of `@import`
-5. ✅ **Max Nesting**: 2-3 levels with context only
+4. **Обработка заказов**
+   - Просмотр новых заказов
+   - Изменение статусов
+   - Отправка уведомлений
 
-**Example**:
-```scss
-// ✅ Correct
-.menu-item-card {
-  padding: $spacing-md;
-}
+## 🎨 Кастомизация
 
-.menu-item-card__title {
-  font-size: 1.25rem;
-}
-
-// ❌ Wrong
-.menu-item-card {
-  &__title {  // ❌ Nested BEM
-    font-size: 1.25rem;
-  }
-}
-```
-
-See [SCSS Style Guide](./docs/SCSS_STYLE_GUIDE.md) for complete guidelines.
-
-#### TypeScript Guidelines
-
-- Use TypeScript for all new code
-- Define interfaces for all data structures
-- Use type-safe API calls
-- Avoid `any` type
-
-#### Component Guidelines
-
-- Use Composition API with `<script setup>`
-- Extract reusable logic into composables
-- Keep components focused and single-purpose
-- Use props and emits with TypeScript types
-
-#### State Management
-
-- Use Pinia stores for global state
-- Keep component state local when possible
-- Use composables for shared logic
-- Follow the store pattern (state, getters, actions)
-
-### API Integration
-
-The app uses a centralized API service:
-
-```typescript
-const api = useApi()
-
-// GET request
-const items = await api.get<ApiResponse<MenuItem[]>>('/menu/items')
-
-// POST request
-const newItem = await api.post<ApiResponse<MenuItem>>('/menu/items', {
-  name: 'Pizza',
-  price: 12.99
-})
-
-// PATCH request
-await api.patch<ApiResponse<MenuItem>>('/menu/items/123', {
-  isActive: false
-})
-
-// DELETE request
-await api.delete('/menu/items/123')
-```
-
-See [API Integration Guide](./docs/API_INTEGRATION.md) for details.
-
-### Feature Access Control
-
-Check feature availability based on subscription plan:
-
-```typescript
-const { hasFeature } = useFeatureAccess()
-
-if (hasFeature(FeatureKey.SALES_ANALYTICS)) {
-  // Show analytics
-}
-```
-
-Use the `FeatureGuard` component:
+### Брендинг (BUSINESS план)
 
 ```vue
-<FeatureGuard :feature="FeatureKey.SALES_ANALYTICS" :show-upgrade="true">
-  <SalesAnalyticsDashboard />
-</FeatureGuard>
+<!-- components/ui/BrandedHeader.vue -->
+<template>
+  <header :style="{ backgroundColor: tenant.primaryColor }">
+    <img :src="tenant.logo" :alt="tenant.name" />
+    <h1>{{ tenant.name }}</h1>
+  </header>
+</template>
 ```
 
-See [Feature Access Control](./docs/FEATURE_ACCESS_CONTROL.md) for details.
+### Темы
 
-## 🤝 Contributing
+Настройте цветовую схему в зависимости от плана:
 
-### Before Contributing
+```scss
+// FREE план - базовые цвета
+.theme-free {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+}
 
-1. Read the [Developer Guide](./docs/DEVELOPER_GUIDE.md)
-2. Review the [SCSS Style Guide](./docs/SCSS_STYLE_GUIDE.md)
-3. Understand the [API Integration](./docs/API_INTEGRATION.md)
+// PRO план - расширенная палитра
+.theme-pro {
+  --primary-color: #9b59b6;
+  --secondary-color: #e74c3c;
+  --accent-color: #f39c12;
+}
 
-### Contribution Checklist
-
-- [ ] Code follows SCSS guidelines (no nested BEM, variables used)
-- [ ] TypeScript types defined for all data structures
-- [ ] Components use Composition API with `<script setup>`
-- [ ] Responsive design tested on multiple screen sizes
-- [ ] Feature access control implemented where needed
-- [ ] Error handling implemented
-- [ ] Code is documented with comments where necessary
-- [ ] Commit messages follow conventional commits format
-
-### Commit Message Format
-
-```
-feat: add new feature
-fix: fix bug
-docs: update documentation
-style: format code
-refactor: refactor code
-test: add tests
-chore: update dependencies
+// BUSINESS план - кастомные цвета
+.theme-business {
+  --primary-color: var(--tenant-primary-color);
+  --secondary-color: var(--tenant-secondary-color);
+  --accent-color: var(--tenant-accent-color);
+}
 ```
 
-## 📝 Environment Variables
+## 🚀 Развертывание
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `NUXT_PUBLIC_API_BASE_URL` | Backend API URL | `http://localhost:3000` | Yes |
-| `NODE_ENV` | Environment | `development` | No |
+### Мульти-тенантное развертывание
 
-## 🏗 Build and Deployment
+#### Вариант 1: Поддомены
+```
+pizza.admin.kataloga.com    -> tenant: pizza-palace
+sushi.admin.kataloga.com    -> tenant: sushi-master
+burger.admin.kataloga.com   -> tenant: burger-king-test
+```
 
-### Production Build
+#### Вариант 2: Пути
+```
+admin.kataloga.com/pizza    -> tenant: pizza-palace
+admin.kataloga.com/sushi    -> tenant: sushi-master
+admin.kataloga.com/burger   -> tenant: burger-king-test
+```
+
+### Nginx конфигурация
+
+```nginx
+# Поддомены
+server {
+    listen 80;
+    server_name *.admin.kataloga.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Tenant-Slug $1;
+    }
+}
+
+# Пути
+server {
+    listen 80;
+    server_name admin.kataloga.com;
+    
+    location ~ ^/([^/]+)/(.*) {
+        proxy_pass http://localhost:3000/$1/$2;
+        proxy_set_header Host $host;
+        proxy_set_header X-Tenant-Slug $1;
+    }
+}
+```
+
+### Docker
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+COPY package*.json ./
+RUN pnpm install
+
+COPY . .
+RUN pnpm build
+
+EXPOSE 3000
+CMD ["pnpm", "start"]
+```
+
+## 🔧 Конфигурация
+
+### Переменные окружения
+
+```env
+# API
+NUXT_PUBLIC_API_BASE_URL=https://api.kataloga.com
+
+# App
+NUXT_PUBLIC_APP_NAME="Kataloga Admin"
+NUXT_PUBLIC_SUPPORT_EMAIL="support@kataloga.com"
+
+# Features по планам
+NUXT_PUBLIC_ENABLE_ANALYTICS=true
+NUXT_PUBLIC_ENABLE_MULTI_LOCATION=true
+NUXT_PUBLIC_ENABLE_AUDIT=true
+NUXT_PUBLIC_ENABLE_API_ACCESS=true
+
+# Интеграции
+NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_..."
+NUXT_PUBLIC_GOOGLE_ANALYTICS_ID="GA_MEASUREMENT_ID"
+```
+
+## 🐛 Устранение проблем
+
+### Частые проблемы
+
+1. **Ошибка доступа к функции**
+   - Проверьте план подписки тенанта
+   - Убедитесь, что функция доступна для текущего плана
+
+2. **Проблемы с аналитикой**
+   - Убедитесь, что у тенанта есть данные продаж
+   - Проверьте права доступа пользователя
+
+3. **Ошибки загрузки изображений**
+   - Проверьте настройки S3 или локального хранилища
+   - Убедитесь в правильности CORS настроек
+
+### Отладка
 
 ```bash
-# Build for production
-pnpm build
+# Запуск в режиме отладки
+pnpm dev --debug
 
-# Preview production build locally
-pnpm preview
+# Проверка прав доступа
+console.log('User role:', user.role)
+console.log('Tenant plan:', tenant.subscription.plan.name)
+console.log('Available features:', tenant.subscription.plan.features)
 ```
 
-### Deployment Checklist
+## 📞 Поддержка
 
-- [ ] Update `NUXT_PUBLIC_API_BASE_URL` to production API URL
-- [ ] Set `NODE_ENV=production`
-- [ ] Run production build and test locally
-- [ ] Verify all API endpoints work
-- [ ] Test authentication flow
-- [ ] Verify feature access control
-- [ ] Test on multiple browsers
-- [ ] Check responsive design
-- [ ] Deploy to hosting platform
+### Документация для пользователей
 
-## 🐛 Troubleshooting
+Создайте справочные материалы для каждого плана:
 
-### Common Issues
+- **FREE**: Базовое руководство по управлению меню
+- **PRO**: Руководство по аналитике и мульти-локациям
+- **BUSINESS**: Полное руководство по всем функциям
 
-**Issue**: Development server won't start
-- **Solution**: Ensure Node.js 18+ is installed and dependencies are installed with `pnpm install`
+### Техническая поддержка
 
-**Issue**: API requests fail
-- **Solution**: Check that backend API is running and `NUXT_PUBLIC_API_BASE_URL` is correct
+1. Проверьте логи приложения
+2. Убедитесь в корректности настроек тенанта
+3. Проверьте статус подписки
+4. Обратитесь к команде разработки
 
-**Issue**: Authentication not working
-- **Solution**: Clear localStorage and try logging in again
+## 🔄 Миграция между планами
 
-**Issue**: Features not showing
-- **Solution**: Check subscription plan and feature access permissions
+### Апгрейд плана
 
-## 📄 License
+При переходе на более высокий план:
+1. Обновляется подписка в БД
+2. Разблокируются новые функции
+3. Пользователь получает уведомление
+4. Обновляется интерфейс
 
-Private - All rights reserved
+### Даунгрейд плана
 
-## 🆘 Support
-
-For questions or issues:
-1. Check the [documentation](./docs/)
-2. Review existing issues
-3. Contact the development team
-
----
-
-**Built with ❤️ using Nuxt 3, Vue 3, and TypeScript**
+При переходе на более низкий план:
+1. Блокируются недоступные функции
+2. Сохраняются данные (но скрывается доступ)
+3. Уведомление о потере функций
+4. Предложение апгрейда

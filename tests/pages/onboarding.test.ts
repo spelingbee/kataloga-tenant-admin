@@ -1,7 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
+import { ref, computed, nextTick } from 'vue'
 import OnboardingPage from '~/pages/onboarding.vue'
+
+// Mock Nuxt functions
+vi.stubGlobal('definePageMeta', vi.fn())
+vi.stubGlobal('navigateTo', vi.fn())
+vi.stubGlobal('useRuntimeConfig', () => ({
+  public: {
+    appUrl: 'http://localhost:3000'
+  }
+}))
+
+// Mock Vue composables globally
+vi.stubGlobal('ref', ref)
+vi.stubGlobal('computed', computed)
+vi.stubGlobal('nextTick', nextTick)
+vi.stubGlobal('useApi', () => ({
+  post: vi.fn(),
+  get: vi.fn(),
+  setToken: vi.fn()
+}))
+vi.stubGlobal('useRouter', () => ({
+  push: vi.fn()
+}))
 
 // Mock the composables
 vi.mock('~/composables/useApi', () => ({
@@ -74,9 +97,12 @@ describe('Onboarding Page', () => {
   })
 
   it('should validate password requirements', async () => {
+    const emailInput = wrapper.find('#email')
     const passwordInput = wrapper.find('#password')
     const form = wrapper.find('.wizard-form')
     
+    // Set a valid email first so validation gets to password
+    await emailInput.setValue('test@example.com')
     await passwordInput.setValue('weak')
     await form.trigger('submit')
     

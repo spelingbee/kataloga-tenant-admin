@@ -84,6 +84,7 @@
 import { ref, computed, watch } from 'vue'
 import draggable from 'vuedraggable'
 import { useCategoryStore } from '~/stores/category'
+import { useEnhancedApiForm } from '~/composables/useEnhancedApiForm'
 import type { Category } from '~/types'
 
 const emit = defineEmits<{
@@ -92,6 +93,9 @@ const emit = defineEmits<{
 }>()
 
 const categoryStore = useCategoryStore()
+
+// Use enhanced form for error handling
+const form = useEnhancedApiForm()
 
 const loading = computed(() => categoryStore.loading)
 const error = computed(() => categoryStore.error)

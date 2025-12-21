@@ -24,13 +24,16 @@
           id="category-name"
           v-model="formData.name"
           type="text"
+          name="name"
+          data-field="name"
           class="category-form__input"
-          :class="{ 'category-form__input--error': errors.name }"
+          :class="{ 'category-form__input--error': form.getFieldError('name') }"
           placeholder="e.g., Appetizers, Main Courses, Desserts"
           required
+          @input="form.clearFieldError('name')"
         />
-        <p v-if="errors.name" class="category-form__error">
-          {{ errors.name }}
+        <p v-if="form.getFieldError('name')" class="category-form__error">
+          {{ form.getFieldError('name') }}
         </p>
       </div>
 
@@ -41,18 +44,23 @@
         <textarea
           id="category-description"
           v-model="formData.description"
+          name="description"
+          data-field="description"
           class="category-form__textarea"
-          :class="{ 'category-form__input--error': errors.description }"
+          :class="{ 'category-form__input--error': form.getFieldError('description') }"
           placeholder="Optional description for this category"
           rows="3"
+          @input="form.clearFieldError('description')"
         ></textarea>
-        <p v-if="errors.description" class="category-form__error">
-          {{ errors.description }}
+        <p v-if="form.getFieldError('description')" class="category-form__error">
+          {{ form.getFieldError('description') }}
         </p>
       </div>
 
-      <div v-if="submitError" class="category-form__submit-error">
-        {{ submitError }}
+      <div v-if="form.globalErrors.value.length > 0" class="category-form__submit-error">
+        <div v-for="error in form.globalErrors.value" :key="error">
+          {{ error }}
+        </div>
       </div>
 
       <div class="category-form__actions">
@@ -79,6 +87,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useEnhancedApiForm } from '~/composables/useEnhancedApiForm'
 import type { Category } from '~/types'
 
 interface Props {
@@ -92,6 +101,9 @@ const emit = defineEmits<{
   submit: [data: { name: string; description?: string }]
 }>()
 
+// Use Enhanced API Form for better error handling
+const form = useEnhancedApiForm()
+
 const isEditing = computed(() => !!props.category)
 
 const formData = ref({
@@ -99,12 +111,6 @@ const formData = ref({
   description: '',
 })
 
-const errors = ref({
-  name: '',
-  description: '',
-})
-
-const submitError = ref('')
 const submitting = ref(false)
 
 // Initialize form data when category prop changes
@@ -120,31 +126,58 @@ watch(() => props.category, (newCategory) => {
       description: '',
     }
   }
-  errors.value = { name: '', description: '' }
-  submitError.value = ''
+  form.clearAllErrors()
 }, { immediate: true })
 
 const isFormValid = computed(() => {
-  return formData.value.name.trim().length > 0
+  return formData.value.name.trim().length > 0 && !form.hasErrors.value
 })
 
 const validateForm = (): boolean => {
-  errors.value = { name: '', description: '' }
+  form.clearAllErrors()
   let isValid = true
 
   if (!formData.value.name.trim()) {
-    errors.value.name = 'Category name is required'
+    form.handleValidationError({
+      code: 'VALIDATION_ERROR',
+      message: 'Validation failed',
+      details: [{
+        field: 'name',
+        message: 'Category name is required'
+      }]
+    })
     isValid = false
   } else if (formData.value.name.trim().length < 2) {
-    errors.value.name = 'Category name must be at least 2 characters'
+    form.handleValidationError({
+      code: 'VALIDATION_ERROR',
+      message: 'Validation failed',
+      details: [{
+        field: 'name',
+        message: 'Category name must be at least 2 characters'
+      }]
+    })
     isValid = false
   } else if (formData.value.name.trim().length > 100) {
-    errors.value.name = 'Category name must be less than 100 characters'
+    form.handleValidationError({
+      code: 'VALIDATION_ERROR',
+      message: 'Validation failed',
+      details: [{
+        field: 'name',
+        message: 'Category name must be less than 100 characters'
+      }]
+    })
     isValid = false
   }
 
   if (formData.value.description && formData.value.description.length > 500) {
-    errors.value.description = 'Description must be less than 500 characters'
+    form.handleValidationError({
+      code: 'VALIDATION_ERROR',
+      message: 'Validation failed',
+      details: [{
+        field: 'description',
+        message: 'Description must be less than 500 characters'
+      }]
+    })
     isValid = false
   }
 
@@ -157,7 +190,7 @@ const handleSubmit = async () => {
   }
 
   submitting.value = true
-  submitError.value = ''
+  form.setSubmitting(true)
 
   try {
     const data = {
@@ -167,9 +200,19 @@ const handleSubmit = async () => {
 
     emit('submit', data)
   } catch (error: any) {
-    submitError.value = error.message || 'Failed to save category'
+    // Handle API errors through the enhanced form
+    if (error.code === 'VALIDATION_ERROR') {
+      form.handleValidationError(error)
+    } else {
+      form.handleValidationError({
+        code: 'SUBMIT_ERROR',
+        message: error.message || 'Failed to save category',
+        details: []
+      })
+    }
   } finally {
     submitting.value = false
+    form.setSubmitting(false)
   }
 }
 </script>

@@ -299,13 +299,13 @@
 </template>
 
 <script setup lang="ts">
-import { useMenuStore } from '~/stores/menu'
+import { useEnhancedMenuStore } from '~/stores/enhanced-menu'
 import { useCategoryStore } from '~/stores/category'
 import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import LocationAvailabilityMatrix from './LocationAvailabilityMatrix.vue'
 import BulkMenuOperations from './BulkMenuOperations.vue'
 
-const menuStore = useMenuStore()
+const menuStore = useEnhancedMenuStore()
 const categoryStore = useCategoryStore()
 const router = useRouter()
 const { hasMultiLocation } = useFeatureAccess()
@@ -323,13 +323,14 @@ const filters = ref({
   maxPrice: undefined as number | undefined,
 })
 
-// Computed
-const loading = computed(() => menuStore.loading)
-const error = computed(() => menuStore.error)
+// Computed - using enhanced store getters
+const loading = computed(() => menuStore.isFetching)
+const error = computed(() => menuStore.errors.items?.message || null)
 const menuItems = computed(() => menuStore.menuItems)
-const totalItems = computed(() => menuStore.totalItems)
-const currentPage = computed(() => menuStore.currentPage)
-const totalPages = computed(() => menuStore.totalPages)
+const pagination = computed(() => menuStore.paginationInfo)
+const totalItems = computed(() => pagination.value.totalItems)
+const currentPage = computed(() => pagination.value.page)
+const totalPages = computed(() => pagination.value.totalPages)
 const hasSelectedItems = computed(() => menuStore.hasSelectedItems)
 const selectedItemsCount = computed(() => menuStore.selectedItemsCount)
 const categories = computed(() => categoryStore.categories)
@@ -366,7 +367,7 @@ const debouncedSearch = () => {
 }
 
 /**
- * Load menu items with current filters
+ * Load menu items with current filters using enhanced store
  */
 const loadMenuItems = async () => {
   try {
@@ -398,8 +399,20 @@ const loadMenuItems = async () => {
  * Apply filters
  */
 const applyFilters = () => {
-  menuStore.currentPage = 1
-  loadMenuItems()
+  // Reset to first page when applying filters
+  if (menuStore.currentMenu) {
+    const params = {
+      page: 1,
+      limit: 20,
+      search: searchQuery.value || undefined,
+      categoryId: filters.value.categoryId || undefined,
+      isActive: filters.value.isActive ? filters.value.isActive === 'true' : undefined,
+      minPrice: filters.value.minPrice,
+      maxPrice: filters.value.maxPrice,
+    }
+    
+    menuStore.fetchMenuItems(menuStore.currentMenu.id, params)
+  }
 }
 
 /**
@@ -417,12 +430,21 @@ const clearFilters = () => {
 }
 
 /**
- * Pagination
+ * Pagination - using enhanced store
  */
 const goToPage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    menuStore.currentPage = page
-    loadMenuItems()
+  if (page >= 1 && page <= totalPages.value && menuStore.currentMenu) {
+    const params = {
+      page,
+      limit: 20,
+      search: searchQuery.value || undefined,
+      categoryId: filters.value.categoryId || undefined,
+      isActive: filters.value.isActive ? filters.value.isActive === 'true' : undefined,
+      minPrice: filters.value.minPrice,
+      maxPrice: filters.value.maxPrice,
+    }
+    
+    menuStore.fetchMenuItems(menuStore.currentMenu.id, params)
   }
 }
 
@@ -508,8 +530,20 @@ const deleteItem = async (itemId: string) => {
   if (item && confirm(`Delete "${item.name}"?`)) {
     try {
       await menuStore.deleteMenuItem(menuStore.currentMenu.id, itemId)
-    } catch (error) {
+      successMessage.value = 'Menu item deleted successfully'
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        successMessage.value = ''
+      }, 3000)
+    } catch (error: any) {
       console.error('Delete error:', error)
+      errorMessage.value = error.message || 'Failed to delete menu item'
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        errorMessage.value = ''
+      }, 5000)
     }
   }
 }

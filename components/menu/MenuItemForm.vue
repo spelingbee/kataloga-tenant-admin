@@ -11,14 +11,17 @@
           id="name"
           v-model="formData.name"
           type="text"
+          name="name"
+          data-field="name"
           class="menu-item-form__input"
-          :class="{ 'menu-item-form__input--error': errors.name }"
+          :class="{ 'menu-item-form__input--error': form.getFieldError('name') }"
           placeholder="Enter menu item name"
           maxlength="100"
           @blur="validateField('name')"
+          @input="form.clearFieldError('name')"
         />
-        <span v-if="errors.name" class="menu-item-form__error">
-          {{ errors.name }}
+        <span v-if="form.getFieldError('name')" class="menu-item-form__error">
+          {{ form.getFieldError('name') }}
         </span>
       </div>
 
@@ -29,16 +32,19 @@
         <textarea
           id="description"
           v-model="formData.description"
+          name="description"
+          data-field="description"
           class="menu-item-form__textarea"
-          :class="{ 'menu-item-form__input--error': errors.description }"
+          :class="{ 'menu-item-form__input--error': form.getFieldError('description') }"
           placeholder="Enter menu item description"
           rows="4"
           maxlength="500"
           @blur="validateField('description')"
+          @input="form.clearFieldError('description')"
         />
         <div class="menu-item-form__field-info">
-          <span v-if="errors.description" class="menu-item-form__error">
-            {{ errors.description }}
+          <span v-if="form.getFieldError('description')" class="menu-item-form__error">
+            {{ form.getFieldError('description') }}
           </span>
           <span class="menu-item-form__char-count">
             {{ formData.description?.length || 0 }}/500
@@ -60,14 +66,17 @@
               step="0.01"
               min="0.01"
               max="999999.99"
+              name="price"
+              data-field="price"
               class="menu-item-form__input menu-item-form__input--with-prefix"
-              :class="{ 'menu-item-form__input--error': errors.price }"
+              :class="{ 'menu-item-form__input--error': form.getFieldError('price') }"
               placeholder="0.00"
               @blur="validateField('price')"
+              @input="form.clearFieldError('price')"
             />
           </div>
-          <span v-if="errors.price" class="menu-item-form__error">
-            {{ errors.price }}
+          <span v-if="form.getFieldError('price')" class="menu-item-form__error">
+            {{ form.getFieldError('price') }}
           </span>
         </div>
 
@@ -78,9 +87,12 @@
           <select
             id="categoryId"
             v-model="formData.categoryId"
+            name="categoryId"
+            data-field="categoryId"
             class="menu-item-form__select"
-            :class="{ 'menu-item-form__input--error': errors.categoryId }"
+            :class="{ 'menu-item-form__input--error': form.getFieldError('categoryId') }"
             @blur="validateField('categoryId')"
+            @change="form.clearFieldError('categoryId')"
           >
             <option value="">Select a category</option>
             <option
@@ -91,8 +103,8 @@
               {{ category.name }}
             </option>
           </select>
-          <span v-if="errors.categoryId" class="menu-item-form__error">
-            {{ errors.categoryId }}
+          <span v-if="form.getFieldError('categoryId')" class="menu-item-form__error">
+            {{ form.getFieldError('categoryId') }}
           </span>
         </div>
       </div>
@@ -125,13 +137,16 @@
           id="imageUrl"
           v-model="formData.imageUrl"
           type="url"
+          name="imageUrl"
+          data-field="imageUrl"
           class="menu-item-form__input"
-          :class="{ 'menu-item-form__input--error': errors.imageUrl }"
+          :class="{ 'menu-item-form__input--error': form.getFieldError('imageUrl') }"
           placeholder="https://example.com/image.jpg"
           @blur="validateField('imageUrl')"
+          @input="form.clearFieldError('imageUrl')"
         />
-        <span v-if="errors.imageUrl" class="menu-item-form__error">
-          {{ errors.imageUrl }}
+        <span v-if="form.getFieldError('imageUrl')" class="menu-item-form__error">
+          {{ form.getFieldError('imageUrl') }}
         </span>
         <span class="menu-item-form__field-hint">
           Supported formats: JPG, JPEG, PNG, GIF, WebP
@@ -163,8 +178,10 @@
       </div>
     </div>
 
-    <div v-if="generalError" class="menu-item-form__general-error">
-      {{ generalError }}
+    <div v-if="form.globalErrors.value.length > 0" class="menu-item-form__general-error">
+      <div v-for="error in form.globalErrors.value" :key="error">
+        {{ error }}
+      </div>
     </div>
 
     <div class="menu-item-form__actions">
@@ -190,6 +207,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useEnhancedApiForm } from '~/composables/useEnhancedApiForm'
 import type { MenuItem, Category } from '~/types'
 import LoadingSpinner from '~/components/ui/LoadingSpinner.vue'
 
@@ -209,6 +227,8 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+// Use Enhanced API Form for better error handling
+const form = useEnhancedApiForm()
 const categoryStore = useCategoryStore()
 
 const formData = ref<Partial<MenuItem>>({
@@ -221,9 +241,7 @@ const formData = ref<Partial<MenuItem>>({
   isActive: true,
 })
 
-const errors = ref<Record<string, string>>({})
-const generalError = ref<string>('')
-
+// Use enhanced form errors instead of local errors
 const categories = computed(() => categoryStore.sortedCategories)
 
 // Initialize form with initial data
@@ -255,39 +273,34 @@ onMounted(async () => {
 })
 
 const validateField = (field: string): boolean => {
-  errors.value[field] = ''
+  // Clear field error when user starts typing (Requirement 2.4)
+  form.clearFieldError(field)
 
   switch (field) {
     case 'name':
       if (!formData.value.name || formData.value.name.trim().length === 0) {
-        errors.value.name = 'Name is required'
         return false
       }
       if (formData.value.name.length > 100) {
-        errors.value.name = 'Name must be 100 characters or less'
         return false
       }
       break
 
     case 'description':
       if (formData.value.description && formData.value.description.length > 500) {
-        errors.value.description = 'Description must be 500 characters or less'
         return false
       }
       break
 
     case 'price':
       if (!formData.value.price) {
-        errors.value.price = 'Price is required'
         return false
       }
       const price = Number(formData.value.price)
       if (isNaN(price) || price < 0.01) {
-        errors.value.price = 'Price must be at least $0.01'
         return false
       }
       if (price > 999999.99) {
-        errors.value.price = 'Price cannot exceed $999,999.99'
         return false
       }
       break
@@ -296,12 +309,10 @@ const validateField = (field: string): boolean => {
       if (formData.value.imageUrl) {
         const urlPattern = /^https?:\/\/.+/i
         if (!urlPattern.test(formData.value.imageUrl)) {
-          errors.value.imageUrl = 'Please enter a valid URL'
           return false
         }
         const imagePattern = /\.(jpg|jpeg|png|gif|webp)$/i
         if (!imagePattern.test(formData.value.imageUrl)) {
-          errors.value.imageUrl = 'Image must be JPG, JPEG, PNG, GIF, or WebP'
           return false
         }
       }
@@ -330,15 +341,14 @@ const isFormValid = computed(() => {
     formData.value.name.trim().length > 0 &&
     formData.value.price &&
     Number(formData.value.price) >= 0.01 &&
-    Object.keys(errors.value).every((key) => !errors.value[key])
+    !form.hasErrors.value
   )
 })
 
 const handleSubmit = () => {
-  generalError.value = ''
+  form.clearAllErrors()
 
   if (!validateForm()) {
-    generalError.value = 'Please fix the errors above'
     return
   }
 
@@ -357,7 +367,15 @@ const handleSubmit = () => {
 }
 
 const handleImageError = () => {
-  errors.value.imageUrl = 'Failed to load image. Please check the URL.'
+  // Use enhanced form to handle image errors
+  form.handleValidationError({
+    code: 'VALIDATION_ERROR',
+    message: 'Image validation failed',
+    details: [{
+      field: 'imageUrl',
+      message: 'Failed to load image. Please check the URL.'
+    }]
+  })
 }
 </script>
 
