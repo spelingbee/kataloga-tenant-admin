@@ -16,7 +16,7 @@ import {
   createMockPaginatedResult,
   createMockBulkOperationResult
 } from '~/utils/test-factories';
-import type { Menu, MenuItem } from '~/types/business';
+import type { Menu, MenuItemUI } from '~/types/business';
 import type { ApiError } from '~/types/enhanced-api';
 
 // Mock the Nuxt app

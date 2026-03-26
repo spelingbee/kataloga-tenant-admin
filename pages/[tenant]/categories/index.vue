@@ -130,7 +130,7 @@ import { ref, computed } from 'vue'
 import { useCategoryStore } from '~/stores/category'
 import CategoryList from '~/components/category/CategoryList.vue'
 import CategoryForm from '~/components/category/CategoryForm.vue'
-import type { Category } from '~/types'
+import type { CategoryUI } from '~/types'
 
 definePageMeta({
   middleware: ['auth']
@@ -140,7 +140,7 @@ const categoryStore = useCategoryStore()
 
 const showFormModal = ref(false)
 const showDeleteModal = ref(false)
-const selectedCategory = ref<Category | null>(null)
+const selectedCategory = ref<CategoryUI | null>(null)
 const deleting = ref(false)
 
 const toast = ref({
@@ -160,7 +160,7 @@ const openCreateModal = () => {
   showFormModal.value = true
 }
 
-const openEditModal = (category: Category) => {
+const openEditModal = (category: CategoryUI) => {
   selectedCategory.value = category
   showFormModal.value = true
 }
@@ -170,7 +170,7 @@ const closeFormModal = () => {
   selectedCategory.value = null
 }
 
-const openDeleteModal = (category: Category) => {
+const openDeleteModal = (category: CategoryUI) => {
   selectedCategory.value = category
   showDeleteModal.value = true
 }

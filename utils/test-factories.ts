@@ -33,8 +33,8 @@ import {
 
 import type {
   Menu,
-  MenuItem,
-  Category,
+  MenuItemUI,
+  CategoryUI,
   Location,
   DashboardMetrics,
   SalesAnalytics,
@@ -267,37 +267,51 @@ export function createMockMenu(overrides: Partial<Menu> = {}): Menu {
 }
 
 /**
- * Create mock MenuItem
+ * Create mock MenuItemUI
  */
-export function createMockMenuItem(overrides: Partial<MenuItem> = {}): MenuItem {
+export function createMockMenuItem(overrides: Partial<MenuItemUI> = {}): MenuItemUI {
   return {
     id: `item-${Math.random().toString(36).substr(2, 9)}`,
     name: 'Test Item',
     description: 'Test item description',
     price: 10.99,
     imageUrl: 'https://example.com/image.jpg',
-    allergens: 'None',
-    isActive: true,
-    menuId: 'test-menu-id',
     categoryId: 'test-category-id',
+    menuId: 'test-menu-id',
+    isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    // UI-specific fields
+    isAvailable: true,
+    stockQuantity: 100,
+    calories: null,
+    preparationTime: null,
+    cookingTime: null,
+    ingredients: [],
+    allergens: [],
+    nutritionInfo: null,
+    dietary: [],
+    badges: [],
+    modifierGroups: [],
+    isNew: false,
+    isPopular: false,
+    category: null,
     ...overrides
   };
 }
 
 /**
- * Create mock Category
+ * Create mock CategoryUI
  */
-export function createMockCategory(overrides: Partial<Category> = {}): Category {
+export function createMockCategory(overrides: Partial<CategoryUI> = {}): CategoryUI {
   return {
     id: `category-${Math.random().toString(36).substr(2, 9)}`,
     name: 'Test Category',
     description: 'Test category description',
-    displayOrder: 1,
-    tenantId: 'test-tenant-id',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    imageUrl: undefined,
+    sortOrder: 1,
+    icon: undefined,
+    count: 0,
     ...overrides
   };
 }
@@ -338,7 +352,7 @@ export function createMockArray<T>(
 /**
  * Create mock menu items array
  */
-export function createMockMenuItems(count: number = 5): MenuItem[] {
+export function createMockMenuItems(count: number = 5): MenuItemUI[] {
   return createMockArray((index) => createMockMenuItem({
     name: `Test Item ${index + 1}`,
     price: 10 + index,
@@ -349,7 +363,7 @@ export function createMockMenuItems(count: number = 5): MenuItem[] {
 /**
  * Create mock categories array
  */
-export function createMockCategories(count: number = 3): Category[] {
+export function createMockCategories(count: number = 3): CategoryUI[] {
   return createMockArray((index) => createMockCategory({
     name: `Category ${index + 1}`,
     displayOrder: index + 1
@@ -982,7 +996,7 @@ export function generateRandomApiResponse<T>(dataGenerator: () => T): ApiRespons
 /**
  * Generate random menu item for property testing
  */
-export function generateRandomMenuItem(): MenuItem {
+export function generateRandomMenuItem(): MenuItemUI {
   return createMockMenuItem({
     name: randomString(randomInt(5, 50)),
     price: randomPrice(1, 1000),

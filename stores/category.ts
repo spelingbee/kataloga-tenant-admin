@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
-import type { Category } from '~/types'
+import type { CategoryUI } from '~/types'
 
 interface CategoryState {
-  categories: Category[]
+  categories: CategoryUI[]
   loading: boolean
   error: string | null
 }
 
-interface CategoryWithItemCount extends Category {
+interface CategoryWithItemCount extends CategoryUI {
   itemCount?: number
 }
 
@@ -23,7 +23,7 @@ export const useCategoryStore = defineStore('category', {
 
   getters: {
     sortedCategories: (state) => {
-      return [...state.categories].sort((a, b) => a.displayOrder - b.displayOrder)
+      return [...state.categories].sort((a, b) => a.sortOrder - b.sortOrder)
     },
     
     getCategoryById: (state) => (id: string) => {
@@ -55,7 +55,7 @@ export const useCategoryStore = defineStore('category', {
       const api = useApi()
 
       try {
-        const response = await api.post<Category>('/tenant-admin/categories', data)
+        const response = await api.post<CategoryUI>('/tenant-admin/categories', data)
         this.categories.push(response)
         return response
       } catch (error: any) {
@@ -73,7 +73,7 @@ export const useCategoryStore = defineStore('category', {
       const api = useApi()
 
       try {
-        const response = await api.patch<Category>(`/tenant-admin/categories/${id}`, data)
+        const response = await api.patch<CategoryUI>(`/tenant-admin/categories/${id}`, data)
         const index = this.categories.findIndex(cat => cat.id === id)
         if (index !== -1) {
           this.categories[index] = response
@@ -105,7 +105,7 @@ export const useCategoryStore = defineStore('category', {
       }
     },
 
-    async reorderCategories(categoryOrders: { id: string; displayOrder: number }[]) {
+    async reorderCategories(categoryOrders: { id: string; sortOrder: number }[]) {
       this.loading = true
       this.error = null
       const api = useApi()
@@ -114,10 +114,10 @@ export const useCategoryStore = defineStore('category', {
         await api.post('/tenant-admin/categories/reorder', { categories: categoryOrders })
         
         // Update local state
-        categoryOrders.forEach(({ id, displayOrder }) => {
+        categoryOrders.forEach(({ id, sortOrder }) => {
           const category = this.categories.find(cat => cat.id === id)
           if (category) {
-            category.displayOrder = displayOrder
+            category.sortOrder = sortOrder
           }
         })
       } catch (error: any) {

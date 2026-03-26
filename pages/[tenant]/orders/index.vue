@@ -152,6 +152,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { updateReadonlyObject } from '~/types/utils/readonly'
 
 definePageMeta({
   middleware: ['auth']
@@ -241,9 +242,13 @@ const confirmOrder = async (orderId: string) => {
   actionLoading.value = true
   try {
     // TODO: Implement API call to confirm order
-    const order = orders.value.find(o => o.id === orderId)
-    if (order) {
-      order.status = 'CONFIRMED'
+    const orderIndex = orders.value.findIndex(o => o.id === orderId)
+    if (orderIndex >= 0) {
+      const order = orders.value[orderIndex]
+      const updatedOrder = updateReadonlyObject(order, {
+        status: 'CONFIRMED'
+      })
+      orders.value[orderIndex] = updatedOrder
     }
     // Show success notification
     alert('Order confirmed successfully!')
@@ -258,9 +263,13 @@ const rejectOrder = async (orderId: string) => {
   actionLoading.value = true
   try {
     // TODO: Implement API call to reject order
-    const order = orders.value.find(o => o.id === orderId)
-    if (order) {
-      order.status = 'CANCELLED'
+    const orderIndex = orders.value.findIndex(o => o.id === orderId)
+    if (orderIndex >= 0) {
+      const order = orders.value[orderIndex]
+      const updatedOrder = updateReadonlyObject(order, {
+        status: 'CANCELLED'
+      })
+      orders.value[orderIndex] = updatedOrder
     }
     // Show success notification
     alert('Order rejected successfully!')

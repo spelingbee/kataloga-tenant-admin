@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
-import type { Menu, MenuItem, PaginatedResponse, PaginationParams } from '~/types'
+import type { Menu, MenuItemUI, PaginatedResponse, PaginationParams } from '~/types'
 
 interface MenuState {
   menus: Menu[]
   currentMenu: Menu | null
-  menuItems: MenuItem[]
+  menuItems: MenuItemUI[]
   totalItems: number
   currentPage: number
   totalPages: number
@@ -42,7 +42,7 @@ export const useMenuStore = defineStore('menu', {
     activeMenuItems: (state) => state.menuItems.filter(item => item.isActive),
     
     menuItemsByCategory: (state) => {
-      const grouped: Record<string, MenuItem[]> = {}
+      const grouped: Record<string, MenuItemUI[]> = {}
       state.menuItems.forEach(item => {
         const categoryId = item.categoryId || 'uncategorized'
         if (!grouped[categoryId]) {
@@ -141,7 +141,7 @@ export const useMenuStore = defineStore('menu', {
         if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString())
         if (params?.locationId) queryParams.append('locationId', params.locationId)
 
-        const response = await api.get<PaginatedResponse<MenuItem>>(
+        const response = await api.get<PaginatedResponse<MenuItemUI>>(
           `/menu/${menuId}/items?${queryParams.toString()}`
         )
 
@@ -203,13 +203,13 @@ export const useMenuStore = defineStore('menu', {
     /**
      * Create a new menu item
      */
-    async createMenuItem(menuId: string, data: Partial<MenuItem>) {
+    async createMenuItem(menuId: string, data: Partial<MenuItemUI>) {
       this.loading = true
       this.error = null
       const api = useApi()
 
       try {
-        const response = await api.post<MenuItem>(`/menu/${menuId}/items`, data)
+        const response = await api.post<MenuItemUI>(`/menu/${menuId}/items`, data)
         
         // Add to local state if on first page
         if (this.currentPage === 1) {
@@ -230,13 +230,13 @@ export const useMenuStore = defineStore('menu', {
     /**
      * Update an existing menu item
      */
-    async updateMenuItem(menuId: string, itemId: string, data: Partial<MenuItem>) {
+    async updateMenuItem(menuId: string, itemId: string, data: Partial<MenuItemUI>) {
       this.loading = true
       this.error = null
       const api = useApi()
 
       try {
-        const response = await api.patch<MenuItem>(
+        const response = await api.patch<MenuItemUI>(
           `/menu/${menuId}/items/${itemId}`,
           data
         )
@@ -389,7 +389,7 @@ export const useMenuStore = defineStore('menu', {
     /**
      * Bulk update menu items
      */
-    async bulkUpdateItems(menuId: string, itemIds: string[], data: Partial<MenuItem>) {
+    async bulkUpdateItems(menuId: string, itemIds: string[], data: Partial<MenuItemUI>) {
       this.loading = true
       this.error = null
       const api = useApi()

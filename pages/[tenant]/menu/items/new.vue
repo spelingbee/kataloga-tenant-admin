@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { MenuItem } from '~/types'
+import type { MenuItemUI } from '~/types'
 import MenuItemForm from '~/components/menu/MenuItemForm.vue'
 
 definePageMeta({
@@ -48,7 +48,7 @@ const router = useRouter()
 const loading = ref(false)
 const error = ref<string>('')
 
-const handleCreate = async (data: Partial<MenuItem>) => {
+const handleCreate = async (data: Partial<MenuItemUI>) => {
   loading.value = true
   error.value = ''
 

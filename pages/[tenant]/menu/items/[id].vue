@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { MenuItem } from '~/types'
+import type { MenuItemUI } from '~/types'
 import MenuItemForm from '~/components/menu/MenuItemForm.vue'
 import LoadingSpinner from '~/components/ui/LoadingSpinner.vue'
 
@@ -64,7 +64,7 @@ const menuStore = useMenuStore()
 
 const itemId = route.params.id as string
 
-const menuItem = ref<MenuItem | null>(null)
+const menuItem = ref<MenuItemUI | null>(null)
 const loadingItem = ref(true)
 const loading = ref(false)
 const error = ref<string>('')
@@ -112,7 +112,7 @@ const loadMenuItem = async () => {
   }
 }
 
-const handleUpdate = async (data: Partial<MenuItem>) => {
+const handleUpdate = async (data: Partial<MenuItemUI>) => {
   loading.value = true
   error.value = ''
 
