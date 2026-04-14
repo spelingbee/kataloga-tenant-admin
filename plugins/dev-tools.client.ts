@@ -18,8 +18,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   monitorApiCalls();
 
   // Add route change monitoring
-  if (nuxtApp.$router) {
-    nuxtApp.$router.beforeEach((to, from) => {
+  const router = nuxtApp.$router as any;
+  if (router && router.beforeEach) {
+    router.beforeEach((to: any, from: any) => {
       if (from.path !== to.path) {
         console.log(`🧭 Route change: ${from.path} → ${to.path}`);
       }

@@ -1,11 +1,11 @@
 <template>
   <form class="menu-item-form" @submit.prevent="handleSubmit">
     <div class="menu-item-form__section">
-      <h2 class="menu-item-form__section-title">Basic Information</h2>
+      <h2 class="menu-item-form__section-title">{{ t('menu.basicInfo') }}</h2>
 
       <div class="menu-item-form__field">
         <label for="name" class="menu-item-form__label">
-          Name <span class="menu-item-form__required">*</span>
+          {{ t('common.name') }} <span class="menu-item-form__required">*</span>
         </label>
         <input
           id="name"
@@ -15,7 +15,7 @@
           data-field="name"
           class="menu-item-form__input"
           :class="{ 'menu-item-form__input--error': form.getFieldError('name') }"
-          placeholder="Enter menu item name"
+          :placeholder="t('menu.enterName')"
           maxlength="100"
           @blur="validateField('name')"
           @input="form.clearFieldError('name')"
@@ -27,7 +27,7 @@
 
       <div class="menu-item-form__field">
         <label for="description" class="menu-item-form__label">
-          Description
+          {{ t('common.description') }}
         </label>
         <textarea
           id="description"
@@ -36,7 +36,7 @@
           data-field="description"
           class="menu-item-form__textarea"
           :class="{ 'menu-item-form__input--error': form.getFieldError('description') }"
-          placeholder="Enter menu item description"
+          :placeholder="t('menu.enterDescription')"
           rows="4"
           maxlength="500"
           @blur="validateField('description')"
@@ -55,10 +55,10 @@
       <div class="menu-item-form__row">
         <div class="menu-item-form__field">
           <label for="price" class="menu-item-form__label">
-            Price <span class="menu-item-form__required">*</span>
+            {{ t('common.price') }} <span class="menu-item-form__required">*</span>
           </label>
           <div class="menu-item-form__input-group">
-            <span class="menu-item-form__input-prefix">$</span>
+            <span class="menu-item-form__input-prefix">{{ suffix }}</span>
             <input
               id="price"
               v-model="formData.price"
@@ -82,7 +82,7 @@
 
         <div class="menu-item-form__field">
           <label for="categoryId" class="menu-item-form__label">
-            Category
+            {{ t('common.category') }}
           </label>
           <select
             id="categoryId"
@@ -90,11 +90,11 @@
             name="categoryId"
             data-field="categoryId"
             class="menu-item-form__select"
-            :class="{ 'menu-item-form__input--error': form.getFieldError('categoryId') }"
+            :class="{ 'menu-item-form__select--error': form.getFieldError('categoryId') }"
             @blur="validateField('categoryId')"
             @change="form.clearFieldError('categoryId')"
           >
-            <option value="">Select a category</option>
+            <option value="">{{ t('menu.selectCategory') }}</option>
             <option
               v-for="category in categories"
               :key="category.id"
@@ -111,60 +111,83 @@
 
       <div class="menu-item-form__field">
         <label for="allergens" class="menu-item-form__label">
-          Allergens
+          {{ t('menu.allergens') }}
         </label>
         <input
           id="allergens"
           v-model="formData.allergens"
           type="text"
           class="menu-item-form__input"
-          placeholder="e.g., Nuts, Dairy, Gluten"
+          :placeholder="t('menu.allergensPlaceholder')"
         />
         <span class="menu-item-form__field-hint">
-          List any allergens separated by commas
+          {{ t('menu.allergensHelp') }}
         </span>
       </div>
     </div>
 
     <div class="menu-item-form__section">
-      <h2 class="menu-item-form__section-title">Image</h2>
+      <h2 class="menu-item-form__section-title">{{ t('common.image') }}</h2>
 
       <div class="menu-item-form__field">
         <label for="imageUrl" class="menu-item-form__label">
-          Image URL
+          {{ t('menu.imageUrl') }}
         </label>
-        <input
-          id="imageUrl"
-          v-model="formData.imageUrl"
-          type="url"
-          name="imageUrl"
-          data-field="imageUrl"
-          class="menu-item-form__input"
-          :class="{ 'menu-item-form__input--error': form.getFieldError('imageUrl') }"
-          placeholder="https://example.com/image.jpg"
-          @blur="validateField('imageUrl')"
-          @input="form.clearFieldError('imageUrl')"
-        />
+        <div class="menu-item-form__image-input-group">
+          <input
+            id="imageUrl"
+            v-model="formData.imageUrl"
+            type="url"
+            name="imageUrl"
+            data-field="imageUrl"
+            class="menu-item-form__input"
+            :class="{ 'menu-item-form__input--error': form.getFieldError('imageUrl') }"
+            placeholder="https://example.com/image.jpg"
+            @blur="validateField('imageUrl')"
+            @input="form.clearFieldError('imageUrl')"
+          />
+          <div class="menu-item-form__upload-wrapper">
+            <button 
+              type="button" 
+              class="menu-item-form__upload-btn"
+              :disabled="isUploading"
+              @click="triggerFileUpload"
+            >
+              <svg v-if="!isUploading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="btn-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span v-if="isUploading">{{ t('common.loading') }}</span>
+              <span v-else>{{ t('common.upload') }}</span>
+            </button>
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              class="menu-item-form__hidden-file"
+              @change="handleFileUpload"
+            />
+          </div>
+        </div>
         <span v-if="form.getFieldError('imageUrl')" class="menu-item-form__error">
           {{ form.getFieldError('imageUrl') }}
         </span>
         <span class="menu-item-form__field-hint">
-          Supported formats: JPG, JPEG, PNG, GIF, WebP
+          {{ t('menu.imageFormats') }}
         </span>
       </div>
 
       <div v-if="formData.imageUrl" class="menu-item-form__image-preview">
         <img
-          :src="formData.imageUrl"
+          :src="mediaService.resolveImageUrl(formData.imageUrl)"
           :alt="formData.name || 'Menu item preview'"
-          class="menu-item-form__preview-image"
+          class="menu-item-form__image"
           @error="handleImageError"
         />
       </div>
     </div>
 
     <div class="menu-item-form__section">
-      <h2 class="menu-item-form__section-title">Availability</h2>
+      <h2 class="menu-item-form__section-title">{{ t('menu.availability') }}</h2>
 
       <div class="menu-item-form__field">
         <label class="menu-item-form__checkbox-label">
@@ -173,7 +196,7 @@
             type="checkbox"
             class="menu-item-form__checkbox"
           />
-          <span>Item is active and available to customers</span>
+          <span>{{ t('menu.availabilityHelp') }}</span>
         </label>
       </div>
     </div>
@@ -187,15 +210,15 @@
     <div class="menu-item-form__actions">
       <button
         type="button"
-        class="menu-item-form__button menu-item-form__button--secondary"
+        class="menu-item-form__btn menu-item-form__btn--secondary"
         @click="$emit('cancel')"
         :disabled="loading"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
       <button
         type="submit"
-        class="menu-item-form__button menu-item-form__button--primary"
+        class="menu-item-form__btn menu-item-form__btn--primary"
         :disabled="loading || !isFormValid"
       >
         <LoadingSpinner v-if="loading" size="sm" />
@@ -208,6 +231,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useEnhancedApiForm } from '~/composables/useEnhancedApiForm'
+import { useCurrency } from '~/composables/useCurrency'
+import { useMediaService } from '~/services/media.service'
 import type { MenuItem, Category } from '~/types'
 import LoadingSpinner from '~/components/ui/LoadingSpinner.vue'
 
@@ -227,9 +252,14 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
-// Use Enhanced API Form for better error handling
+const { t } = useI18n()
+const { suffix } = useCurrency()
+const mediaService = useMediaService()
 const form = useEnhancedApiForm()
 const categoryStore = useCategoryStore()
+
+const fileInput = ref<HTMLInputElement | null>(null)
+const isUploading = ref(false)
 
 const formData = ref<Partial<MenuItem>>({
   name: '',
@@ -241,10 +271,8 @@ const formData = ref<Partial<MenuItem>>({
   isActive: true,
 })
 
-// Use enhanced form errors instead of local errors
 const categories = computed(() => categoryStore.sortedCategories)
 
-// Initialize form with initial data
 watch(
   () => props.initialData,
   (newData) => {
@@ -263,7 +291,6 @@ watch(
   { immediate: true }
 )
 
-// Load categories on mount
 onMounted(async () => {
   try {
     await categoryStore.fetchCategories()
@@ -272,67 +299,57 @@ onMounted(async () => {
   }
 })
 
-const validateField = (field: string): boolean => {
-  // Clear field error when user starts typing (Requirement 2.4)
-  form.clearFieldError(field)
+const triggerFileUpload = () => {
+  fileInput.value?.click()
+}
 
+const handleFileUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  isUploading.value = true
+  try {
+    const imageUrl = await mediaService.uploadImage(file)
+    formData.value.imageUrl = imageUrl
+    form.clearFieldError('imageUrl')
+  } catch (error) {
+    console.error('Upload failed:', error)
+  } finally {
+    isUploading.value = false
+    target.value = ''
+  }
+}
+
+const validateField = (field: string): boolean => {
+  form.clearFieldError(field)
   switch (field) {
     case 'name':
-      if (!formData.value.name || formData.value.name.trim().length === 0) {
-        return false
-      }
-      if (formData.value.name.length > 100) {
-        return false
-      }
+      if (!formData.value.name || formData.value.name.trim().length === 0) return false
+      if (formData.value.name.length > 100) return false
       break
-
     case 'description':
-      if (formData.value.description && formData.value.description.length > 500) {
-        return false
-      }
+      if (formData.value.description && formData.value.description.length > 500) return false
       break
-
     case 'price':
-      if (!formData.value.price) {
-        return false
-      }
+      if (!formData.value.price) return false
       const price = Number(formData.value.price)
-      if (isNaN(price) || price < 0.01) {
-        return false
-      }
-      if (price > 999999.99) {
-        return false
-      }
+      if (isNaN(price) || price < 0.01 || price > 999999.99) return false
       break
-
     case 'imageUrl':
       if (formData.value.imageUrl) {
-        const urlPattern = /^https?:\/\/.+/i
-        if (!urlPattern.test(formData.value.imageUrl)) {
-          return false
-        }
-        const imagePattern = /\.(jpg|jpeg|png|gif|webp)$/i
-        if (!imagePattern.test(formData.value.imageUrl)) {
-          return false
-        }
+        // Allow absolute URLs or relative paths starting with /
+        const urlPattern = /^(https?:\/\/|\/)/
+        if (!urlPattern.test(formData.value.imageUrl)) return false
       }
       break
   }
-
   return true
 }
 
 const validateForm = (): boolean => {
   const fields = ['name', 'price', 'description', 'imageUrl']
-  let isValid = true
-
-  fields.forEach((field) => {
-    if (!validateField(field)) {
-      isValid = false
-    }
-  })
-
-  return isValid
+  return fields.every(validateField)
 }
 
 const isFormValid = computed(() => {
@@ -347,35 +364,23 @@ const isFormValid = computed(() => {
 
 const handleSubmit = () => {
   form.clearAllErrors()
+  if (!validateForm()) return
 
-  if (!validateForm()) {
-    return
-  }
-
-  // Clean up empty strings
   const submitData: Partial<MenuItem> = {
     name: formData.value.name?.trim(),
     description: formData.value.description?.trim() || undefined,
     price: Number(formData.value.price),
     imageUrl: formData.value.imageUrl?.trim() || undefined,
     allergens: formData.value.allergens?.trim() || undefined,
-    categoryId: formData.value.categoryId || undefined,
+    categoryId: formData.value.categoryId ? formData.value.categoryId : undefined,
     isActive: formData.value.isActive,
   }
-
   emit('submit', submitData)
 }
 
 const handleImageError = () => {
-  // Use enhanced form to handle image errors
-  form.handleValidationError({
-    code: 'VALIDATION_ERROR',
-    message: 'Image validation failed',
-    details: [{
-      field: 'imageUrl',
-      message: 'Failed to load image. Please check the URL.'
-    }]
-  })
+  // If image fails to load, maybe show a toast or just a placeholder
+  console.warn('Image failed to load')
 }
 </script>
 
@@ -476,7 +481,7 @@ const handleImageError = () => {
 }
 
 .menu-item-form__input--with-prefix {
-  padding-left: $spacing-xl;
+  padding-left: $spacing-3xl;
 }
 
 .menu-item-form__textarea {
@@ -586,22 +591,80 @@ const handleImageError = () => {
   border-radius: $radius-md;
 }
 
+.menu-item-form__image-input-group {
+  display: flex;
+  gap: $spacing-md;
+  
+  .menu-item-form__input {
+    flex: 1;
+  }
+}
+
+.menu-item-form__upload-wrapper {
+  position: relative;
+}
+
+.menu-item-form__upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+  background: $bg-tertiary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all $transition-base;
+  
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  &:hover:not(:disabled) {
+    background: $bg-primary;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.menu-item-form__hidden-file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .menu-item-form__actions {
   display: flex;
   justify-content: flex-end;
   gap: $spacing-md;
   padding-top: $spacing-xl;
+  border-top: 1px solid $border-color;
+  margin-top: $spacing-xl;
 }
 
-.menu-item-form__button {
+.menu-item-form__btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: $spacing-sm;
-  padding: $spacing-sm $spacing-xl;
+  padding: $spacing-md $spacing-2xl;
   font-size: $font-size-base;
-  font-weight: $font-weight-medium;
-  border: none;
+  font-weight: $font-weight-semibold;
   border-radius: $radius-md;
   cursor: pointer;
   transition: all $transition-base;
@@ -612,22 +675,32 @@ const handleImageError = () => {
   }
 }
 
-.menu-item-form__button--secondary {
-  color: $text-primary;
-  background: $bg-secondary;
+.menu-item-form__btn--secondary {
+  color: $text-secondary;
+  background: $bg-tertiary;
   border: 1px solid $border-color;
   
   &:hover:not(:disabled) {
-    background: $bg-tertiary;
+    background: $bg-primary;
+    color: $text-primary;
+    border-color: $text-light;
   }
 }
 
-.menu-item-form__button--primary {
+.menu-item-form__btn--primary {
   color: $text-white;
   background: $primary-color;
+  border: 1px solid $primary-dark;
+  box-shadow: 0 2px 4px rgba($primary-color, 0.2);
   
   &:hover:not(:disabled) {
     background: $primary-dark;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba($primary-color, 0.3);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 }
 </style>

@@ -3,26 +3,26 @@
     <!-- Header -->
     <div class="dashboard-overview__header">
       <div>
-        <h1 class="dashboard-overview__title">Dashboard</h1>
+        <h1 class="dashboard-overview__title">{{ t('dashboard.title') }}</h1>
         <p class="dashboard-overview__subtitle">
-          Welcome back, {{ userName }}!
+          {{ t('dashboard.welcomeBack', { userName }) }}
         </p>
       </div>
-      <button class="dashboard-overview__logout" @click="handleLogout">
-        Logout
-      </button>
+      <div class="dashboard-overview__actions">
+        <LanguageSwitcher />
+        <button class="dashboard-overview__logout" @click="handleLogout">
+          {{ t('auth.logout') }}
+        </button>
+      </div>
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="dashboard-overview__loading">
-      <div class="loading-spinner" />
-      <p>Loading dashboard...</p>
-    </div>
+    <DashboardSkeleton v-if="loading" />
 
     <!-- Error State -->
     <div v-else-if="error" class="dashboard-overview__error">
       <p>{{ error }}</p>
-      <button @click="refreshData">Retry</button>
+      <button @click="refreshData">{{ t('common.retry') }}</button>
     </div>
 
     <!-- Dashboard Content -->
@@ -36,7 +36,7 @@
             </svg>
           </div>
           <div class="metric-card__content">
-            <p class="metric-card__label">Total Menu Items</p>
+            <p class="metric-card__label">{{ t('dashboard.totalMenuItems') }}</p>
             <p class="metric-card__value">{{ metrics?.totalMenuItems || 0 }}</p>
           </div>
         </div>
@@ -48,7 +48,7 @@
             </svg>
           </div>
           <div class="metric-card__content">
-            <p class="metric-card__label">Active Items</p>
+            <p class="metric-card__label">{{ t('dashboard.activeItems') }}</p>
             <p class="metric-card__value">{{ metrics?.activeMenuItems || 0 }}</p>
           </div>
         </div>
@@ -60,7 +60,7 @@
             </svg>
           </div>
           <div class="metric-card__content">
-            <p class="metric-card__label">Categories</p>
+            <p class="metric-card__label">{{ t('dashboard.categories') }}</p>
             <p class="metric-card__value">{{ metrics?.totalCategories || 0 }}</p>
           </div>
         </div>
@@ -73,15 +73,15 @@
             </svg>
           </div>
           <div class="metric-card__content">
-            <p class="metric-card__label">Today's Revenue</p>
-            <p class="metric-card__value">${{ formatCurrency(metrics.todaySales.revenue) }}</p>
+            <p class="metric-card__label">{{ t('dashboard.todayRevenue') }}</p>
+            <p class="metric-card__value">{{ formatCurrency(metrics.todaySales.revenue) }}</p>
           </div>
         </div>
       </div>
 
       <!-- Main Actions (Prominently displayed for Mini App) -->
       <div class="main-actions">
-        <h2 class="main-actions__title">Main Features</h2>
+        <h2 class="main-actions__title">{{ t('dashboard.mainFeatures') }}</h2>
         <div class="main-actions__grid">
           <!-- Orders - Most important for Mini App -->
           <button class="main-action-button main-action-button--primary" @click="navigateToTenant('/orders')">
@@ -91,8 +91,8 @@
               </svg>
             </div>
             <div class="main-action-button__content">
-              <h3 class="main-action-button__title">Orders</h3>
-              <p class="main-action-button__subtitle">Manage incoming orders</p>
+              <h3 class="main-action-button__title">{{ t('orders.title') }}</h3>
+              <p class="main-action-button__subtitle">{{ t('dashboard.manageOrders') }}</p>
             </div>
           </button>
 
@@ -104,8 +104,8 @@
               </svg>
             </div>
             <div class="main-action-button__content">
-              <h3 class="main-action-button__title">Menu</h3>
-              <p class="main-action-button__subtitle">Manage your menu items</p>
+              <h3 class="main-action-button__title">{{ t('menu.title') }}</h3>
+              <p class="main-action-button__subtitle">{{ t('dashboard.manageMenu') }}</p>
             </div>
           </button>
 
@@ -118,8 +118,8 @@
               </svg>
             </div>
             <div class="main-action-button__content">
-              <h3 class="main-action-button__title">Settings</h3>
-              <p class="main-action-button__subtitle">Configure your restaurant</p>
+              <h3 class="main-action-button__title">{{ t('settings.title') }}</h3>
+              <p class="main-action-button__subtitle">{{ t('dashboard.configureSettings') }}</p>
             </div>
           </button>
         </div>
@@ -127,27 +127,27 @@
 
       <!-- Quick Actions (Secondary features) -->
       <div class="quick-actions">
-        <h2 class="quick-actions__title">Quick Actions</h2>
+        <h2 class="quick-actions__title">{{ t('dashboard.quickActions') }}</h2>
         <div class="quick-actions__grid">
           <button class="action-button" @click="navigateToTenant('/menu/items/new')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            <span>Add Menu Item</span>
+            <span>{{ t('dashboard.addMenuItem') }}</span>
           </button>
 
           <button class="action-button" @click="navigateToTenant('/categories')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <span>Manage Categories</span>
+            <span>{{ t('dashboard.manageCategories') }}</span>
           </button>
 
           <button v-if="hasAnalyticsAccess" class="action-button" @click="navigateToTenant('/analytics')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <span>View Analytics</span>
+            <span>{{ t('dashboard.viewAnalytics') }}</span>
           </button>
         </div>
       </div>
@@ -163,7 +163,7 @@
 
       <!-- Recent Activity -->
       <div class="recent-activity">
-        <h2 class="recent-activity__title">Recent Activity</h2>
+        <h2 class="recent-activity__title">{{ t('dashboard.recentActivity') }}</h2>
         <div v-if="recentActivity.length > 0" class="recent-activity__list">
           <div
             v-for="activity in recentActivity"
@@ -182,7 +182,7 @@
           </div>
         </div>
         <div v-else class="recent-activity__empty">
-          <p>No recent activity</p>
+          <p>{{ t('dashboard.noRecentActivity') }}</p>
         </div>
       </div>
     </div>
@@ -193,7 +193,10 @@
 import { useDashboardStore } from '~/stores/dashboard'
 import { useAuthStore } from '~/stores/auth'
 import PlanLimitIndicator from '~/components/ui/PlanLimitIndicator.vue'
+import LanguageSwitcher from "../ui/LanguageSwitcher.vue"
+import DashboardSkeleton from "../ui/DashboardSkeleton.vue"
 
+const { t } = useI18n()
 const dashboardStore = useDashboardStore()
 const authStore = useAuthStore()
 const router = useRouter()
@@ -248,9 +251,7 @@ const recentActivity = ref([
 /**
  * Format currency
  */
-const formatCurrency = (value: number): string => {
-  return value.toFixed(2)
-}
+const { formatCurrency } = useCurrency()
 
 /**
  * Format timestamp
@@ -261,14 +262,14 @@ const formatTime = (timestamp: string): string => {
   const diff = now.getTime() - date.getTime()
   const minutes = Math.floor(diff / 60000)
   
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 1) return t('dashboard.justNow')
+  if (minutes < 60) return t('dashboard.minutesAgo', { minutes })
   
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return t('dashboard.hoursAgo', { hours })
   
   const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  return t('dashboard.daysAgo', { days })
 }
 
 /**
@@ -324,6 +325,12 @@ onMounted(async () => {
   margin: 0;
   font-size: $font-size-lg;
   color: $text-secondary;
+}
+
+.dashboard-overview__actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
 }
 
 .dashboard-overview__logout {

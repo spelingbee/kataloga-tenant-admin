@@ -7,7 +7,6 @@
  * Requirements 8.1, 8.2, 8.3, 8.4, 8.5: Mock data generation for comprehensive testing
  */
 
-import { UserRole } from '~/types/enhanced-api';
 import type { 
   ApiResponse, 
   ApiError, 
@@ -489,13 +488,15 @@ export function createMockTopSellingItem(overrides: Partial<TopSellingItem> = {}
  * Create mock CategoryPerformance
  */
 export function createMockCategoryPerformance(overrides: Partial<CategoryPerformance> = {}): CategoryPerformance {
+  const totalRevenue = randomPrice(500, 10000)
   return {
     categoryId: `category-${randomString(8)}`,
     categoryName: `Category ${randomInt(1, 20)}`,
-    totalRevenue: randomPrice(500, 10000),
+    totalRevenue,
     totalOrders: randomInt(20, 300),
     itemCount: randomInt(5, 25),
     averageItemPrice: randomPrice(10, 50),
+    revenue: totalRevenue,
     ...overrides
   };
 }
@@ -970,7 +971,7 @@ export function createMockDirectArrayResponse<T>(items: T[]): T[] {
 export function generateRandomApiResponse<T>(dataGenerator: () => T): ApiResponse<T> {
   const isSuccess = randomBoolean();
   return createMockApiResponse(
-    isSuccess ? dataGenerator() : null,
+    isSuccess ? dataGenerator() : null as any,
     {
       success: isSuccess,
       statusCode: isSuccess ? randomPick([200, 201]) : randomPick([400, 404, 500]),

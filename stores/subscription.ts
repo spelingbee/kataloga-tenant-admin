@@ -52,7 +52,7 @@ export const useSubscriptionStore = defineStore('subscription', {
       const api = useApi()
 
       try {
-        const subscription = await api.get<Subscription>('/subscription')
+        const subscription = await api.get<Subscription>('/subscription/details')
         this.subscription = subscription
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch subscription'

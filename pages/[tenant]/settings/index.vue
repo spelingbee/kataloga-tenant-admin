@@ -1,75 +1,69 @@
 <template>
   <div class="settings-page">
-    <div class="settings-page__header">
-      <div>
-        <h1 class="settings-page__title">Settings</h1>
-        <p class="settings-page__subtitle">
-          Manage your restaurant settings and preferences
-        </p>
-      </div>
-      <button class="settings-page__back" @click="navigateToTenant('/')">
-        ← Back to Dashboard
-      </button>
-    </div>
+    <PageHeader 
+      :title="t('settings.title')" 
+      :subtitle="t('settings.subtitle')"
+    />
+
 
     <!-- Loading State -->
     <div v-if="loading" class="settings-page__loading">
       <div class="loading-spinner" />
-      <p>Loading settings...</p>
+      <p>{{ t('common.loading') }}</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="settings-page__error">
       <p>{{ error }}</p>
-      <button @click="refreshData">Retry</button>
+      <button @click="refreshData">{{ t('common.retry') }}</button>
     </div>
 
     <!-- Settings Content -->
     <div v-else class="settings-page__content">
       <!-- Restaurant Information -->
       <div class="settings-section">
-        <h2 class="settings-section__title">Restaurant Information</h2>
+        <h2 class="settings-section__title">{{ t('settings.restaurantInfo') }}</h2>
         <div class="settings-section__content">
           <div class="form-group">
-            <label for="storeName" class="form-label">Restaurant Name</label>
+            <label for="storeName" class="form-label">{{ t('settings.restaurantName') }}</label>
             <input
               id="storeName"
               v-model="settings.storeName"
               type="text"
               class="form-input"
-              placeholder="Enter restaurant name"
+              :placeholder="t('settings.restaurantNamePlaceholder')"
             />
           </div>
 
           <div class="form-group">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">{{ t('common.description') }}</label>
             <textarea
               id="description"
               v-model="settings.description"
               class="form-textarea"
-              placeholder="Brief description of your restaurant"
+              :placeholder="t('settings.descriptionPlaceholder')"
               rows="3"
             />
           </div>
 
           <div class="form-group">
-            <label for="phone" class="form-label">Phone Number</label>
+            <label for="phone" class="form-label">{{ t('common.phone') }}</label>
             <input
               id="phone"
               v-model="settings.phone"
               type="tel"
               class="form-input"
-              placeholder="Restaurant phone number"
+              :placeholder="t('settings.phonePlaceholder')"
             />
           </div>
 
           <div class="form-group">
-            <label for="address" class="form-label">Address</label>
+            <label for="address" class="form-label">{{ t('common.address') }}</label>
             <textarea
               id="address"
               v-model="settings.address"
               class="form-textarea"
-              placeholder="Restaurant address"
+              :placeholder="t('settings.addressPlaceholder')"
               rows="2"
             />
           </div>
@@ -78,51 +72,51 @@
 
       <!-- Telegram Integration -->
       <div class="settings-section">
-        <h2 class="settings-section__title">Telegram Integration</h2>
+        <h2 class="settings-section__title">{{ t('settings.telegramIntegration') }}</h2>
         <div class="settings-section__content">
           <div class="form-group">
-            <label for="telegramBotToken" class="form-label">Bot Token</label>
+            <label for="telegramBotToken" class="form-label">{{ t('settings.botToken') }}</label>
             <input
               id="telegramBotToken"
               v-model="settings.telegramBotToken"
               type="password"
               class="form-input"
-              placeholder="Your Telegram bot token"
+              :placeholder="t('settings.botTokenPlaceholder')"
             />
             <p class="form-help">
-              Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a>
+              {{ t('settings.botTokenHelp') }} <a href="https://t.me/BotFather" target="_blank">@BotFather</a>
             </p>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Chat Connection Status</label>
+            <label class="form-label">{{ t('settings.chatStatus') }}</label>
             <div class="connection-status">
               <div 
                 class="status-indicator" 
                 :class="settings.telegramChatId ? 'status-indicator--connected' : 'status-indicator--disconnected'"
               />
               <span class="status-text">
-                {{ settings.telegramChatId ? 'Connected' : 'Not Connected' }}
+                {{ settings.telegramChatId ? t('settings.connected') : t('settings.notConnected') }}
               </span>
             </div>
             <p v-if="!settings.telegramChatId" class="form-help">
-              Start your bot to receive order notifications
+              {{ t('settings.startBotHelp') }}
             </p>
           </div>
 
           <div v-if="settings.telegramBotToken && !settings.telegramChatId" class="form-group">
-            <label class="form-label">Connect Your Bot</label>
+            <label class="form-label">{{ t('settings.connectBot') }}</label>
             <div class="bot-connection">
               <p class="bot-connection__text">
-                Click the button below to connect your Telegram bot and start receiving order notifications.
+                {{ t('settings.connectBotDescription') }}
               </p>
               <button 
                 class="bot-connection__button"
                 @click="connectTelegramBot"
                 :disabled="connectLoading"
               >
-                <span v-if="connectLoading">Connecting...</span>
-                <span v-else>Connect Telegram Bot</span>
+                <span v-if="connectLoading">{{ t('settings.connecting') }}</span>
+                <span v-else>{{ t('settings.connectTelegramBot') }}</span>
               </button>
             </div>
           </div>
@@ -131,10 +125,10 @@
 
       <!-- WhatsApp Integration -->
       <div class="settings-section">
-        <h2 class="settings-section__title">WhatsApp Integration</h2>
+        <h2 class="settings-section__title">{{ t('settings.whatsappIntegration') }}</h2>
         <div class="settings-section__content">
           <div class="form-group">
-            <label for="whatsappPhone" class="form-label">WhatsApp Phone Number</label>
+            <label for="whatsappPhone" class="form-label">{{ t('settings.whatsappPhone') }}</label>
             <input
               id="whatsappPhone"
               v-model="settings.whatsappPhone"
@@ -143,7 +137,7 @@
               placeholder="+1234567890"
             />
             <p class="form-help">
-              Used for bank transfer payment instructions
+              {{ t('settings.whatsappHelp') }}
             </p>
           </div>
         </div>
@@ -151,11 +145,11 @@
 
       <!-- Operating Hours -->
       <div class="settings-section">
-        <h2 class="settings-section__title">Operating Hours</h2>
+        <h2 class="settings-section__title">{{ t('settings.operatingHours') }}</h2>
         <div class="settings-section__content">
           <div class="operating-hours">
             <div v-for="day in daysOfWeek" :key="day.key" class="day-hours">
-              <div class="day-hours__day">{{ day.name }}</div>
+              <div class="day-hours__day">{{ t(`settings.days.${day.key}`) }}</div>
               <div class="day-hours__controls">
                 <label class="checkbox-label">
                   <input
@@ -164,7 +158,7 @@
                     class="checkbox-input"
                   />
                   <span class="checkbox-custom" />
-                  Open
+                  {{ t('settings.open') }}
                 </label>
                 <div v-if="settings.operatingHours[day.key].isOpen" class="time-inputs">
                   <input
@@ -172,7 +166,7 @@
                     type="time"
                     class="time-input"
                   />
-                  <span>to</span>
+                  <span>{{ t('settings.to') }}</span>
                   <input
                     v-model="settings.operatingHours[day.key].closeTime"
                     type="time"
@@ -192,8 +186,8 @@
           @click="saveSettings"
           :disabled="saveLoading"
         >
-          <span v-if="saveLoading">Saving...</span>
-          <span v-else>Save Settings</span>
+          <span v-if="saveLoading">{{ t('common.saving') }}</span>
+          <span v-else>{{ t('settings.saveSettings') }}</span>
         </button>
       </div>
     </div>
@@ -207,6 +201,7 @@ definePageMeta({
   middleware: ['auth']
 })
 
+const { t } = useI18n()
 const { navigateToTenant } = useNavigation()
 
 const loading = ref(false)
@@ -216,14 +211,14 @@ const connectLoading = ref(false)
 
 type DayKey = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
 
-const daysOfWeek: { key: DayKey; name: string }[] = [
-  { key: 'monday', name: 'Monday' },
-  { key: 'tuesday', name: 'Tuesday' },
-  { key: 'wednesday', name: 'Wednesday' },
-  { key: 'thursday', name: 'Thursday' },
-  { key: 'friday', name: 'Friday' },
-  { key: 'saturday', name: 'Saturday' },
-  { key: 'sunday', name: 'Sunday' },
+const daysOfWeek: { key: DayKey }[] = [
+  { key: 'monday' },
+  { key: 'tuesday' },
+  { key: 'wednesday' },
+  { key: 'thursday' },
+  { key: 'friday' },
+  { key: 'saturday' },
+  { key: 'sunday' },
 ]
 
 const settings = reactive({
@@ -263,7 +258,7 @@ const refreshData = async () => {
       whatsappPhone: '+1234567890',
     })
   } catch (err: any) {
-    error.value = err.message || 'Failed to load settings'
+    error.value = err.message || t('settings.saveFailed')
   } finally {
     loading.value = false
   }
@@ -276,9 +271,9 @@ const saveSettings = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
     
     // Show success notification
-    alert('Settings saved successfully!')
+    alert(t('settings.saveSuccess'))
   } catch (err: any) {
-    alert(err.message || 'Failed to save settings')
+    alert(err.message || t('settings.saveFailed'))
   } finally {
     saveLoading.value = false
   }
@@ -286,7 +281,7 @@ const saveSettings = async () => {
 
 const connectTelegramBot = async () => {
   if (!settings.telegramBotToken) {
-    alert('Please enter your bot token first')
+    alert(t('settings.enterTokenFirst'))
     return
   }
   
@@ -303,9 +298,9 @@ const connectTelegramBot = async () => {
     // Open deep link
     window.open(deepLink, '_blank')
     
-    alert('Please start the bot in Telegram to complete the connection')
+    alert(t('settings.startBotInTelegram'))
   } catch (err: any) {
-    alert(err.message || 'Failed to connect bot')
+    alert(err.message || t('settings.connectBotFailed'))
   } finally {
     connectLoading.value = false
   }

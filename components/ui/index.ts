@@ -1,5 +1,7 @@
 // Base components
+export { default as PageHeader } from './PageHeader.vue'
 export { default as Modal } from './Modal.vue'
+
 export { default as LoadingSpinner } from './LoadingSpinner.vue'
 export { default as EmptyState } from './EmptyState.vue'
 export { default as ErrorBoundary } from './ErrorBoundary.vue'

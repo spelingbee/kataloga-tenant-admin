@@ -9,7 +9,8 @@ export default defineNuxtPlugin({
   name: 'toast',
   setup(nuxtApp) {
     // Initialize toast functionality
-    const { success, error, warning, info, setToastInstance } = useToast();
+    const toast = useToast();
+    const { success, error, warning, info, dismiss, setToastInstance } = toast;
     
     // Create a simple toast instance for initialization
     const simpleToastInstance = {
@@ -23,9 +24,6 @@ export default defineNuxtPlugin({
         };
         
         console.log(`${typeEmoji[toast.type as keyof typeof typeEmoji] || '📢'} ${toast.message}`);
-        
-        // In a real implementation, this would show a UI toast
-        // For now, we'll just log to console to prevent errors
       }
     };
     
@@ -34,16 +32,13 @@ export default defineNuxtPlugin({
     
     // Create toast interface that matches what Enhanced API Service expects
     const toastInterface = {
-      success: (msg: string, options?: any) => success(msg),
-      error: (msg: string, options?: any) => error(msg),
-      warning: (msg: string, options?: any) => warning(msg),
-      info: (msg: string, options?: any) => info(msg),
-      dismiss: (id: string) => {
-        // Note: Current toast composable doesn't support dismiss by ID
-        // This is a placeholder for future implementation
-        console.log('[Toast Dismiss]', id);
-      }
+      success: (msg: string, options?: any) => success(msg, options),
+      error: (msg: string, requestId?: string, options?: any) => error(msg, requestId, options),
+      warning: (msg: string, requestId?: string, options?: any) => warning(msg, requestId, options),
+      info: (msg: string, options?: any) => info(msg, options),
+      dismiss: (id: string) => dismiss(id)
     };
+
 
     return {
       provide: {

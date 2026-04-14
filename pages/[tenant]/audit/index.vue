@@ -1,11 +1,10 @@
 <template>
   <div class="audit-page">
-    <div class="audit-page__header">
-      <h1 class="audit-page__title">Audit Trail</h1>
-      <p class="audit-page__description">
-        View complete change history for all operations
-      </p>
-    </div>
+    <PageHeader 
+      title="Audit Trail" 
+      subtitle="View complete change history for all operations"
+    />
+
 
     <AuditLogList />
   </div>

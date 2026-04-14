@@ -23,23 +23,37 @@ export const useCategoryStore = defineStore('category', {
 
   getters: {
     sortedCategories: (state) => {
+      if (!Array.isArray(state.categories)) {
+        return []
+      }
       return [...state.categories].sort((a, b) => a.displayOrder - b.displayOrder)
     },
     
     getCategoryById: (state) => (id: string) => {
+      if (!Array.isArray(state.categories)) {
+        return undefined
+      }
       return state.categories.find(cat => cat.id === id)
     },
   },
 
   actions: {
     async fetchCategories() {
+      const { fetchWithCache } = useDataCache()
       this.loading = true
       this.error = null
-      const api = useApi()
 
       try {
-        const response = await api.get<{ data: CategoryWithItemCount[] }>('/tenant-admin/categories')
-        this.categories = response.data
+        const data = await fetchWithCache(
+          'categories',
+          async () => {
+            const api = useApi()
+            const response = await api.get<{ data: CategoryWithItemCount[] }>('/tenant-admin/categories')
+            return response.data
+          },
+          { ttl: 5 * 60 * 1000, staleWhileRevalidate: true }
+        )
+        this.categories = data
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch categories'
         console.error('Error fetching categories:', error)
@@ -57,6 +71,11 @@ export const useCategoryStore = defineStore('category', {
       try {
         const response = await api.post<Category>('/tenant-admin/categories', data)
         this.categories.push(response)
+        
+        // Invalidate cache
+        const { invalidateCache } = useDataCache()
+        invalidateCache('categories')
+        
         return response
       } catch (error: any) {
         this.error = error.message || 'Failed to create category'
@@ -78,6 +97,11 @@ export const useCategoryStore = defineStore('category', {
         if (index !== -1) {
           this.categories[index] = response
         }
+        
+        // Invalidate cache
+        const { invalidateCache } = useDataCache()
+        invalidateCache('categories')
+        
         return response
       } catch (error: any) {
         this.error = error.message || 'Failed to update category'
@@ -96,6 +120,10 @@ export const useCategoryStore = defineStore('category', {
       try {
         await api.delete(`/tenant-admin/categories/${id}`)
         this.categories = this.categories.filter(cat => cat.id !== id)
+        
+        // Invalidate cache
+        const { invalidateCache } = useDataCache()
+        invalidateCache('categories')
       } catch (error: any) {
         this.error = error.message || 'Failed to delete category'
         console.error('Error deleting category:', error)
@@ -120,6 +148,10 @@ export const useCategoryStore = defineStore('category', {
             category.displayOrder = displayOrder
           }
         })
+        
+        // Invalidate cache
+        const { invalidateCache } = useDataCache()
+        invalidateCache('categories')
       } catch (error: any) {
         this.error = error.message || 'Failed to reorder categories'
         console.error('Error reordering categories:', error)

@@ -4,36 +4,32 @@
     <div v-if="!hasMultiUser" class="team-page__locked">
       <div class="team-page__locked-content">
         <div class="team-page__locked-icon">🔒</div>
-        <h2 class="team-page__locked-title">Team Management</h2>
+        <h2 class="team-page__locked-title">{{ t('team.title') }}</h2>
         <p class="team-page__locked-description">
-          Team management is available on PRO and BUSINESS plans. Upgrade your plan to
-          invite team members and collaborate with your staff.
+          {{ t('team.featureLocked.description') }}
         </p>
         <div class="team-page__locked-features">
-          <h3 class="team-page__locked-features-title">With Team Management you can:</h3>
+          <h3 class="team-page__locked-features-title">{{ t('team.featureLocked.benefits') }}</h3>
           <ul class="team-page__locked-features-list">
-            <li>Invite multiple team members</li>
-            <li>Assign roles (Admin or Staff)</li>
-            <li>Control access to features</li>
-            <li>Track team activity</li>
+            <li>{{ t('team.featureLocked.benefit1') }}</li>
+            <li>{{ t('team.featureLocked.benefit2') }}</li>
+            <li>{{ t('team.featureLocked.benefit3') }}</li>
+            <li>{{ t('team.featureLocked.benefit4') }}</li>
           </ul>
         </div>
         <NuxtLink to="/subscription" class="team-page__upgrade-btn">
-          View Plans & Upgrade
+          {{ t('team.featureLocked.viewPlans') }}
         </NuxtLink>
       </div>
     </div>
 
     <!-- Team Management Content -->
     <div v-else class="team-page__content">
-      <div class="team-page__header">
-        <div>
-          <h1 class="team-page__title">Team Management</h1>
-          <p class="team-page__subtitle">
-            Manage your team members and their access levels
-          </p>
-        </div>
-      </div>
+      <PageHeader 
+        :title="t('team.title')" 
+        :subtitle="t('team.subtitle')"
+      />
+
 
       <!-- Team Member List -->
       <TeamMemberList
@@ -65,7 +61,7 @@
     <Modal v-model="showRoleModal">
       <div class="team-page__role-modal">
         <div class="team-page__role-modal-header">
-          <h3 class="team-page__role-modal-title">Change Role</h3>
+          <h3 class="team-page__role-modal-title">{{ t('team.changeRole') }}</h3>
           <button
             @click="showRoleModal = false"
             class="team-page__role-modal-close"
@@ -76,17 +72,17 @@
         </div>
         <div class="team-page__role-modal-body">
           <p class="team-page__role-modal-text">
-            Change role for <strong>{{ selectedMember?.firstName }} {{ selectedMember?.lastName }}</strong>
+            {{ t('team.changeRoleTitle', { firstName: selectedMember?.firstName, lastName: selectedMember?.lastName }) }}
           </p>
           <div class="team-page__role-modal-field">
-            <label for="newRole" class="team-page__role-modal-label">New Role</label>
+            <label for="newRole" class="team-page__role-modal-label">{{ t('team.newRole') }}</label>
             <select
               id="newRole"
               v-model="newRole"
               class="team-page__role-modal-select"
             >
-              <option value="TENANT_ADMIN">Admin</option>
-              <option value="TENANT_STAFF">Staff</option>
+              <option value="TENANT_ADMIN">{{ t('team.roles.admin') }}</option>
+              <option value="TENANT_STAFF">{{ t('team.roles.staff') }}</option>
             </select>
           </div>
         </div>
@@ -96,7 +92,7 @@
             class="team-page__role-modal-cancel"
             :disabled="roleLoading"
           >
-            Cancel
+            {{ t('common.cancel') }}
           </button>
           <button
             @click="confirmRoleChange"
@@ -104,7 +100,7 @@
             :disabled="roleLoading || !newRole"
           >
             <span v-if="roleLoading" class="team-page__spinner"></span>
-            <span v-else>Change Role</span>
+            <span v-else>{{ t('team.changeRole') }}</span>
           </button>
         </div>
       </div>
@@ -114,7 +110,7 @@
     <Modal v-model="showRemoveModal">
       <div class="team-page__remove-modal">
         <div class="team-page__remove-modal-header">
-          <h3 class="team-page__remove-modal-title">Remove Team Member</h3>
+          <h3 class="team-page__remove-modal-title">{{ t('team.removeMember') }}</h3>
           <button
             @click="showRemoveModal = false"
             class="team-page__remove-modal-close"
@@ -125,9 +121,7 @@
         </div>
         <div class="team-page__remove-modal-body">
           <p class="team-page__remove-modal-text">
-            Are you sure you want to remove
-            <strong>{{ selectedMember?.firstName }} {{ selectedMember?.lastName }}</strong>
-            from your team? This action cannot be undone.
+            {{ t('team.removeConfirm', { firstName: selectedMember?.firstName, lastName: selectedMember?.lastName }) }}
           </p>
         </div>
         <div class="team-page__remove-modal-actions">
@@ -136,7 +130,7 @@
             class="team-page__remove-modal-cancel"
             :disabled="removeLoading"
           >
-            Cancel
+            {{ t('common.cancel') }}
           </button>
           <button
             @click="confirmRemove"
@@ -144,7 +138,7 @@
             :disabled="removeLoading"
           >
             <span v-if="removeLoading" class="team-page__spinner"></span>
-            <span v-else>Remove Member</span>
+            <span v-else>{{ t('team.removeMember') }}</span>
           </button>
         </div>
       </div>
@@ -162,6 +156,8 @@ import { FeatureKey } from '~/types'
 import TeamMemberList from '~/components/team/TeamMemberList.vue'
 import TeamMemberInviteForm from '~/components/team/TeamMemberInviteForm.vue'
 import Modal from '~/components/ui/Modal.vue'
+
+const { t } = useI18n()
 
 definePageMeta({
   middleware: ['auth'],
@@ -195,9 +191,9 @@ const handleInvite = async (data: any): Promise<void> => {
     await teamStore.inviteMember(data)
     showInviteModal.value = false
     // Show success notification (you can add a toast notification here)
-    alert('Team member invited successfully!')
+    alert(t('team.inviteSuccess'))
   } catch (error: any) {
-    alert(error.message || 'Failed to invite team member')
+    alert(error.message || t('team.inviteFailed'))
   } finally {
     inviteLoading.value = false
   }
@@ -216,9 +212,9 @@ const confirmRoleChange = async (): Promise<void> => {
   try {
     await teamStore.updateMemberRole(selectedMember.value.id, newRole.value as UserRole)
     showRoleModal.value = false
-    alert('Role updated successfully!')
+    alert(t('team.roleUpdateSuccess'))
   } catch (error: any) {
-    alert(error.message || 'Failed to update role')
+    alert(error.message || t('team.roleUpdateFailed'))
   } finally {
     roleLoading.value = false
   }
@@ -236,9 +232,9 @@ const confirmRemove = async (): Promise<void> => {
   try {
     await teamStore.removeMember(selectedMember.value.id)
     showRemoveModal.value = false
-    alert('Team member removed successfully!')
+    alert(t('team.removeSuccess'))
   } catch (error: any) {
-    alert(error.message || 'Failed to remove team member')
+    alert(error.message || t('team.removeFailed'))
   } finally {
     removeLoading.value = false
   }

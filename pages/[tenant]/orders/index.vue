@@ -1,27 +1,22 @@
 <template>
   <div class="orders-page">
-    <div class="orders-page__header">
-      <div>
-        <h1 class="orders-page__title">Orders</h1>
-        <p class="orders-page__subtitle">
-          Manage and track your restaurant orders
-        </p>
-      </div>
-      <button class="orders-page__back" @click="navigateToTenant('/')">
-        ← Back to Dashboard
-      </button>
-    </div>
+    <PageHeader 
+      :title="t('orders.title')" 
+      :subtitle="t('orders.subtitle')"
+      :back-label="t('dashboard.title')"
+      @back="goBack"
+    />
 
     <!-- Loading State -->
-    <div v-if="loading" class="orders-page__loading">
+    <div v-if="orderStore.loading && orderStore.orders.length === 0" class="orders-page__loading">
       <div class="loading-spinner" />
-      <p>Loading orders...</p>
+      <p>{{ t('common.loading') }}</p>
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="orders-page__error">
-      <p>{{ error }}</p>
-      <button @click="refreshData">Retry</button>
+    <div v-else-if="orderStore.error" class="orders-page__error">
+      <p>{{ orderStore.error }}</p>
+      <button @click="refreshData">{{ t('common.retry') }}</button>
     </div>
 
     <!-- Orders Content -->
@@ -35,8 +30,8 @@
             </svg>
           </div>
           <div class="stat-card__content">
-            <p class="stat-card__label">Pending Orders</p>
-            <p class="stat-card__value">{{ orderStats.pending || 0 }}</p>
+            <p class="stat-card__label">{{ t('orders.pendingOrders') }}</p>
+            <p class="stat-card__value">{{ orderStore.stats.pending || 0 }}</p>
           </div>
         </div>
 
@@ -47,8 +42,8 @@
             </svg>
           </div>
           <div class="stat-card__content">
-            <p class="stat-card__label">Confirmed Orders</p>
-            <p class="stat-card__value">{{ orderStats.confirmed || 0 }}</p>
+            <p class="stat-card__label">{{ t('orders.confirmedOrders') }}</p>
+            <p class="stat-card__value">{{ orderStore.stats.confirmed || 0 }}</p>
           </div>
         </div>
 
@@ -59,8 +54,8 @@
             </svg>
           </div>
           <div class="stat-card__content">
-            <p class="stat-card__label">Today's Revenue</p>
-            <p class="stat-card__value">${{ formatCurrency(orderStats.todayRevenue || 0) }}</p>
+            <p class="stat-card__label">{{ t('orders.todayRevenue') }}</p>
+            <p class="stat-card__value">{{ formatCurrency(orderStore.stats.todayRevenue || 0) }}</p>
           </div>
         </div>
       </div>
@@ -68,23 +63,23 @@
       <!-- Orders List -->
       <div class="orders-list">
         <div class="orders-list__header">
-          <h2 class="orders-list__title">Recent Orders</h2>
+          <h2 class="orders-list__title">{{ t('orders.recentOrders') }}</h2>
           <div class="orders-list__filters">
             <select v-model="statusFilter" class="filter-select">
-              <option value="">All Orders</option>
-              <option value="PENDING">Pending</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="PREPARING">Preparing</option>
-              <option value="READY">Ready</option>
-              <option value="DELIVERED">Delivered</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="">{{ t('orders.allOrders') }}</option>
+              <option value="PENDING">{{ t('orders.status.pending') }}</option>
+              <option value="CONFIRMED">{{ t('orders.status.confirmed') }}</option>
+              <option value="PREPARING">{{ t('orders.status.preparing') }}</option>
+              <option value="READY">{{ t('orders.status.ready') }}</option>
+              <option value="DELIVERED">{{ t('orders.status.delivered') }}</option>
+              <option value="CANCELLED">{{ t('orders.status.cancelled') }}</option>
             </select>
           </div>
         </div>
 
         <div v-if="filteredOrders.length === 0" class="orders-list__empty">
-          <p>No orders found</p>
-          <p class="orders-list__empty-subtitle">Orders will appear here when customers place them</p>
+          <p>{{ t('orders.noOrders') }}</p>
+          <p class="orders-list__empty-subtitle">{{ t('orders.ordersWillAppear') }}</p>
         </div>
 
         <div v-else class="orders-list__items">
@@ -96,34 +91,34 @@
           >
             <div class="order-item__header">
               <div class="order-item__info">
-                <h3 class="order-item__number">Order #{{ order.orderNumber }}</h3>
+                <h3 class="order-item__number">{{ t('orders.orderNumber', { orderNumber: order.orderNumber }) }}</h3>
                 <p class="order-item__time">{{ formatTime(order.createdAt) }}</p>
               </div>
               <div class="order-item__status">
                 <span class="status-badge" :class="`status-badge--${order.status.toLowerCase()}`">
-                  {{ order.status }}
+                  {{ t(`orders.status.${order.status.toLowerCase()}`) }}
                 </span>
               </div>
             </div>
 
             <div class="order-item__details">
               <div class="order-item__customer">
-                <p><strong>Customer:</strong> {{ order.customerName || 'Anonymous' }}</p>
-                <p v-if="order.customerPhone"><strong>Phone:</strong> {{ order.customerPhone }}</p>
+                <p><strong>{{ t('orders.customer') }}</strong> {{ order.customerName || t('orders.anonymous') }}</p>
+                <p v-if="order.customerPhone"><strong>{{ t('orders.phone') }}</strong> {{ order.customerPhone }}</p>
               </div>
               
               <div class="order-item__items">
-                <p><strong>Items:</strong></p>
+                <p><strong>{{ t('orders.items') }}</strong></p>
                 <ul class="order-item__items-list">
                   <li v-for="item in order.items" :key="item.id">
-                    {{ item.quantity }}x {{ item.menuItem.name }} - ${{ formatCurrency(item.price) }}
+                    {{ item.quantity }}x {{ item.product?.name || 'Item' }} - {{ formatCurrency(item.price) }}
                   </li>
                 </ul>
               </div>
 
               <div class="order-item__payment">
-                <p><strong>Payment:</strong> {{ order.paymentMethod }} - {{ order.paymentStatus }}</p>
-                <p><strong>Total:</strong> ${{ formatCurrency(order.total) }}</p>
+                <p><strong>{{ t('orders.payment') }}</strong> {{ order.paymentMethod || t('orders.payment.cash') }} - {{ order.paymentStatus || t('orders.payment.pending') }}</p>
+                <p><strong>{{ t('common.total') }}:</strong> {{ formatCurrency(order.total) }}</p>
               </div>
             </div>
 
@@ -131,16 +126,16 @@
               <button 
                 class="action-btn action-btn--confirm" 
                 @click="confirmOrder(order.id)"
-                :disabled="actionLoading"
+                :disabled="orderStore.actionLoading"
               >
-                Confirm Order
+                {{ t('orders.confirmOrder') }}
               </button>
               <button 
                 class="action-btn action-btn--reject" 
                 @click="rejectOrder(order.id)"
-                :disabled="actionLoading"
+                :disabled="orderStore.actionLoading"
               >
-                Reject Order
+                {{ t('orders.rejectOrder') }}
               </button>
             </div>
           </div>
@@ -152,74 +147,27 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useOrderStore } from '~/stores/order'
+import { useNavigation } from '~/composables/useNavigation'
+import {PageHeader} from "../../../components/ui";
+
+const { t } = useI18n()
 
 definePageMeta({
   middleware: ['auth']
 })
 
 const { navigateToTenant } = useNavigation()
+const orderStore = useOrderStore()
 
-// Mock data - replace with real API calls
-const loading = ref(false)
-const error = ref<string | null>(null)
-const actionLoading = ref(false)
 const statusFilter = ref('')
 
-const orderStats = ref({
-  pending: 3,
-  confirmed: 12,
-  todayRevenue: 245.50
-})
-
-const orders = ref([
-  {
-    id: '1',
-    orderNumber: '001',
-    status: 'PENDING',
-    customerName: 'John Doe',
-    customerPhone: '+1234567890',
-    paymentMethod: 'CASH',
-    paymentStatus: 'PENDING',
-    total: 25.50,
-    createdAt: new Date().toISOString(),
-    items: [
-      {
-        id: '1',
-        quantity: 2,
-        price: 12.75,
-        menuItem: { name: 'Margherita Pizza' }
-      }
-    ]
-  },
-  {
-    id: '2',
-    orderNumber: '002',
-    status: 'CONFIRMED',
-    customerName: 'Jane Smith',
-    customerPhone: '+1234567891',
-    paymentMethod: 'STRIPE',
-    paymentStatus: 'PAID',
-    total: 18.00,
-    createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-    items: [
-      {
-        id: '2',
-        quantity: 1,
-        price: 18.00,
-        menuItem: { name: 'Caesar Salad' }
-      }
-    ]
-  }
-])
-
 const filteredOrders = computed(() => {
-  if (!statusFilter.value) return orders.value
-  return orders.value.filter(order => order.status === statusFilter.value)
+  if (!statusFilter.value) return orderStore.orders
+  return orderStore.orders.filter(order => order.status === statusFilter.value)
 })
 
-const formatCurrency = (value: number): string => {
-  return value.toFixed(2)
-}
+const { formatCurrency } = useCurrency()
 
 const formatTime = (timestamp: string): string => {
   const date = new Date(timestamp)
@@ -227,61 +175,45 @@ const formatTime = (timestamp: string): string => {
   const diff = now.getTime() - date.getTime()
   const minutes = Math.floor(diff / 60000)
   
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 1) return t('dashboard.justNow')
+  if (minutes < 60) return t('dashboard.minutesAgo', { minutes })
   
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return t('dashboard.hoursAgo', { hours })
   
   const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  return t('dashboard.daysAgo', { days })
 }
 
 const confirmOrder = async (orderId: string) => {
-  actionLoading.value = true
   try {
-    // TODO: Implement API call to confirm order
-    const order = orders.value.find(o => o.id === orderId)
-    if (order) {
-      order.status = 'CONFIRMED'
-    }
-    // Show success notification
-    alert('Order confirmed successfully!')
+    await orderStore.updateOrderStatus(orderId, 'CONFIRMED' as any)
   } catch (error) {
-    alert('Failed to confirm order')
-  } finally {
-    actionLoading.value = false
+    alert(t('orders.confirmFailed'))
   }
 }
 
 const rejectOrder = async (orderId: string) => {
-  actionLoading.value = true
   try {
-    // TODO: Implement API call to reject order
-    const order = orders.value.find(o => o.id === orderId)
-    if (order) {
-      order.status = 'CANCELLED'
-    }
-    // Show success notification
-    alert('Order rejected successfully!')
+    await orderStore.updateOrderStatus(orderId, 'CANCELLED' as any)
   } catch (error) {
-    alert('Failed to reject order')
-  } finally {
-    actionLoading.value = false
+    alert(t('orders.rejectFailed'))
   }
 }
 
 const refreshData = async () => {
-  loading.value = true
-  error.value = null
   try {
-    // TODO: Implement API calls to fetch orders and stats
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
-  } catch (err: any) {
-    error.value = err.message || 'Failed to load orders'
-  } finally {
-    loading.value = false
+    await Promise.all([
+      orderStore.fetchOrders(),
+      orderStore.fetchOrderStats()
+    ])
+  } catch (err) {
+    console.error('Failed to load orders data')
   }
+}
+
+const goBack = () => {
+  navigateToTenant('/')
 }
 
 onMounted(() => {
@@ -291,6 +223,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 @use '@/assets/scss/variables' as *;
+
 
 .orders-page {
   padding: $spacing-xl;
@@ -303,8 +236,41 @@ onMounted(() => {
 .orders-page__header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: $spacing-xl;
+}
+
+.orders-page__header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-lg;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  color: $text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-base;
+  margin-top: 4px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: $bg-secondary;
+    color: $primary-color;
+    border-color: $primary-color;
+  }
 }
 
 .orders-page__title {

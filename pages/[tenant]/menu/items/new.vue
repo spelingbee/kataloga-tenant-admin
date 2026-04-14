@@ -8,18 +8,18 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Menu
+        {{ t('menu.backToMenu') }}
       </button>
 
-      <h1 class="menu-item-new-page__title">Add New Menu Item</h1>
+      <h1 class="menu-item-new-page__title">{{ t('menu.addMenuItem') }}</h1>
       <p class="menu-item-new-page__subtitle">
-        Create a new item for your menu
+        {{ t('menu.newItemSubtitle') }}
       </p>
     </div>
 
     <MenuItemForm
-      submit-label="Create Menu Item"
-      :loading="loading"
+      :submit-label="t('common.create')"
+      :loading="isSubmitting"
       @submit="handleCreate"
       @cancel="handleCancel"
     />
@@ -34,47 +34,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { MenuItem } from '~/types'
+import { storeToRefs } from 'pinia'
+import { useEnhancedMenuStore } from '~/stores/enhanced-menu'
 import MenuItemForm from '~/components/menu/MenuItemForm.vue'
 
-definePageMeta({
-  middleware: ['auth'],
-})
-
-const menuStore = useMenuStore()
-const router = useRouter()
-
-const loading = ref(false)
+const { t } = useI18n()
+const menuStore = useEnhancedMenuStore()
+const { isSubmitting, currentMenu } = storeToRefs(menuStore)
 const error = ref<string>('')
 
-const handleCreate = async (data: Partial<MenuItem>) => {
-  loading.value = true
+const handleCreate = async (data: any) => {
   error.value = ''
 
   try {
-    // Get current menu or use first menu
-    if (!menuStore.currentMenu) {
+    if (!currentMenu.value) {
       await menuStore.fetchMenus()
     }
 
-    if (!menuStore.currentMenu) {
-      error.value = 'No menu found. Please create a menu first.'
+    if (!currentMenu.value) {
+      error.value = t('errors.noMenuFound') || 'No menu found.'
       return
     }
 
-    await menuStore.createMenuItem(menuStore.currentMenu.id, data)
-
-    // Show success notification (you can add a toast notification here)
-    console.log('Menu item created successfully')
-
-    // Navigate back to menu list
-    await navigateToTenant('/menu')
+    await menuStore.createMenuItem(currentMenu.value.id, data)
+    await handleCancel()
   } catch (err: any) {
     console.error('Failed to create menu item:', err)
-    error.value = err.response?.data?.message || 'Failed to create menu item. Please try again.'
-  } finally {
-    loading.value = false
+    error.value = err.message || t('errors.saveFailed')
   }
 }
 

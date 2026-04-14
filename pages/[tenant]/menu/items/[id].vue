@@ -8,12 +8,12 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Menu
+        {{ t('menu.backToMenu') }}
       </button>
 
-      <h1 class="menu-item-edit-page__title">Edit Menu Item</h1>
+      <h1 class="menu-item-edit-page__title">{{ t('menu.editMenuItem') }}</h1>
       <p class="menu-item-edit-page__subtitle">
-        Update menu item details
+        {{ t('menu.editItemSubtitle') }}
       </p>
     </div>
 
@@ -22,20 +22,20 @@
     <MenuItemForm
       v-else-if="menuItem"
       :initial-data="menuItem"
-      submit-label="Update Menu Item"
-      :loading="loading"
+      :submit-label="t('common.save')"
+      :loading="isSubmitting"
       @submit="handleUpdate"
       @cancel="handleCancel"
     />
 
-    <div v-else-if="!loadingItem" class="menu-item-edit-page__not-found">
+    <div v-else-if="!isFetching" class="menu-item-edit-page__not-found">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <h2>Menu Item Not Found</h2>
-      <p>The menu item you're looking for doesn't exist or has been deleted.</p>
+      <h2>{{ t('menu.noItemsFound') }}</h2>
+      <p>{{ t('menu.itemNotFoundDescription') || 'The menu item you\'re looking for doesn\'t exist.' }}</p>
       <button @click="handleCancel">
-        Return to Menu
+        {{ t('menu.backToMenu') }}
       </button>
     </div>
 
@@ -50,23 +50,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { MenuItem } from '~/types'
+import { storeToRefs } from 'pinia'
+import { useEnhancedMenuStore } from '~/stores/enhanced-menu'
 import MenuItemForm from '~/components/menu/MenuItemForm.vue'
 import LoadingSpinner from '~/components/ui/LoadingSpinner.vue'
 
-definePageMeta({
-  middleware: ['auth'],
-})
-
+const { t } = useI18n()
 const route = useRoute()
-const router = useRouter()
-const menuStore = useMenuStore()
+const menuStore = useEnhancedMenuStore()
+const { isFetching, isSubmitting, currentMenu, menuItems } = storeToRefs(menuStore)
 
 const itemId = route.params.id as string
-
-const menuItem = ref<MenuItem | null>(null)
-const loadingItem = ref(true)
-const loading = ref(false)
+const menuItem = ref<any>(null)
 const error = ref<string>('')
 
 onMounted(async () => {
@@ -74,66 +69,49 @@ onMounted(async () => {
 })
 
 const loadMenuItem = async () => {
-  loadingItem.value = true
   error.value = ''
 
   try {
-    // Get current menu or use first menu
-    if (!menuStore.currentMenu) {
+    if (!currentMenu.value) {
       await menuStore.fetchMenus()
     }
 
-    if (!menuStore.currentMenu) {
-      error.value = 'No menu found.'
+    if (!currentMenu.value) {
+      error.value = t('errors.noMenuFound') || 'No menu found.'
       return
     }
 
-    // Find the menu item in the store
-    const item = menuStore.menuItems.find((i) => i.id === itemId)
+    // Try to find item in central items first
+    let item = menuItems.value.find((i: any) => i.id === itemId)
+
+    if (!item) {
+      // If not in current list, fetch items for this menu
+      await menuStore.fetchMenuItems(currentMenu.value.id)
+      item = menuItems.value.find((i: any) => i.id === itemId)
+    }
 
     if (item) {
       menuItem.value = item
     } else {
-      // If not in store, fetch menu items
-      await menuStore.fetchMenuItems(menuStore.currentMenu.id)
-      const foundItem = menuStore.menuItems.find((i) => i.id === itemId)
-      
-      if (foundItem) {
-        menuItem.value = foundItem
-      } else {
-        menuItem.value = null
-      }
+      menuItem.value = null
     }
   } catch (err: any) {
     console.error('Failed to load menu item:', err)
-    error.value = err.response?.data?.message || 'Failed to load menu item.'
-  } finally {
-    loadingItem.value = false
+    error.value = err.message || t('errors.loadFailed')
   }
 }
 
-const handleUpdate = async (data: Partial<MenuItem>) => {
-  loading.value = true
+const handleUpdate = async (data: any) => {
   error.value = ''
 
   try {
-    if (!menuStore.currentMenu) {
-      error.value = 'No menu found.'
-      return
-    }
+    if (!currentMenu.value) return
 
-    await menuStore.updateMenuItem(menuStore.currentMenu.id, itemId, data)
-
-    // Show success notification (you can add a toast notification here)
-    console.log('Menu item updated successfully')
-
-    // Navigate back to menu list
-    await navigateToTenant('/menu')
+    await menuStore.updateMenuItem(currentMenu.value.id, itemId, data)
+    await handleCancel()
   } catch (err: any) {
     console.error('Failed to update menu item:', err)
-    error.value = err.response?.data?.message || 'Failed to update menu item. Please try again.'
-  } finally {
-    loading.value = false
+    error.value = err.message || t('errors.saveFailed')
   }
 }
 

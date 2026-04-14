@@ -12,11 +12,11 @@ import { isApiResponse, isLegacyResponse } from './type-guards';
  * Normalize any response format to ApiResponse<T>
  * Handles legacy formats and ensures consistent structure
  */
-export function normalizeResponse<T>(response: any, requestUrl?: string): ApiResponse<T> {
+export function normalizeResponse<T = any>(response: any, requestUrl?: string): ApiResponse<T> {
   try {
     // Already in correct format
     if (isApiResponse<T>(response)) {
-      return response;
+  return response as ApiResponse<T>;
     }
 
     // Handle legacy formats
@@ -89,7 +89,7 @@ function normalizeLegacyResponse<T>(legacyResponse: any, requestUrl?: string): A
       data,
       error: null,
       meta: createLegacyMeta(requestUrl)
-    };
+    } as ApiResponse<T>;
   } catch (error) {
     // Handle errors during legacy conversion (Requirement 7.4)
     console.error('[Legacy Normalizer] Error converting legacy response:', error);
@@ -408,3 +408,66 @@ export function normalizeLegacyPagination<T>(
     return null;
   }
 }
+
+/**
+ * Refine a standard ApiResponse to handle nested legacy structures
+ * Specifically targets the "double data" pattern: { data: { data: [], total: X } }
+ */
+export function refineApiResponse<T>(response: any): ApiResponse<T> {
+  // If not an ApiResponse, we can't refine it as one (fallback to normalization)
+  if (!isApiResponse(response)) {
+    return normalizeResponse<T>(response);
+  }
+
+  const data = response.data;
+  
+  // Pattern 1: { data: { data: [], total: X, ... } }
+  if (data && typeof data === 'object' && 
+      Object.prototype.hasOwnProperty.call(data, 'data') && 
+      Array.isArray((data as any).data) &&
+      Object.prototype.hasOwnProperty.call(data, 'total')) {
+    
+    const innerData = (data as any).data;
+    const total = (data as any).total;
+    const page = (data as any).page || 1;
+    const limit = (data as any).limit || innerData.length;
+
+    // Lift the inner data to the top-level data
+    response.data = innerData;
+
+    // Lift pagination info to meta
+    if (!response.meta.pagination) {
+      response.meta.pagination = {
+        page,
+        limit,
+        totalItems: total,
+        totalPages: Math.ceil(total / limit)
+      };
+    }
+  }
+  
+  // Pattern 2: { data: { items: [], total: X, ... } }
+  if (data && typeof data === 'object' && 
+      Object.prototype.hasOwnProperty.call(data, 'items') && 
+      Array.isArray((data as any).items) &&
+      Object.prototype.hasOwnProperty.call(data, 'total')) {
+    
+    const innerData = (data as any).items;
+    const total = (data as any).total;
+    const page = (data as any).page || 1;
+    const limit = (data as any).limit || innerData.length;
+
+    response.data = innerData;
+
+    if (!response.meta.pagination) {
+      response.meta.pagination = {
+        page,
+        limit,
+        totalItems: total,
+        totalPages: Math.ceil(total / limit)
+      };
+    }
+  }
+
+  return response as ApiResponse<T>;
+}

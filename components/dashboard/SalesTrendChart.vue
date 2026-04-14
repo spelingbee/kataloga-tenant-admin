@@ -210,13 +210,10 @@ const hideTooltip = () => {
   tooltip.value.visible = false
 }
 
+const { formatCompactCurrency } = useCurrency()
+
 const formatCurrency = (value: number): string => {
-  if (value >= 1000000) {
-    return `$${(value / 1000000).toFixed(1)}M`
-  } else if (value >= 1000) {
-    return `$${(value / 1000).toFixed(1)}K`
-  }
-  return `$${value.toFixed(0)}`
+  return formatCompactCurrency(value)
 }
 
 const formatDate = (dateString: string): string => {

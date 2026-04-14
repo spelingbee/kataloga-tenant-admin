@@ -382,7 +382,7 @@ export const useEnhancedMenuStore = defineStore('enhanced-menu', {
         
         const result = await $api.bulkOperation<MenuItem>(
           `/menu/${menuId}/items/bulk-price-update`,
-          { itemIds, method, value },
+          { itemIds, method, value } as any,
           { successMessage: `Цены обновлены для ${itemIds.length} элементов` }
         );
         

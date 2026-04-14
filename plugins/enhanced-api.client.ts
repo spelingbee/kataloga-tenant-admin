@@ -52,25 +52,23 @@ export default defineNuxtPlugin({
       
       // Try to get toast from useToast composable
       try {
-        const { success, error, info } = useToast();
+        const { success, error, info, dismiss } = useToast();
         return {
-          success: (msg: string) => success(msg),
-          error: (msg: string) => error(msg),
-          info: (msg: string, options?: any) => info(msg),
-          dismiss: (id: string) => {
-            // Toast composable doesn't have dismiss, so we'll ignore it
-            console.log('[Toast Dismiss]', id);
-          }
+          success: (msg: string, options?: any) => success(msg, options),
+          error: (msg: string, requestId?: string, options?: any) => error(msg, requestId, options),
+          info: (msg: string, options?: any) => info(msg, options),
+          dismiss: (id: string) => dismiss(id)
         };
       } catch (e) {
         // Fallback to console logging if toast is not available
         return {
-          success: (msg: string) => console.log('[Toast Success]', msg),
-          error: (msg: string) => console.error('[Toast Error]', msg),
-          info: (msg: string) => console.info('[Toast Info]', msg),
+          success: (msg: string, options?: any) => console.log('[Toast Success]', msg),
+          error: (msg: string, requestId?: string, options?: any) => console.error('[Toast Error]', msg, requestId),
+          info: (msg: string, options?: any) => console.info('[Toast Info]', msg),
           dismiss: (id: string) => console.log('[Toast Dismiss]', id)
         };
       }
+
     };
 
     const toast = getToastInstance();

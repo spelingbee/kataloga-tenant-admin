@@ -61,8 +61,11 @@ export const useDashboardStore = defineStore('dashboard', {
         let totalMenuItems = 0
         let activeMenuItems = 0
         
-        if (menusResponse.data && Array.isArray(menusResponse.data)) {
-          menusResponse.data.forEach((menu: any) => {
+        // After refinement, menusResponse should be a clean array or unwrapped data
+        const menus = Array.isArray(menusResponse) ? menusResponse : menusResponse?.data || []
+        
+        if (Array.isArray(menus)) {
+          menus.forEach((menu: any) => {
             if (menu.items && Array.isArray(menu.items)) {
               totalMenuItems += menu.items.length
               activeMenuItems += menu.items.filter((item: any) => item.isActive).length
@@ -70,13 +73,18 @@ export const useDashboardStore = defineStore('dashboard', {
           })
         }
         
-        const totalCategories = categoriesResponse.meta?.total || 0
+        // Use standard pagination metadata populated by refineApiResponse
+        const totalCategories = categoriesResponse.meta?.pagination?.totalItems || 
+                              categoriesResponse?.total || 
+                              (Array.isArray(categoriesResponse?.data) ? categoriesResponse.data.length : 0)
 
         this.metrics = {
           totalMenuItems,
           activeMenuItems,
           totalCategories,
         }
+
+
       } catch (error: any) {
         console.error('Failed to fetch dashboard metrics:', error)
         this.error = error.message || 'Failed to load dashboard metrics'
@@ -118,10 +126,15 @@ export const useDashboardStore = defineStore('dashboard', {
         this.analytics = analyticsData
       } catch (error: any) {
         // If 403, user doesn't have access to analytics (FREE plan)
-        if (error.response?.status === 403) {
+        if (error.statusCode === 403 || error.code === 'ACCESS_DENIED') {
           console.log('Analytics not available in current plan')
+          this.analytics = null
+          if (this.metrics) {
+            this.metrics.todaySales = undefined
+          }
         } else {
           console.error('Failed to fetch analytics:', error)
+          // Don't set this.error to avoid breaking the whole dashboard overview
         }
       }
     },

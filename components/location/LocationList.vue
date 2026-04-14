@@ -1,13 +1,7 @@
 <template>
   <div class="location-list">
-    <!-- Header -->
-    <div class="location-list__header">
-      <h2 class="location-list__title">Locations</h2>
-      <button class="location-list__add-btn" @click="$emit('add')">
-        <span class="location-list__add-icon">+</span>
-        Add Location
-      </button>
-    </div>
+    <!-- Loading State -->
+
 
     <!-- Loading State -->
     <div v-if="loading" class="location-list__loading">
