@@ -1,30 +1,17 @@
-<<<<<<< HEAD
-# Multi-stage Docker build for production optimization
-=======
-# Multi-stage Docker build for Tenant Admin (Nuxt 3)
->>>>>>> d4ab5c9cb5c729f1c2866aba1a6927f5e93a40f7
 FROM node:20-alpine AS base
-
 # Install pnpm
 RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-<<<<<<< HEAD
 COPY package.json pnpm-lock.yaml* package-lock.json* ./
 
 # Install dependencies
-RUN pnpm install --no-frozen-lockfile || pnpm install || npm install
-=======
+RUN pnpm config set node-linker hoisted && pnpm install
 COPY package.json ./
 # Copy pnpm-lock.yaml if it exists, otherwise skip
 COPY pnpm-lock.yaml* ./
-
-# Install dependencies
-RUN pnpm install --frozen-lockfile || pnpm install
->>>>>>> d4ab5c9cb5c729f1c2866aba1a6927f5e93a40f7
 
 # Development stage
 FROM base AS development
@@ -66,12 +53,8 @@ USER nuxt
 # Expose port
 EXPOSE 3003
 
-<<<<<<< HEAD
-=======
-# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3003', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
->>>>>>> d4ab5c9cb5c729f1c2866aba1a6927f5e93a40f7
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
