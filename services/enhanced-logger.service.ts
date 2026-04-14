@@ -108,7 +108,7 @@ export class EnhancedLoggerService {
         userAgent: import.meta.client ? navigator.userAgent : undefined
       },
       error,
-      stack: error.stack
+      stack: (error as Error).stack || (error as any).stack
     };
 
     this.addLogEntry(logEntry);
@@ -167,9 +167,8 @@ export class EnhancedLoggerService {
       this.logWarning('Legacy format detected', {
         url,
         requestId,
-        format,
         timestamp: logEntry.timestamp.toISOString()
-      });
+      } as any);
     }
   }
 

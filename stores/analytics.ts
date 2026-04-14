@@ -5,6 +5,7 @@ import type {
   CategoryPerformance,
   SalesTrendData,
   MenuItemSalesHistory,
+  SaleRecord,
 } from '~/types'
 
 interface AnalyticsState {
@@ -61,7 +62,11 @@ export const useAnalyticsStore = defineStore('analytics', {
           ? { startDate: dateRange.startDate, endDate: dateRange.endDate }
           : {}
 
-        const response = await api.get('/analytics/overview', { params })
+        const response = await api.get<{
+          totalRevenue: number
+          totalOrders: number
+          averageOrderValue: number
+        }>('/analytics/overview', { params })
         this.overview = {
           totalRevenue: response.totalRevenue || 0,
           totalOrders: response.totalOrders || 0,
@@ -92,7 +97,7 @@ export const useAnalyticsStore = defineStore('analytics', {
           limit,
         }
 
-        const response = await api.get('/analytics/top-items', { params })
+        const response = await api.get<{ items: TopSellingItem[] }>('/analytics/top-items', { params })
         this.topItems = response.items || []
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch top-selling items'
@@ -115,7 +120,7 @@ export const useAnalyticsStore = defineStore('analytics', {
           ? { startDate: dateRange.startDate, endDate: dateRange.endDate }
           : {}
 
-        const response = await api.get('/analytics/category-performance', { params })
+        const response = await api.get<{ categories: CategoryPerformance[] }>('/analytics/category-performance', { params })
         this.categoryPerformance = response.categories || []
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch category performance'
@@ -145,7 +150,7 @@ export const useAnalyticsStore = defineStore('analytics', {
           period,
         }
 
-        const response = await api.get('/analytics/sales', { params })
+        const response = await api.get<{ trend: SalesTrendData[] }>('/analytics/sales', { params })
         this.salesTrend = response.trend || []
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch sales trend'
@@ -186,7 +191,13 @@ export const useAnalyticsStore = defineStore('analytics', {
           ? { startDate: dateRange.startDate, endDate: dateRange.endDate }
           : {}
 
-        const response = await api.get(`/analytics/items/${menuItemId}/history`, {
+        const response = await api.get<{
+          menuItemId: string
+          menuItemName: string
+          totalQuantity: number
+          totalRevenue: number
+          sales: SaleRecord[]
+        }>(`/analytics/items/${menuItemId}/history`, {
           params,
         })
         this.itemSalesHistory = {
@@ -223,13 +234,13 @@ export const useAnalyticsStore = defineStore('analytics', {
         }
 
         // This will trigger a download
-        const response = await api.get('/analytics/export', {
+        const response = await api.get<Blob>('/analytics/export', {
           params,
           responseType: 'blob',
         })
 
         // Create download link
-        const url = window.URL.createObjectURL(new Blob([response]))
+        const url = window.URL.createObjectURL(new Blob([response as BlobPart]))
         const link = document.createElement('a')
         link.href = url
         link.setAttribute(
@@ -264,13 +275,13 @@ export const useAnalyticsStore = defineStore('analytics', {
         }
 
         // This will trigger a download
-        const response = await api.get(`/analytics/items/${menuItemId}/history/export`, {
+        const response = await api.get<Blob>(`/analytics/items/${menuItemId}/history/export`, {
           params,
           responseType: 'blob',
         })
 
         // Create download link
-        const url = window.URL.createObjectURL(new Blob([response]))
+        const url = window.URL.createObjectURL(new Blob([response as BlobPart]))
         const link = document.createElement('a')
         link.href = url
         link.setAttribute(

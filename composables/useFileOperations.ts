@@ -7,11 +7,11 @@
  * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5
  */
 
-import type { 
-  FileDownloadOptions, 
-  ReportRequest, 
-  ReportType, 
-  ReportFormat 
+import {
+  type FileDownloadOptions,
+  type ReportRequest,
+  ReportType,
+  ReportFormat
 } from '~/types/enhanced-api';
 
 export interface FileOperationProgress {
@@ -355,7 +355,6 @@ export function useFileOperations() {
 /**
  * Report generation helper types
  */
-import { ReportType, ReportFormat } from '~/types/enhanced-api';
 
 export const REPORT_TYPES: Record<ReportType, string> = {
   [ReportType.SALES]: 'Отчет по продажам',

@@ -1,55 +1,63 @@
-import type { Toast } from '~/components/ui/Toast/Toast.vue'
+import { enhancedToast, type ToastOptions } from '~/services/enhanced-toast.service'
 
-interface ToastOptions {
-  title?: string
-  message: string
-  duration?: number
-}
-
-let toastInstance: any = null
-
+/**
+ * Toast notification composable
+ * Provides a standardized interface for showing notifications
+ */
 export const useToast = () => {
-  const setToastInstance = (instance: any) => {
-    toastInstance = instance
+  /**
+   * Show success notification
+   */
+  const success = (message: string, options?: ToastOptions) => {
+    return enhancedToast.success(message, options)
   }
 
-  const showToast = (type: Toast['type'], options: ToastOptions | string) => {
-    if (!toastInstance) {
-      console.warn('Toast instance not initialized')
-      return
-    }
-
-    const toastData = typeof options === 'string'
-      ? { message: options }
-      : options
-
-    toastInstance.addToast({
-      type,
-      ...toastData
-    })
+  /**
+   * Show error notification
+   */
+  const error = (message: string, requestId?: string, options?: ToastOptions) => {
+    return enhancedToast.error(message, requestId, options)
   }
 
-  const success = (options: ToastOptions | string) => {
-    showToast('success', options)
+  /**
+   * Show warning notification
+   */
+  const warning = (message: string, requestId?: string, options?: ToastOptions) => {
+    return enhancedToast.warning(message, requestId, options)
   }
 
-  const error = (options: ToastOptions | string) => {
-    showToast('error', options)
+  /**
+   * Show info notification
+   */
+  const info = (message: string, options?: ToastOptions) => {
+    return enhancedToast.info(message, options)
   }
 
-  const warning = (options: ToastOptions | string) => {
-    showToast('warning', options)
+  /**
+   * Dismiss notification by ID
+   */
+  const dismiss = (id: string) => {
+    enhancedToast.dismiss(id)
   }
 
-  const info = (options: ToastOptions | string) => {
-    showToast('info', options)
+  /**
+   * Dismiss all notifications
+   */
+  const dismissAll = () => {
+    enhancedToast.dismissAll()
   }
 
   return {
-    setToastInstance,
     success,
     error,
     warning,
-    info
+    info,
+    dismiss,
+    dismissAll,
+    // For backward compatibility with simpler components
+    setToastInstance: (instance: any) => {
+      // Legacy method, not used in the new enhanced system
+    }
   }
 }
+

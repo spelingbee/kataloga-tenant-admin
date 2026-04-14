@@ -346,11 +346,11 @@ export const useMenuStore = defineStore('menu', {
             l => l.locationId === locationId
           )
           if (locIndex !== -1) {
-            this.menuItems[itemIndex].locations![locIndex] = response
+            this.menuItems[itemIndex].locations![locIndex] = response as { locationId: string; locationName: string; isAvailable: boolean; }
           }
         }
         
-        return response
+        return response as { locationId: string; locationName: string; isAvailable: boolean; }
       } catch (error: any) {
         console.error('Error toggling location availability:', error)
         throw error
@@ -482,10 +482,36 @@ export const useMenuStore = defineStore('menu', {
     },
 
     /**
-     * Set current menu
+     * Fetch menu items with pagination and filters
      */
-    setCurrentMenu(menu: Menu) {
-      this.currentMenu = menu
+    async fetchMenuItems(params: PaginationParams & MenuItemFilters = {}) {
+      const { fetchWithCache } = useDataCache()
+      this.loading = true
+      this.error = null
+
+      try {
+        const cacheKey = `menu-items-${JSON.stringify(params)}`
+        const data = await fetchWithCache(
+          cacheKey,
+          async () => {
+            const api = useApi()
+            const response = await api.get<PaginatedResponse<MenuItem>>('/tenant-admin/menu-items', { params })
+            return response
+          },
+          { ttl: 3 * 60 * 1000, staleWhileRevalidate: true }
+        )
+        
+        this.menuItems = data.data
+        this.totalItems = data.meta.total
+        this.currentPage = data.meta.page
+        this.totalPages = data.meta.totalPages
+      } catch (error: any) {
+        this.error = error.message || 'Failed to fetch menu items'
+        console.error('Error fetching menu items:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
     },
 
     /**

@@ -92,12 +92,7 @@ const getBarColor = (revenue: number): string => {
   return 'linear-gradient(90deg, #64748b 0%, #94a3b8 100%)'
 }
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value)
-}
+const { formatCurrency } = useCurrency()
 </script>
 
 <style scoped lang="scss">

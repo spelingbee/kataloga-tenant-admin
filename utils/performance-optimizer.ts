@@ -50,7 +50,7 @@ const getPerformanceConfig = (): PerformanceConfig => {
     maxCacheSize: 100,
     
     // Logging
-    enablePerformanceLogging: isDevelopment,
+    enablePerformanceLogging: isDevelopment ? true : false,
     logSlowRequests: true,
     slowRequestThreshold: 2000, // 2 seconds
     
@@ -645,8 +645,8 @@ export const optimizeBundle = () => {
     console.debug = () => {};
     
     // Disable Vue devtools
-    if (import.meta.client && window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
-      window.__VUE_DEVTOOLS_GLOBAL_HOOK__.enabled = false;
+    if (import.meta.client && (window as any).__VUE_DEVTOOLS_GLOBAL_HOOK__) {
+      (window as any).__VUE_DEVTOOLS_GLOBAL_HOOK__.enabled = false;
     }
   }
 };

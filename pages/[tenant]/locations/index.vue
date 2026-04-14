@@ -4,33 +4,44 @@
     <div v-if="!hasMultiLocation" class="locations-page__locked">
       <div class="locations-page__locked-content">
         <div class="locations-page__locked-icon">🔒</div>
-        <h2 class="locations-page__locked-title">Multi-Location Feature</h2>
+        <h2 class="locations-page__locked-title">{{ t('locations.featureLocked.title') }}</h2>
         <p class="locations-page__locked-text">
-          Manage multiple restaurant locations with location-specific menu availability.
-          This feature is available on PRO and BUSINESS plans.
+          {{ t('locations.featureLocked.description') }}
         </p>
         <div class="locations-page__locked-features">
           <div class="locations-page__locked-feature">
             <span class="locations-page__locked-feature-icon">✓</span>
-            <span>Manage multiple locations</span>
+            <span>{{ t('locations.featureLocked.benefit1') }}</span>
           </div>
           <div class="locations-page__locked-feature">
             <span class="locations-page__locked-feature-icon">✓</span>
-            <span>Location-specific menu availability</span>
+            <span>{{ t('locations.featureLocked.benefit2') }}</span>
           </div>
           <div class="locations-page__locked-feature">
             <span class="locations-page__locked-feature-icon">✓</span>
-            <span>Individual location statistics</span>
+            <span>{{ t('locations.featureLocked.benefit3') }}</span>
           </div>
         </div>
         <button class="locations-page__locked-btn" @click="handleUpgrade">
-          Upgrade Plan
+          {{ t('subscription.upgradePlan') }}
         </button>
       </div>
     </div>
 
     <!-- Main Content (when feature is available) -->
     <div v-else class="locations-page__content">
+      <PageHeader 
+        :title="t('locations.title')" 
+        :subtitle="t('locations.subtitle')"
+      >
+        <template #actions>
+          <button class="locations-page__add-btn" @click="openAddForm">
+            <span class="locations-page__add-icon">+</span>
+            {{ t('locations.addLocation') }}
+          </button>
+        </template>
+      </PageHeader>
+
       <!-- Modal for Add/Edit -->
       <div v-if="showForm" class="locations-page__modal">
         <div class="locations-page__modal-backdrop" @click="closeForm"></div>
@@ -75,6 +86,7 @@ definePageMeta({
   layout: 'default',
 })
 
+const { t } = useI18n()
 const router = useRouter()
 const locationStore = useLocationStore()
 const { hasMultiLocation, requireFeature } = useFeatureAccess()
@@ -124,33 +136,33 @@ const handleFormSubmit = async (data: any) => {
     if (selectedLocation.value) {
       // Update existing location
       await locationStore.updateLocation(selectedLocation.value.id, data)
-      showNotification('Location updated successfully')
+      showNotification(t('locations.updateSuccess'))
     } else {
       // Create new location
       await locationStore.createLocation(data)
-      showNotification('Location created successfully')
+      showNotification(t('locations.createSuccess'))
     }
     closeForm()
   } catch (error: any) {
-    showNotification(error.message || 'Failed to save location', 'error')
+    showNotification(error.message || t('locations.saveFailed'), 'error')
   }
 }
 
 const handleToggleStatus = async (locationId: string) => {
   try {
     await locationStore.toggleLocationStatus(locationId)
-    showNotification('Location status updated')
+    showNotification(t('locations.statusUpdated'))
   } catch (error: any) {
-    showNotification(error.message || 'Failed to update location status', 'error')
+    showNotification(error.message || t('locations.statusUpdateFailed'), 'error')
   }
 }
 
 const handleDelete = async (locationId: string) => {
   try {
     await locationStore.deleteLocation(locationId)
-    showNotification('Location deleted successfully')
+    showNotification(t('locations.deleteSuccess'))
   } catch (error: any) {
-    showNotification(error.message || 'Failed to delete location', 'error')
+    showNotification(error.message || t('locations.deleteFailed'), 'error')
   }
 }
 
@@ -171,7 +183,7 @@ onMounted(async () => {
     try {
       await locationStore.fetchLocations()
     } catch (error) {
-      showNotification('Failed to load locations', 'error')
+      showNotification(t('locations.loadFailed'), 'error')
     }
   }
 })

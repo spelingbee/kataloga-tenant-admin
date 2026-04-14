@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
-import type { User, UserRole, PaginatedResponse } from '~/types'
+import type { User, UserRole } from '~/types'
+import { mapUser } from '~/utils/api-helpers'
+
 
 interface TeamState {
   members: User[]
@@ -70,17 +72,22 @@ export const useTeamStore = defineStore('team', {
       const api = useApi()
 
       try {
-        const response = await api.get<PaginatedResponse<User>>('/tenant-admin/users', {
+        const response = await api.get<any>('/tenant-admin/users', {
           params: { page, limit },
         })
 
-        this.members = response.data
+        // Data is now normalized by refineApiResponse
+        const rawMembers = Array.isArray(response) ? response : (response.data || [])
+        this.members = rawMembers.map(mapUser)
+        
+        const pagination = response.meta?.pagination || response
         this.pagination = {
-          page: response.page,
-          limit: response.limit,
-          total: response.total,
-          totalPages: response.totalPages,
+          page: pagination.page || 1,
+          limit: pagination.limit || 10,
+          total: pagination.totalItems || pagination.total || 0,
+          totalPages: pagination.totalPages || 1,
         }
+
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch team members'
         throw error

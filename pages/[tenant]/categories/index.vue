@@ -1,19 +1,20 @@
 <template>
   <div class="categories-page">
-    <div class="categories-page__header">
-      <div>
-        <h1 class="categories-page__title">Category Management</h1>
-        <p class="categories-page__subtitle">
-          Organize your menu items with categories. Drag and drop to reorder.
-        </p>
-      </div>
-      <button class="categories-page__add-btn" @click="openCreateModal">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Category
-      </button>
-    </div>
+    <PageHeader 
+      :title="t('categories.title')" 
+      :subtitle="t('categories.subtitle')"
+      :back-label="t('dashboard.title')"
+      @back="goBack"
+    >
+      <template #actions>
+        <button class="categories-page__add-btn" @click="openCreateModal">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          {{ t('categories.addCategory') }}
+        </button>
+      </template>
+    </PageHeader>
 
     <div v-if="categoryStore.sortedCategories.length > 0" class="categories-page__stats">
       <div class="stat-card">
@@ -23,7 +24,7 @@
           </svg>
         </div>
         <div class="stat-card__content">
-          <p class="stat-card__label">Total Categories</p>
+          <p class="stat-card__label">{{ t('categories.totalCategories') }}</p>
           <p class="stat-card__value">{{ categoryStore.sortedCategories.length }}</p>
         </div>
       </div>
@@ -35,7 +36,7 @@
           </svg>
         </div>
         <div class="stat-card__content">
-          <p class="stat-card__label">Total Items</p>
+          <p class="stat-card__label">{{ t('categories.totalItems') }}</p>
           <p class="stat-card__value">{{ totalItems }}</p>
         </div>
       </div>
@@ -59,7 +60,7 @@
     <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
       <div class="delete-modal">
         <div class="delete-modal__header">
-          <h2 class="delete-modal__title">Delete Category</h2>
+          <h2 class="delete-modal__title">{{ t('categories.deleteCategory') }}</h2>
           <button
             @click="closeDeleteModal"
             class="delete-modal__close-btn"
@@ -78,15 +79,13 @@
             </svg>
           </div>
           <p class="delete-modal__message">
-            Are you sure you want to delete the category
-            <strong>"{{ selectedCategory?.name }}"</strong>?
+            {{ t('categories.deleteConfirm', { name: selectedCategory?.name }) }}
           </p>
           <p v-if="(selectedCategory as any)?.itemCount > 0" class="delete-modal__warning">
-            This category has {{ (selectedCategory as any).itemCount }} menu items.
-            You cannot delete a category with items.
+            {{ t('categories.deleteWithItems', { count: (selectedCategory as any).itemCount }) }}
           </p>
           <p v-else class="delete-modal__info">
-            This action cannot be undone.
+            {{ t('categories.deleteWarning') }}
           </p>
         </div>
 
@@ -97,7 +96,7 @@
             class="delete-modal__btn delete-modal__btn--cancel"
             :disabled="deleting"
           >
-            Cancel
+            {{ t('common.cancel') }}
           </button>
           <button
             type="button"
@@ -106,7 +105,7 @@
             :disabled="deleting || (selectedCategory as any)?.itemCount > 0"
           >
             <span v-if="deleting" class="delete-modal__spinner"></span>
-            {{ deleting ? 'Deleting...' : 'Delete Category' }}
+            {{ deleting ? t('common.deleting') : t('categories.deleteCategory') }}
           </button>
         </div>
       </div>
@@ -131,6 +130,10 @@ import { useCategoryStore } from '~/stores/category'
 import CategoryList from '~/components/category/CategoryList.vue'
 import CategoryForm from '~/components/category/CategoryForm.vue'
 import type { Category } from '~/types'
+import {PageHeader} from "../../../components/ui";
+
+const { t } = useI18n()
+const { navigateToTenant } = useNavigation()
 
 definePageMeta({
   middleware: ['auth']
@@ -154,6 +157,10 @@ const totalItems = computed(() => {
     return sum + ((cat as any).itemCount || 0)
   }, 0)
 })
+
+const goBack = () => {
+  navigateToTenant('/')
+}
 
 const openCreateModal = () => {
   selectedCategory.value = null
@@ -185,15 +192,15 @@ const handleFormSubmit = async (data: { name: string; description?: string }) =>
     if (selectedCategory.value) {
       // Update existing category
       await categoryStore.updateCategory(selectedCategory.value.id, data)
-      showToast('Category updated successfully', 'success')
+      showToast(t('categories.updateSuccess'), 'success')
     } else {
       // Create new category
       await categoryStore.createCategory(data)
-      showToast('Category created successfully', 'success')
+      showToast(t('categories.createSuccess'), 'success')
     }
     closeFormModal()
   } catch (error: any) {
-    showToast(error.message || 'Failed to save category', 'error')
+    showToast(error.message || t('categories.saveFailed'), 'error')
   }
 }
 
@@ -203,10 +210,10 @@ const handleDelete = async () => {
   deleting.value = true
   try {
     await categoryStore.deleteCategory(selectedCategory.value.id)
-    showToast('Category deleted successfully', 'success')
+    showToast(t('categories.deleteSuccess'), 'success')
     closeDeleteModal()
   } catch (error: any) {
-    showToast(error.message || 'Failed to delete category', 'error')
+    showToast(error.message || t('categories.deleteFailed'), 'error')
   } finally {
     deleting.value = false
   }

@@ -1,11 +1,11 @@
 <template>
   <div class="analytics-page">
-    <div class="analytics-page__header">
-      <h1 class="analytics-page__title">Sales Analytics</h1>
-      <p class="analytics-page__subtitle">
-        Track your sales performance and business insights
-      </p>
-    </div>
+    <PageHeader 
+      :title="t('analytics.title')" 
+      :subtitle="t('analytics.subtitle')"
+      :back-label="t('dashboard.title')"
+      @back="goBack"
+    />
 
     <!-- Feature Access Check -->
     <div v-if="!hasSalesAnalytics" class="analytics-page__upgrade">
@@ -25,13 +25,12 @@
             />
           </svg>
         </div>
-        <h2 class="upgrade-prompt__title">Upgrade to Access Sales Analytics</h2>
+        <h2 class="upgrade-prompt__title">{{ t('analytics.upgradeTitle') }}</h2>
         <p class="upgrade-prompt__description">
-          Sales analytics is available on PRO and BUSINESS plans. Upgrade now to track your
-          sales performance, view top-selling items, and make data-driven decisions.
+          {{ t('analytics.upgradeDescription') }}
         </p>
         <button class="upgrade-prompt__button" @click="navigateToSubscription">
-          View Plans & Upgrade
+          {{ t('analytics.viewPlansUpgrade') }}
         </button>
       </div>
     </div>
@@ -46,6 +45,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { FeatureKey } from '~/types'
+import {PageHeader} from "../../../components/ui";
+
+const { t } = useI18n()
 
 definePageMeta({
   middleware: 'auth',
@@ -66,6 +68,10 @@ const { navigateToTenant } = useNavigation()
 
 const navigateToSubscription = () => {
   navigateToTenant('/subscription')
+}
+
+const goBack = () => {
+  navigateToTenant('/')
 }
 </script>
 

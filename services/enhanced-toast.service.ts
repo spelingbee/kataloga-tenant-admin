@@ -8,12 +8,14 @@
 import type { ApiError, ApiMeta } from '~/types/enhanced-api';
 
 export interface ToastOptions {
+  id?: string;
   duration?: number;
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
   showRequestId?: boolean;
   allowCopy?: boolean;
   persistent?: boolean;
 }
+
 
 export interface EnhancedToastMessage {
   id: string;
@@ -145,7 +147,8 @@ export class EnhancedToastService {
     requestId?: string,
     options: ToastOptions = {}
   ): string {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = options.id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
     
     const toast: EnhancedToastMessage = {
       id,

@@ -72,12 +72,7 @@ const getBarWidth = (revenue: number): number => {
   return (revenue / maxRevenue.value) * 100
 }
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value)
-}
+const { formatCurrency } = useCurrency()
 
 const { tenantPath } = useNavigation()
 

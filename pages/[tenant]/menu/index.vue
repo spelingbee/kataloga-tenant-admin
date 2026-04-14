@@ -1,19 +1,21 @@
 <template>
   <div class="menu-page">
-    <div class="menu-page__header">
-      <div>
-        <h1 class="menu-page__title">Menu Management</h1>
-        <p class="menu-page__subtitle">
-          Manage your menu items, categories, and availability
-        </p>
-      </div>
-      <button class="menu-page__add-btn" @click="handleAddItem">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Menu Item
-      </button>
-    </div>
+    <PageHeader 
+      :title="t('menu.title')" 
+      :subtitle="t('menu.subtitle')"
+      :back-label="t('dashboard.title')"
+      back-to="/"
+    >
+      <template #actions>
+        <button class="menu-page__add-btn" @click="handleAddItem">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          {{ t('menu.addMenuItem') }}
+        </button>
+      </template>
+    </PageHeader>
+
 
     <MenuItemList />
   </div>
@@ -21,6 +23,9 @@
 
 <script setup lang="ts">
 import MenuItemList from '~/components/menu/MenuItemList.vue'
+import {PageHeader} from "../../../components/ui";
+
+const { t } = useI18n()
 
 definePageMeta({
   middleware: ['auth']
@@ -32,6 +37,10 @@ const { navigateToTenant } = useNavigation()
 
 const handleAddItem = () => {
   navigateToTenant('/menu/items/new')
+}
+
+const goBack = () => {
+  navigateToTenant('/')
 }
 </script>
 

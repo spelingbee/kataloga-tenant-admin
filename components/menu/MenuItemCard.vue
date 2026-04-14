@@ -3,7 +3,7 @@
     <div class="menu-item-card__image-container">
       <img
         v-if="item.imageUrl"
-        :src="item.imageUrl"
+        :src="mediaService.resolveImageUrl(item.imageUrl)"
         :alt="item.name"
         class="menu-item-card__image"
       />

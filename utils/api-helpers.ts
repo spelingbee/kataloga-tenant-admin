@@ -393,3 +393,15 @@ export function getRelativeTime(date: string | Date, locale: string = 'ru-RU'): 
   if (diffMinutes > 0) return rtf.format(-diffMinutes, 'minute');
   return rtf.format(-diffSeconds, 'second');
 }
+
+/**
+ * Map user data from API response (handles snake_case fallback)
+ */
+export function mapUser(user: any): any {
+  if (!user) return user;
+  return {
+    ...user,
+    firstName: user.firstName || user.first_name || '',
+    lastName: user.lastName || user.last_name || ''
+  };
+}

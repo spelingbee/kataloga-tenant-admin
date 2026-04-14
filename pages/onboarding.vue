@@ -473,7 +473,7 @@ const registerUser = async () => {
   loading.value = true
   
   try {
-    const response = await api.post('/auth/register-light', {
+    const response = await api.post<{ data: any }>('/auth/register-light', {
       email: formData.value.email,
       password: formData.value.password,
       storeName: formData.value.storeName,
@@ -522,7 +522,7 @@ const loginAfterRegistration = async () => {
   
   try {
     // Login using the tenant slug
-    const loginResponse = await api.post(`/${registrationResult.value.tenant.slug}/auth/login`, {
+    const loginResponse = await api.post<{ data: { accessToken: string } }>(`/${registrationResult.value.tenant.slug}/auth/login`, {
       email: formData.value.email,
       password: formData.value.password
     })
@@ -555,7 +555,7 @@ const pollForConnection = async () => {
   const poll = async () => {
     try {
       // Check if tenant has a telegram chat ID set
-      const response = await api.get(`/tenant-registration/check-telegram-connection/${registrationResult.value!.tenant.id}`)
+      const response = await api.get<{ data: { connected: boolean } }>(`/tenant-registration/check-telegram-connection/${registrationResult.value!.tenant.id}`)
       
       if (response.data.connected) {
         connectionStatus.value = 'connected'

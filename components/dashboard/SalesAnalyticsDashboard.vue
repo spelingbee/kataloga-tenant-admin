@@ -223,12 +223,7 @@ const handleExport = async () => {
   }
 }
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value)
-}
+const { formatCurrency } = useCurrency()
 
 // Load analytics on mount
 onMounted(() => {

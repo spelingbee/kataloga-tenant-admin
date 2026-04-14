@@ -8,5 +8,10 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "exclude": [
+    "tests/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }

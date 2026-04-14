@@ -89,7 +89,7 @@
                 <div class="location-availability-matrix__item-info">
                   <img
                     v-if="item.imageUrl"
-                    :src="item.imageUrl"
+                    :src="mediaService.resolveImageUrl(item.imageUrl)"
                     :alt="item.name"
                     class="location-availability-matrix__item-image"
                   />

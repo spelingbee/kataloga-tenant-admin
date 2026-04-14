@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import type { User } from '~/types'
+import { mapUser } from '~/utils/api-helpers'
+
 
 interface AuthState {
   user: User | null
@@ -36,6 +38,7 @@ export const useAuthStore = defineStore('auth', {
      */
     async login(email: string, password: string): Promise<void> {
       this.loading = true
+
       const api = useApi()
       const { requireTenantSlug } = useTenant()
 
@@ -47,7 +50,8 @@ export const useAuthStore = defineStore('auth', {
           email,
           password,
           tenantSlug,
-        })
+        }, { skipAuthRefresh: true })
+
 
         // Store tokens
         api.setToken(response.accessToken)
@@ -56,8 +60,9 @@ export const useAuthStore = defineStore('auth', {
         }
 
         // Set user state
-        this.user = response.user
+        this.user = this.mapUser(response.user)
         this.isAuthenticated = true
+
       } catch (error) {
         this.user = null
         this.isAuthenticated = false
@@ -102,9 +107,11 @@ export const useAuthStore = defineStore('auth', {
       const api = useApi()
 
       try {
-        const user = await api.get<User>('/auth/profile')
-        this.user = user
+        const user = await api.get<User>('/auth/profile', { skipAuthRefresh: true })
+
+        this.user = this.mapUser(user)
         this.isAuthenticated = true
+
         return user
       } catch (error) {
         this.user = null
@@ -118,8 +125,8 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Set user directly (for registration or other flows)
      */
-    setUser(user: User): void {
-      this.user = user
+    setUser(user: any): void {
+      this.user = this.mapUser(user)
       this.isAuthenticated = true
     },
 
@@ -130,5 +137,14 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.isAuthenticated = false
     },
+
+    /**
+     * Map user data from API response (handles snake_case fallback)
+     */
+    mapUser(user: any): User {
+      return mapUser(user);
+    }
+
+
   },
 })

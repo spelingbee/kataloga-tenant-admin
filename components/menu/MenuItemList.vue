@@ -24,7 +24,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search menu items..."
+          :placeholder="t('menu.searchPlaceholder')"
           class="menu-item-list__search-input"
           @input="debouncedSearch"
         />
@@ -32,23 +32,23 @@
 
       <div class="menu-item-list__filter-row">
         <select v-model="filters.categoryId" class="menu-item-list__select" @change="applyFilters">
-          <option value="">All Categories</option>
+          <option value="">{{ t('menu.allCategories') }}</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.name }}
           </option>
         </select>
 
         <select v-model="filters.isActive" class="menu-item-list__select" @change="applyFilters">
-          <option value="">All Status</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
+          <option value="">{{ t('menu.allStatus') }}</option>
+          <option value="true">{{ t('common.active') }}</option>
+          <option value="false">{{ t('common.inactive') }}</option>
         </select>
 
         <div class="menu-item-list__price-filter">
           <input
             v-model.number="filters.minPrice"
             type="number"
-            placeholder="Min Price"
+            :placeholder="t('menu.minPrice')"
             class="menu-item-list__price-input"
             @change="applyFilters"
           />
@@ -56,14 +56,14 @@
           <input
             v-model.number="filters.maxPrice"
             type="number"
-            placeholder="Max Price"
+            :placeholder="t('menu.maxPrice')"
             class="menu-item-list__price-input"
             @change="applyFilters"
           />
         </div>
 
         <button class="menu-item-list__clear-btn" @click="clearFilters">
-          Clear Filters
+          {{ t('menu.clearFilters') }}
         </button>
       </div>
     </div>
@@ -71,9 +71,9 @@
     <!-- Bulk Actions Bar -->
     <div v-if="hasSelectedItems" class="menu-item-list__bulk-actions">
       <div class="menu-item-list__bulk-info">
-        <span>{{ selectedItemsCount }} item(s) selected</span>
+        <span>{{ selectedItemsCount }} {{ t('menu.itemsSelected') }}</span>
         <button class="menu-item-list__clear-selection" @click="clearSelection">
-          Clear Selection
+          {{ t('menu.clearSelection') }}
         </button>
       </div>
       <div class="menu-item-list__bulk-buttons">
@@ -86,13 +86,13 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          Manage Locations
+          {{ t('menu.manageLocations') }}
         </button>
         <button class="bulk-action-btn bulk-action-btn--operations" @click="showBulkOperations = true">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          Bulk Operations
+          {{ t('menu.bulkOperations') }}
         </button>
       </div>
     </div>
@@ -101,7 +101,7 @@
     <div v-if="showBulkOperations" class="menu-item-list__modal-overlay" @click="closeBulkOperations">
       <div class="menu-item-list__modal menu-item-list__modal--wide" @click.stop>
         <div class="menu-item-list__modal-header">
-          <h2>Bulk Operations</h2>
+          <h2>{{ t('menu.bulkOperations') }}</h2>
           <button class="menu-item-list__modal-close" @click="closeBulkOperations">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -122,7 +122,7 @@
     <div v-if="showLocationMatrix" class="menu-item-list__modal-overlay" @click="closeLocationMatrix">
       <div class="menu-item-list__modal" @click.stop>
         <div class="menu-item-list__modal-header">
-          <h2>Manage Location Availability</h2>
+          <h2>{{ t('menu.manageLocations') }}</h2>
           <button class="menu-item-list__modal-close" @click="closeLocationMatrix">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -141,13 +141,13 @@
     <!-- Loading State -->
     <div v-if="loading" class="menu-item-list__loading">
       <div class="loading-spinner" />
-      <p>Loading menu items...</p>
+      <p>{{ t('common.loading') }}</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="menu-item-list__error">
       <p>{{ error }}</p>
-      <button @click="loadMenuItems">Retry</button>
+      <button @click="loadMenuItems">{{ t('common.retry') }}</button>
     </div>
 
     <!-- Empty State -->
@@ -155,10 +155,10 @@
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
-      <h3>No menu items found</h3>
-      <p>Get started by adding your first menu item</p>
+      <h3>{{ t('menu.noItemsFound') }}</h3>
+      <p>{{ t('menu.getStarted') }}</p>
       <button class="menu-item-list__add-btn" @click="handleAddItem">
-        Add Menu Item
+        {{ t('menu.addMenuItem') }}
       </button>
     </div>
 
@@ -174,12 +174,12 @@
                 @change="toggleSelectAll"
               />
             </th>
-            <th class="menu-item-list__th">Image</th>
-            <th class="menu-item-list__th">Name</th>
-            <th class="menu-item-list__th">Category</th>
-            <th class="menu-item-list__th">Price</th>
-            <th class="menu-item-list__th">Status</th>
-            <th class="menu-item-list__th">Actions</th>
+            <th class="menu-item-list__th">{{ t('common.image') }}</th>
+            <th class="menu-item-list__th">{{ t('common.name') }}</th>
+            <th class="menu-item-list__th">{{ t('common.category') }}</th>
+            <th class="menu-item-list__th">{{ t('common.price') }}</th>
+            <th class="menu-item-list__th">{{ t('common.status') }}</th>
+            <th class="menu-item-list__th">{{ t('common.actions') }}</th>
           </tr>
         </thead>
         <tbody class="menu-item-list__tbody">
@@ -198,7 +198,7 @@
             </td>
             <td class="menu-item-list__td">
               <div class="menu-item-list__image">
-                <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" />
+                <img v-if="item.imageUrl" :src="mediaService.resolveImageUrl(item.imageUrl)" :alt="item.name" />
                 <div v-else class="menu-item-list__image-placeholder">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -219,25 +219,25 @@
                 {{ item.category.name }}
               </span>
               <span v-else class="menu-item-list__category menu-item-list__category--uncategorized">
-                Uncategorized
+                {{ t('menu.uncategorized') }}
               </span>
             </td>
             <td class="menu-item-list__td">
-              <span class="menu-item-list__price">${{ item.price.toFixed(2) }}</span>
+              <span class="menu-item-list__price">{{ formatPrice(item.price) }}</span>
             </td>
             <td class="menu-item-list__td">
               <span
                 class="menu-item-list__status"
                 :class="item.isActive ? 'menu-item-list__status--active' : 'menu-item-list__status--inactive'"
               >
-                {{ item.isActive ? 'Active' : 'Inactive' }}
+                {{ item.isActive ? t('common.active') : t('common.inactive') }}
               </span>
             </td>
             <td class="menu-item-list__td">
               <div class="menu-item-list__actions">
                 <button
                   class="action-btn action-btn--edit"
-                  title="Edit"
+                  :title="t('common.edit')"
                   @click="editItem(item.id)"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -246,7 +246,7 @@
                 </button>
                 <button
                   class="action-btn action-btn--delete"
-                  title="Delete"
+                  :title="t('common.delete')"
                   @click="deleteItem(item.id)"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -267,7 +267,7 @@
         :disabled="currentPage === 1"
         @click="goToPage(currentPage - 1)"
       >
-        Previous
+        {{ t('common.previous') }}
       </button>
       
       <div class="pagination-pages">
@@ -287,12 +287,12 @@
         :disabled="currentPage === totalPages"
         @click="goToPage(currentPage + 1)"
       >
-        Next
+        {{ t('common.next') }}
       </button>
       
       <div class="pagination-info">
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <span>{{ totalItems }} total items</span>
+        <span>{{ t('menu.pageInfo', { page: currentPage, totalPages: totalPages }) }}</span>
+        <span>{{ t('menu.totalItems', { totalItems: totalItems }) }}</span>
       </div>
     </div>
   </div>
@@ -302,8 +302,12 @@
 import { useEnhancedMenuStore } from '~/stores/enhanced-menu'
 import { useCategoryStore } from '~/stores/category'
 import { useFeatureAccess } from '~/composables/useFeatureAccess'
+import { useCurrency } from '~/composables/useCurrency'
 import LocationAvailabilityMatrix from './LocationAvailabilityMatrix.vue'
 import BulkMenuOperations from './BulkMenuOperations.vue'
+
+const { t } = useI18n()
+const { formatPrice } = useCurrency()
 
 const menuStore = useEnhancedMenuStore()
 const categoryStore = useCategoryStore()
@@ -527,10 +531,10 @@ const deleteItem = async (itemId: string) => {
   if (!menuStore.currentMenu) return
   
   const item = menuItems.value.find(i => i.id === itemId)
-  if (item && confirm(`Delete "${item.name}"?`)) {
+  if (item && confirm(t('menu.deleteConfirm', { name: item.name }))) {
     try {
       await menuStore.deleteMenuItem(menuStore.currentMenu.id, itemId)
-      successMessage.value = 'Menu item deleted successfully'
+      successMessage.value = t('menu.deleteSuccess')
       
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -538,7 +542,7 @@ const deleteItem = async (itemId: string) => {
       }, 3000)
     } catch (error: any) {
       console.error('Delete error:', error)
-      errorMessage.value = error.message || 'Failed to delete menu item'
+      errorMessage.value = error.message || t('menu.deleteFailed')
       
       // Clear error message after 5 seconds
       setTimeout(() => {

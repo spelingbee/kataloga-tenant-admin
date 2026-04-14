@@ -3,8 +3,14 @@
  * Redirects to error page if tenant is missing
  */
 export default defineNuxtRouteMiddleware((to) => {
-  // Skip check for error pages and root login
-  if (to.path.startsWith('/error') || to.path === '/login') {
+  // Skip check for error pages and root/onboarding/login
+  if (
+    to.path.startsWith('/error') || 
+    to.path === '/' || 
+    to.path === '/login' || 
+    to.path === '/register' || 
+    to.path === '/onboarding'
+  ) {
     return
   }
   

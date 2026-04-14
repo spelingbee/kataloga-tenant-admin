@@ -239,9 +239,9 @@ const loadAuditLogs = async () => {
       params.endDate = new Date(filters.value.endDate).toISOString();
     }
 
-    const response = await api.get('/tenant/audit', { params });
-    auditLogs.value = response.data.data;
-    meta.value = response.data.meta;
+    const response = await api.get<{ data: any[], meta: any }>('/tenant/audit', { params });
+    auditLogs.value = response.data;
+    meta.value = response.meta;
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to load audit logs';
   } finally {
