@@ -268,7 +268,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@use '../../assets/scss/variables' as *;
+@use '@/assets/scss/variables' as *;
 
 .team-page {
   padding: $spacing-xl;

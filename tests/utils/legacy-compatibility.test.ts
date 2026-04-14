@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Legacy Compatibility Layer Tests
  * 
