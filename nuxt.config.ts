@@ -3,7 +3,28 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   
-  modules: ['@pinia/nuxt'],
+  modules: [
+    '@pinia/nuxt',
+    '@nuxtjs/i18n'
+  ],
+  
+  i18n: {
+    locales: [
+      { code: 'en', iso: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'ru', iso: 'ru-RU', name: 'Русский', file: 'ru.json' },
+      { code: 'ky', iso: 'ky-KG', name: 'Кыргызча', file: 'ky.json' }
+    ],
+    langDir: 'locales',
+    defaultLocale: 'ru',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'tenant_admin_locale',
+      redirectOn: 'root',
+      alwaysRedirect: false,
+      fallbackLocale: 'en'
+    }
+  },
   
   css: ['~/assets/scss/main.scss'],
   

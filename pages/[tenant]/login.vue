@@ -2,20 +2,20 @@
   <div class="login-page">
     <div class="login-card">
       <div class="login-card__header">
-        <h1 class="login-card__title">Tenant Admin Login</h1>
-        <p class="login-card__subtitle">Sign in to manage your restaurant</p>
+        <h1 class="login-card__title">{{ $t('auth.loginTitle') }}</h1>
+        <p class="login-card__subtitle">{{ $t('auth.loginSubtitle') }}</p>
       </div>
 
       <form class="login-form" @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="email" class="form-group__label">Email</label>
+          <label for="email" class="form-group__label">{{ $t('common.email') }}</label>
           <input
             id="email"
             v-model="email"
             type="email"
             class="form-group__input"
             :class="{ 'form-group__input--error': errors.email }"
-            placeholder="Enter your email"
+            :placeholder="$t('common.email')"
             required
             autocomplete="email"
           />
@@ -23,14 +23,14 @@
         </div>
 
         <div class="form-group">
-          <label for="password" class="form-group__label">Password</label>
+          <label for="password" class="form-group__label">{{ $t('common.password') }}</label>
           <input
             id="password"
             v-model="password"
             type="password"
             class="form-group__input"
             :class="{ 'form-group__input--error': errors.password }"
-            placeholder="Enter your password"
+            :placeholder="$t('common.password')"
             required
             autocomplete="current-password"
           />
@@ -46,7 +46,7 @@
           class="login-form__submit"
           :disabled="loading"
         >
-          {{ loading ? 'Signing in...' : 'Sign In' }}
+          {{ loading ? $t('auth.signingIn') : $t('auth.signIn') }}
         </button>
       </form>
     </div>
@@ -59,6 +59,7 @@ definePageMeta({
   middleware: []
 })
 
+const { t } = useI18n()
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -75,22 +76,22 @@ const validateForm = (): boolean => {
   errors.value = {}
   
   if (!email.value) {
-    errors.value.email = 'Email is required'
+    errors.value.email = t('validation.required', { field: t('common.email') })
     return false
   }
   
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-    errors.value.email = 'Please provide a valid email address'
+    errors.value.email = t('validation.emailInvalid')
     return false
   }
   
   if (!password.value) {
-    errors.value.password = 'Password is required'
+    errors.value.password = t('validation.required', { field: t('common.password') })
     return false
   }
   
   if (password.value.length < 6) {
-    errors.value.password = 'Password must be at least 6 characters long'
+    errors.value.password = t('validation.passwordMin', { min: 6 })
     return false
   }
   
