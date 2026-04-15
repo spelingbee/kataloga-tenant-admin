@@ -1,33 +1,40 @@
 <template>
   <div class="language-switcher">
-    <select 
-      v-model="currentLocale" 
+    <select
+      v-model="currentLocale"
       @change="changeLocale"
       class="language-switcher__select"
     >
       <option 
-        v-for="locale in availableLocales" 
-        :key="locale.code" 
-        :value="locale.code"
+        v-for="l in availableLocales" 
+        :key="l.code"
+        :value="l.code"
       >
-        {{ locale.name }}
+        {{ l.name }}
       </option>
     </select>
   </div>
 </template>
 
 <script setup lang="ts">
+import { unref } from 'vue'
+
 const { locale, locales, setLocale } = useI18n()
 
 const currentLocale = ref(locale.value)
 
 const availableLocales = computed(() => {
-  return locales as Array<{ code: string; name: string }>
+  return unref(locales) as Array<{ code: string; name: string }>
 })
 
 const changeLocale = async () => {
   await setLocale(currentLocale.value)
 }
+
+// Keep local state in sync if locale changes externally
+watch(locale, (newVal) => {
+  currentLocale.value = newVal
+})
 </script>
 
 <style scoped lang="scss">

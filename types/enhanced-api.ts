@@ -188,8 +188,12 @@ export interface User {
 }
 
 export enum UserRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
   TENANT_ADMIN = 'TENANT_ADMIN',
   TENANT_STAFF = 'TENANT_STAFF',
+  ADMIN = 'ADMIN',
+  OWNER = 'OWNER',
+  CLIENT = 'CLIENT',
 }
 
 // ============================================================================

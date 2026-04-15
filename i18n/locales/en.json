@@ -50,7 +50,10 @@
     "confirmPassword": "Confirm Password",
     "alreadyHaveAccount": "Already have an account?",
     "loginTitle": "Tenant Admin Login",
-    "loginSubtitle": "Sign in to manage your restaurant"
+    "loginSubtitle": "Sign in to manage your restaurant",
+    "invalidCredentials": "Invalid email or password",
+    "tooManyAttempts": "Too many login attempts. Please try again later.",
+    "loginError": "An error occurred during login. Please try again."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -149,7 +152,10 @@
     "anonymous": "Anonymous",
     "phone": "Phone:",
     "items": "Items:",
-    "payment": "Payment:",
+    "payment": {
+      "cash": "Cash",
+      "pending": "Pending"
+    },
     "confirmOrder": "Confirm Order",
     "rejectOrder": "Reject Order",
     "confirmFailed": "Failed to confirm order",
@@ -161,10 +167,6 @@
       "ready": "Ready",
       "delivered": "Delivered",
       "cancelled": "Cancelled"
-    },
-    "payment": {
-      "cash": "Cash",
-      "pending": "Pending"
     }
   },
   "settings": {
@@ -179,7 +181,7 @@
     "telegramIntegration": "Telegram Integration",
     "botToken": "Bot Token",
     "botTokenPlaceholder": "Your Telegram bot token",
-    "botTokenHelp": "Get your bot token from @BotFather",
+    "botTokenHelp": "Get your bot token from BotFather",
     "chatStatus": "Chat Connection Status",
     "connected": "Connected",
     "notConnected": "Not Connected",
@@ -262,7 +264,7 @@
     },
     "inviteForm": {
       "title": "Invite Team Member",
-      "emailPlaceholder": "member@example.com",
+      "emailPlaceholder": "member{'@'}example.com",
       "firstNamePlaceholder": "John",
       "lastNamePlaceholder": "Doe",
       "selectRole": "Select a role",
@@ -291,7 +293,7 @@
     "addressPlaceholder": "e.g., 123 Main Street",
     "cityPlaceholder": "e.g., Bishkek",
     "phonePlaceholder": "e.g., +996 (555) 123-456",
-    "emailPlaceholder": "e.g., downtown@restaurant.com",
+    "emailPlaceholder": "e.g., downtown{'@'}restaurant.com",
     "activeLocation": "Active Location",
     "inactiveHelp": "Inactive locations won't be available for menu item assignment",
     "mapComingSoon": "Map integration coming soon",
@@ -365,7 +367,7 @@
     "account": {
       "title": "Create Your Account",
       "subtitle": "Enter your email and create a secure password",
-      "emailPlaceholder": "your@email.com",
+      "emailPlaceholder": "your{'@'}email.com",
       "passwordPlaceholder": "Create a secure password",
       "passwordHelp": "Must be at least 6 characters with uppercase, lowercase, and number"
     },
@@ -380,8 +382,8 @@
       "createBot": "Create Your Telegram Bot",
       "description": "A Telegram bot will send you instant notifications when customers place orders.",
       "guide": "Step-by-step guide:",
-      "step1": "Open @BotFather",
-      "step1Description": "Search for \"@BotFather\" in Telegram or click the button below",
+      "step1": "Open BotFather",
+      "step1Description": "Search for \"BotFather\" in Telegram or click the button below",
       "step2": "Start creating your bot",
       "step2Description": "Send the command: /newbot",
       "step3": "Choose a display name",
@@ -392,7 +394,7 @@
       "step5Description": "BotFather will give you a token like: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
       "step6": "Paste the token below",
       "step6Description": "This connects your bot to your restaurant",
-      "openBotFather": "Open @BotFather in Telegram",
+      "openBotFather": "Open BotFather in Telegram",
       "needHelp": "Need help? Common questions",
       "faq1Question": "Q: What if my username is taken?",
       "faq1Answer": "Try adding numbers or your city name: \"mariospizza2024bot\" or \"mariospizzabishkekbot\"",
@@ -462,7 +464,8 @@
     "invalidData": "Invalid data",
     "noMenuFound": "No menu found. Please create a menu first.",
     "loadFailed": "Failed to load data. Please try again.",
-    "saveFailed": "Failed to save changes. Please check weights and try again."
+    "saveFailed": "Failed to save changes. Please check weights and try again.",
+    "invalidItemId": "Invalid item ID"
   },
   "dataTable": {
     "loading": "Loading data...",

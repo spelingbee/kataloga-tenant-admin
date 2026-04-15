@@ -11,8 +11,9 @@ export const useTenant = () => {
   /**
    * Extract tenant slug from URL path (first segment after /)
    */
-  const getTenantSlug = (): string | null => {
-    const pathSegments = route.path.split('/').filter(Boolean)
+  const getTenantSlug = (explicitPath?: string): string | null => {
+    const pathToParse = explicitPath ?? route.path
+    const pathSegments = pathToParse.split('/').filter(Boolean)
     if (pathSegments.length === 0) {
       return null
     }
@@ -20,8 +21,8 @@ export const useTenant = () => {
     const firstSegment = pathSegments[0]
     
     // Exclude system routes
-    const systemRoutes = ['error', 'api', 'admin', 'health']
-    if (systemRoutes.includes(firstSegment)) {
+    const systemRoutes = ['error', 'api', 'admin', 'health', 'login']
+    if (systemRoutes.includes(firstSegment.toLowerCase())) {
       return null
     }
     
@@ -31,8 +32,8 @@ export const useTenant = () => {
   /**
    * Get current tenant slug or throw error
    */
-  const requireTenantSlug = (): string => {
-    const slug = getTenantSlug()
+  const requireTenantSlug = (explicitPath?: string): string => {
+    const slug = getTenantSlug(explicitPath)
     if (!slug) {
       throw new Error('Tenant slug is required. Please access via /{tenant-slug}')
     }

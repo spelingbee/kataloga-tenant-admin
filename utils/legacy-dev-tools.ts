@@ -153,7 +153,7 @@ if (import.meta.dev && import.meta.client) {
   // Initialize on next tick to ensure DOM is ready
   setTimeout(() => {
     LegacyDevTools.init();
-    LegacyDevTools.startMonitoring();
+    // LegacyDevTools.startMonitoring(); // Disabled auto-monitoring to reduce noise
   }, 100);
 }
 

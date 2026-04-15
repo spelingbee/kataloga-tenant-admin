@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "cancel": "Жокко чыгаруу",
     "save": "Сактоо",
@@ -50,7 +50,10 @@
     "confirmPassword": "Сыр сөздү ырастоо",
     "alreadyHaveAccount": "Аккаунтуңуз барбы?",
     "loginTitle": "Админ панелге кирүү",
-    "loginSubtitle": "Ресторануңузду башкаруу үчүн кириңиз"
+    "loginSubtitle": "Ресторануңузду башкаруу үчүн кириңиз",
+    "invalidCredentials": "Email же сыр сөз туура эмес",
+    "tooManyAttempts": "Өтө көп аракет кылдыңыз. Кийинчерээк кайталаңыз.",
+    "loginError": "Кирүү учурунда ката кетти. Кайталап көрүңүз."
   },
   "dashboard": {
     "title": "Башкаруу панели",
@@ -185,7 +188,7 @@
     "telegramIntegration": "Telegram менен интеграция",
     "botToken": "Боттун токени",
     "botTokenPlaceholder": "Telegram боттун токени",
-    "botTokenHelp": "Боттун токенин @BotFather дан алыңыз",
+    "botTokenHelp": "Боттун токенин {'@'}BotFather дан алыңыз",
     "chatStatus": "Чат туташуу статусу",
     "connected": "Туташты",
     "notConnected": "Туташкан жок",
@@ -268,7 +271,7 @@
     },
     "inviteForm": {
       "title": "Команда мүчөсүн чакыруу",
-      "emailPlaceholder": "member@example.com",
+      "emailPlaceholder": "member{'@'}example.com",
       "firstNamePlaceholder": "Асан",
       "lastNamePlaceholder": "Асанов",
       "selectRole": "Ролду тандаңыз",
@@ -297,7 +300,7 @@
     "addressPlaceholder": "мисалы, Чүй 123",
     "cityPlaceholder": "мисалы, Бишкек",
     "phonePlaceholder": "мисалы, +996 (555) 123-456",
-    "emailPlaceholder": "мисалы, center@restaurant.com",
+    "emailPlaceholder": "мисалы, center{'@'}restaurant.com",
     "activeLocation": "Активдүү жай",
     "inactiveHelp": "Активдүү эмес жайлар тамак-ашка дайындоого жеткиликтүү болбойт",
     "mapComingSoon": "Карта менен интеграция жакында",
@@ -340,7 +343,7 @@
     "account": {
       "title": "Аккаунт түзүңүз",
       "subtitle": "Email киргизип, коопсуз сыр сөз түзүңүз",
-      "emailPlaceholder": "your@email.com",
+      "emailPlaceholder": "your{'@'}email.com",
       "passwordPlaceholder": "Коопсуз сыр сөз түзүңүз",
       "passwordHelp": "Кеминде 6 символ, чоң, кичине тамгалар жана сан болушу керек"
     },
@@ -355,8 +358,8 @@
       "createBot": "Telegram ботту түзүңүз",
       "description": "Telegram бот кардарлар заказ берген учурда дароо билдирүүлөрдү жөнөтөт.",
       "guide": "Кадам-кадам көрсөтмө:",
-      "step1": "@BotFather ачыңыз",
-      "step1Description": "Telegram де \"@BotFather\" издеңиз же төмөнкү баскычты басыңыз",
+      "step1": "{'@'}BotFather ачыңыз",
+      "step1Description": "Telegram де \"{'@'}BotFather\" издеңиз же төмөнкү баскычты басыңыз",
       "step2": "Бот түзүүнү баштаңыз",
       "step2Description": "Команданы жөнөтүңүз: /newbot",
       "step3": "Көрсөтүлүүчү атын тандаңыз",
@@ -367,7 +370,7 @@
       "step5Description": "BotFather сизге токен берет: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
       "step6": "Токенди төмөнкүгө чаптаңыз",
       "step6Description": "Бул ботту ресторануңузга туташтырат",
-      "openBotFather": "Telegram де @BotFather ачуу",
+      "openBotFather": "Telegram де {'@'}BotFather ачуу",
       "needHelp": "Жардам керекпи? Көп берилүүчү суроолор",
       "faq1Question": "Колдонуучу аты ээлеп алынган болсо эмне кылуу керек?",
       "faq1Answer": "Сандарды же шаардын атын кошуп көрүңүз: \"mariospizza2024bot\" же \"mariospizzabishkekbot\"",
@@ -416,6 +419,7 @@
     "advancedSetup": "Кеңейтилген жөндөө",
     "advancedSetupDescription": "Салттуу катталуу формасын колдонуңуз"
   },
+  "features": {
     "locked": "Функция бөгөттөлгөн",
     "upgradeToAccess": "Бул функцияга кирүү үчүн планды жакшыртыңыз",
     "upgradeTo": "{requiredPlan} га өтүү",
@@ -467,7 +471,8 @@
     "invalidData": "Туура эмес маалымат",
     "noMenuFound": "Меню табылган жок. Адегенде меню түзүңүз.",
     "loadFailed": "Маалыматты жүктөө мүмкүн болгон жок. Кайра аракет кылыңыз.",
-    "saveFailed": "Өзгөртүүлөрдү сактоо мүмкүн болгон жок. Маалыматты текшерип, кайра аракет кылыңыз."
+    "saveFailed": "Өзгөртүүлөрдү сактоо мүмкүн болгон жок. Маалыматты текшерип, кайра аракет кылыңыз.",
+    "invalidItemId": "Туура эмес элемент ID"
   },
   "dataTable": {
     "loading": "Маалымат жүктөлүүдө...",

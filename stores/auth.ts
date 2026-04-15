@@ -28,6 +28,7 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     currentUser: (state) => state.user,
+    isSuperAdmin: (state) => state.user?.role === 'SUPER_ADMIN',
     isTenantAdmin: (state) => state.user?.role === 'TENANT_ADMIN',
     isTenantStaff: (state) => state.user?.role === 'TENANT_STAFF',
   },
@@ -59,9 +60,8 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('tenant_refresh_token', response.refreshToken)
         }
 
-        // Set user state
-        this.user = this.mapUser(response.user)
-        this.isAuthenticated = true
+        // Fetch full user profile with firstName and lastName
+        await this.fetchUser()
 
       } catch (error) {
         this.user = null

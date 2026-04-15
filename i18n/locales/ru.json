@@ -50,7 +50,10 @@
     "confirmPassword": "Подтвердите пароль",
     "alreadyHaveAccount": "Уже есть аккаунт?",
     "loginTitle": "Вход в админ-панель",
-    "loginSubtitle": "Войдите для управления вашим рестораном"
+    "loginSubtitle": "Войдите для управления вашим рестораном",
+    "invalidCredentials": "Неверный email или пароль",
+    "tooManyAttempts": "Слишком много попыток входа. Пожалуйста, попробуйте позже.",
+    "loginError": "Произошла ошибка при входе. Пожалуйста, попробуйте снова."
   },
   "dashboard": {
     "title": "Панель управления",
@@ -155,7 +158,10 @@
     "anonymous": "Анонимный",
     "phone": "Телефон:",
     "items": "Позиции:",
-    "payment": "Оплата:",
+    "payment": {
+      "cash": "Наличные",
+      "pending": "Ожидает"
+    },
     "confirmOrder": "Подтвердить заказ",
     "rejectOrder": "Отклонить заказ",
     "confirmFailed": "Не удалось подтвердить заказ",
@@ -167,10 +173,6 @@
       "ready": "Готов",
       "delivered": "Доставлен",
       "cancelled": "Отменен"
-    },
-    "payment": {
-      "cash": "Наличные",
-      "pending": "Ожидает"
     }
   },
   "settings": {
@@ -185,7 +187,7 @@
     "telegramIntegration": "Интеграция с Telegram",
     "botToken": "Токен бота",
     "botTokenPlaceholder": "Ваш токен Telegram бота",
-    "botTokenHelp": "Получите токен бота у @BotFather",
+    "botTokenHelp": "Получите токен бота у BotFather",
     "chatStatus": "Статус подключения чата",
     "connected": "Подключено",
     "notConnected": "Не подключено",
@@ -268,7 +270,7 @@
     },
     "inviteForm": {
       "title": "Пригласить участника команды",
-      "emailPlaceholder": "member@example.com",
+      "emailPlaceholder": "member{'@'}example.com",
       "firstNamePlaceholder": "Иван",
       "lastNamePlaceholder": "Иванов",
       "selectRole": "Выберите роль",
@@ -297,7 +299,7 @@
     "addressPlaceholder": "например, ул. Главная 123",
     "cityPlaceholder": "например, Бишкек",
     "phonePlaceholder": "например, +996 (555) 123-456",
-    "emailPlaceholder": "например, center@restaurant.com",
+    "emailPlaceholder": "например, center{'@'}restaurant.com",
     "activeLocation": "Активная локация",
     "inactiveHelp": "Неактивные локации не будут доступны для назначения позициям меню",
     "mapComingSoon": "Интеграция с картами скоро появится",
@@ -371,7 +373,7 @@
     "account": {
       "title": "Создайте аккаунт",
       "subtitle": "Введите email и создайте надежный пароль",
-      "emailPlaceholder": "your@email.com",
+      "emailPlaceholder": "your{'@'}email.com",
       "passwordPlaceholder": "Создайте надежный пароль",
       "passwordHelp": "Минимум 6 символов с заглавными, строчными буквами и цифрой"
     },
@@ -386,8 +388,8 @@
       "createBot": "Создайте Telegram бота",
       "description": "Telegram бот будет отправлять вам мгновенные уведомления, когда клиенты размещают заказы.",
       "guide": "Пошаговая инструкция:",
-      "step1": "Откройте @BotFather",
-      "step1Description": "Найдите \"@BotFather\" в Telegram или нажмите кнопку ниже",
+      "step1": "Откройте BotFather",
+      "step1Description": "Найдите \"BotFather\" в Telegram или нажмите кнопку ниже",
       "step2": "Начните создание бота",
       "step2Description": "Отправьте команду: /newbot",
       "step3": "Выберите отображаемое имя",
@@ -398,7 +400,7 @@
       "step5Description": "BotFather даст вам токен вида: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
       "step6": "Вставьте токен ниже",
       "step6Description": "Это подключит бота к вашему ресторану",
-      "openBotFather": "Открыть @BotFather в Telegram",
+      "openBotFather": "Открыть BotFather в Telegram",
       "needHelp": "Нужна помощь? Частые вопросы",
       "faq1Question": "Что делать, если имя пользователя занято?",
       "faq1Answer": "Попробуйте добавить цифры или название города: \"mariospizza2024bot\" или \"mariospizzabishkekbot\"",
@@ -468,7 +470,8 @@
     "invalidData": "Неверные данные",
     "noMenuFound": "Меню не найдено. Пожалуйста, сначала создайте меню.",
     "loadFailed": "Не удалось загрузить данные. Пожалуйста, попробуйте снова.",
-    "saveFailed": "Не удалось сохранить изменения. Пожалуйста, проверьте данные и попробуйте снова."
+    "saveFailed": "Не удалось сохранить изменения. Пожалуйста, проверьте данные и попробуйте снова.",
+    "invalidItemId": "Неверный ID элемента"
   },
   "dataTable": {
     "loading": "Загрузка данных...",

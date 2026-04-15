@@ -11,40 +11,47 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const { getTenantSlug } = useTenant()
 
   // Get tenant slug from path
-  const tenantSlug = getTenantSlug()
+  const tenantSlug = getTenantSlug(to.path)
+  
+  // CRITICAL: Set tenant slug in API client for subsequent requests (like fetchUser)
+  if (tenantSlug) {
+    api.setTenant(tenantSlug)
+  }
+  
+  // If we're on a route that doesn't have a tenant slug (like /login or system routes),
+  // we don't need to enforce auth here.
   if (!tenantSlug) return
 
-  // Check if user is authenticated
-  const token = api.getToken()
-  
-  // Check if current route is login
-  const isLoginRoute = to.path.endsWith('/login')
-  
-  // If no token and trying to access protected route
-  if (!token && !isLoginRoute) {
-    return navigateTo(`/${tenantSlug}/login`)
-  }
+  // Check if we are on the login route
+  const isLoginRoute = to.path.includes('/login')
 
-  // If has token but user not loaded, fetch user
-  if (token && !authStore.user && !isLoginRoute) {
+  // If we are not authenticated, try to fetch the profile (handles existing cookies)
+  if (!authStore.user) {
     try {
       await authStore.fetchUser()
     } catch (error) {
-      // Token invalid, clear and redirect to login
-      api.clearToken()
-      authStore.clearUser()
-      return navigateTo(`/${tenantSlug}/login`)
+      // Profile fetch failed (no active session cookie)
+      if (!isLoginRoute) {
+        return navigateTo(`/${tenantSlug}/login`)
+      }
     }
   }
 
-  // If authenticated and trying to access login page, redirect to dashboard
-  if (token && authStore.isAuthenticated && isLoginRoute) {
+  const stillAuthenticated = authStore.isAuthenticated && authStore.user
+
+  // 1. If we are on the login route and ALREADY authenticated, redirect to dashboard
+  if (isLoginRoute && stillAuthenticated) {
     return navigateTo(`/${tenantSlug}`)
   }
 
-  // Verify user has correct role (TENANT_ADMIN or TENANT_STAFF)
-  if (token && authStore.user && !isLoginRoute) {
-    const validRoles = ['TENANT_ADMIN', 'TENANT_STAFF']
+  // 2. If we are NOT on a login route and NOT authenticated, redirect to login
+  if (!isLoginRoute && !stillAuthenticated) {
+    return navigateTo(`/${tenantSlug}/login`)
+  }
+
+  // Verify user has correct role (OWNER, ADMIN, TENANT_ADMIN, or TENANT_STAFF)
+  if (stillAuthenticated && authStore.user && !isLoginRoute) {
+    const validRoles = ['OWNER', 'ADMIN', 'TENANT_ADMIN', 'TENANT_STAFF']
     if (!validRoles.includes(authStore.user.role)) {
       // User doesn't have tenant admin/staff role
       api.clearToken()

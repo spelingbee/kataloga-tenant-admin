@@ -17,8 +17,18 @@ import MenuItemSalesHistory from '~/components/dashboard/MenuItemSalesHistory.vu
 const route = useRoute()
 const router = useRouter()
 
-const itemId = computed(() => route.params.id as string)
-const itemName = computed(() => (route.query.name as string) || undefined)
+const itemId = computed(() => {
+  const id = route.params.id
+  if (!id || typeof id !== 'string') {
+    console.error('Invalid item ID in route params:', id)
+    return ''
+  }
+  return id
+})
+const itemName = computed(() => {
+  const name = route.query.name
+  return (typeof name === 'string' ? name : undefined)
+})
 
 const { navigateToTenant } = useNavigation()
 

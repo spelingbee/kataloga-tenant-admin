@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { SalesAnalytics } from '~/types'
+import { useAuthStore } from '~/stores/auth'
 
 interface DashboardMetrics {
   totalMenuItems: number
@@ -11,8 +12,31 @@ interface DashboardMetrics {
   }
 }
 
+interface SuperAdminMetrics {
+  tenants: {
+    total: number
+    active: number
+    growth?: number
+  }
+  users: {
+    total: number
+    active: number
+    growth?: number
+  }
+  registrations: {
+    total: number
+    pending: number
+    growth?: number
+  }
+  revenue?: {
+    total: number
+    growth: number
+  }
+}
+
 interface DashboardState {
   metrics: DashboardMetrics | null
+  superAdminMetrics: SuperAdminMetrics | null
   analytics: SalesAnalytics | null
   loading: boolean
   error: string | null
@@ -24,6 +48,7 @@ interface DashboardState {
 export const useDashboardStore = defineStore('dashboard', {
   state: (): DashboardState => ({
     metrics: null,
+    superAdminMetrics: null,
     analytics: null,
     loading: false,
     error: null,
@@ -61,8 +86,8 @@ export const useDashboardStore = defineStore('dashboard', {
         let totalMenuItems = 0
         let activeMenuItems = 0
         
-        // After refinement, menusResponse should be a clean array or unwrapped data
-        const menus = Array.isArray(menusResponse) ? menusResponse : menusResponse?.data || []
+        // Responses are already unwrapped by ApiClient
+        const menus = menusResponse || []
         
         if (Array.isArray(menus)) {
           menus.forEach((menu: any) => {
@@ -73,10 +98,10 @@ export const useDashboardStore = defineStore('dashboard', {
           })
         }
         
-        // Use standard pagination metadata populated by refineApiResponse
-        const totalCategories = categoriesResponse.meta?.pagination?.totalItems || 
-                              categoriesResponse?.total || 
-                              (Array.isArray(categoriesResponse?.data) ? categoriesResponse.data.length : 0)
+        // Note: ApiClient.unwrapResponse currently discards 'meta' field.
+        // If meta is needed, we should either use api.getRaw or update unwrapResponse.
+        // For now, we'll try to get length from data if it's an array.
+        const totalCategories = Array.isArray(categoriesResponse) ? categoriesResponse.length : 0
 
         this.metrics = {
           totalMenuItems,
@@ -140,11 +165,47 @@ export const useDashboardStore = defineStore('dashboard', {
     },
 
     /**
+     * Fetch super admin dashboard metrics
+     */
+    async fetchSuperAdminMetrics(): Promise<void> {
+      this.loading = true
+      this.error = null
+      const api = useApi()
+
+      try {
+        // Fetch super admin dashboard data
+        const dashboardData = await api.get<SuperAdminMetrics>('/super-admin/analytics/dashboard')
+        
+        this.superAdminMetrics = dashboardData
+      } catch (error: any) {
+        console.error('Failed to fetch super admin metrics:', error)
+        this.error = error.message || 'Failed to load super admin metrics'
+        
+        // Set default metrics on error
+        this.superAdminMetrics = {
+          tenants: { total: 0, active: 0, growth: 0 },
+          users: { total: 0, active: 0, growth: 0 },
+          registrations: { total: 0, pending: 0, growth: 0 },
+          revenue: { total: 0, growth: 0 }
+        }
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
      * Fetch all dashboard data
      */
     async fetchDashboardData(): Promise<void> {
-      await this.fetchMetrics()
-      await this.fetchAnalytics()
+      const authStore = useAuthStore()
+      
+      // Check if user is super admin
+      if (authStore.user?.role === 'SUPER_ADMIN') {
+        await this.fetchSuperAdminMetrics()
+      } else {
+        await this.fetchMetrics()
+        await this.fetchAnalytics()
+      }
     },
 
     /**

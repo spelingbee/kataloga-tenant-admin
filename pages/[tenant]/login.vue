@@ -71,6 +71,7 @@ const errors = ref<{
 
 const { login } = useAuth()
 const router = useRouter()
+const route = useRoute()
 
 const validateForm = (): boolean => {
   errors.value = {}
@@ -109,17 +110,22 @@ const handleLogin = async () => {
   try {
     await login(email.value, password.value)
     const { getTenantSlug } = useTenant()
-    const tenantSlug = getTenantSlug()
-    await router.push(`/${tenantSlug}`)
+    const tenantSlug = getTenantSlug() || route.params.tenant as string
+    
+    if (tenantSlug) {
+      await router.push(`/${tenantSlug}`)
+    } else {
+      await router.push('/')
+    }
   } catch (error: any) {
     console.error('Login error:', error)
     
     if (error.response?.status === 401) {
-      errors.value.general = 'Invalid email or password'
+      errors.value.general = t('auth.invalidCredentials')
     } else if (error.response?.status === 429) {
-      errors.value.general = 'Too many login attempts. Please try again later.'
+      errors.value.general = t('auth.tooManyAttempts')
     } else {
-      errors.value.general = error.response?.data?.message || 'An error occurred during login. Please try again.'
+      errors.value.general = error.response?.data?.message || t('auth.loginError')
     }
   } finally {
     loading.value = false

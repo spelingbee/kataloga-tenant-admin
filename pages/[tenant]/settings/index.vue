@@ -196,6 +196,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import {PageHeader} from "../../../components/ui";
 
 definePageMeta({
   middleware: ['auth']
@@ -244,21 +245,31 @@ const refreshData = async () => {
   loading.value = true
   error.value = null
   try {
-    // TODO: Implement API call to fetch tenant settings
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
+    const { $api } = useNuxtApp()
+    const data = await $api.get('/auth/tenant')
     
-    // Mock data - replace with real API response
-    Object.assign(settings, {
-      storeName: 'My Restaurant',
-      description: 'Delicious food delivered fresh',
-      phone: '+1234567890',
-      address: '123 Main St, City, State 12345',
-      telegramBotToken: '',
-      telegramChatId: null,
-      whatsappPhone: '+1234567890',
-    })
+    // Map backend data to local settings state
+    // Note: DetailDto has tenant and registration info
+    const tenantInfo = data.tenant || {}
+    const registrationInfo = data
+    
+    settings.storeName = tenantInfo.name || registrationInfo.businessName || ''
+    settings.description = registrationInfo.businessDescription || ''
+    settings.phone = registrationInfo.ownerPhone || ''
+    settings.address = registrationInfo.businessAddress || ''
+    settings.telegramBotToken = tenantInfo.telegramBotToken || ''
+    settings.telegramChatId = tenantInfo.telegramChatId ? String(tenantInfo.telegramChatId) : null
+    settings.whatsappPhone = tenantInfo.whatsappPhone || registrationInfo.ownerPhone || ''
+    
+    // If businessAddress is an object (from JSON), try to format it
+    if (typeof settings.address === 'object' && settings.address !== null) {
+      const addr = settings.address as any
+      settings.address = addr.street || addr.address || JSON.stringify(addr)
+    }
+
   } catch (err: any) {
     error.value = err.message || t('settings.saveFailed')
+    console.error('Fetch settings error:', err)
   } finally {
     loading.value = false
   }
@@ -267,13 +278,21 @@ const refreshData = async () => {
 const saveSettings = async () => {
   saveLoading.value = true
   try {
-    // TODO: Implement API call to save settings
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
+    const { $api } = useNuxtApp()
+    await $api.put('/auth/tenant/settings', {
+      storeName: settings.storeName,
+      description: settings.description,
+      phone: settings.phone,
+      address: settings.address,
+      telegramBotToken: settings.telegramBotToken,
+      whatsappPhone: settings.whatsappPhone,
+      // operatingHours: settings.operatingHours // TODO: Add support for operating hours
+    })
     
-    // Show success notification
     alert(t('settings.saveSuccess'))
   } catch (err: any) {
     alert(err.message || t('settings.saveFailed'))
+    console.error('Save settings error:', err)
   } finally {
     saveLoading.value = false
   }
@@ -287,12 +306,17 @@ const connectTelegramBot = async () => {
   
   connectLoading.value = true
   try {
-    // TODO: Implement API call to generate deep link and connect bot
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
+    const config = useRuntimeConfig()
+    const botUsername = config.public.telegramBotUsername || 'kataloga_bot'
     
-    // Mock deep link generation
-    const botUsername = 'your_bot_username' // This would come from API
-    const tenantId = 'tenant_123' // This would come from current tenant
+    const { $api } = useNuxtApp()
+    const data = await $api.get('/auth/tenant')
+    const tenantId = data.tenant?.id || data.tenantId
+    
+    if (!tenantId) {
+      throw new Error('Tenant ID not found')
+    }
+    
     const deepLink = `https://t.me/${botUsername}?start=${tenantId}`
     
     // Open deep link
@@ -301,6 +325,7 @@ const connectTelegramBot = async () => {
     alert(t('settings.startBotInTelegram'))
   } catch (err: any) {
     alert(err.message || t('settings.connectBotFailed'))
+    console.error('Connect bot error:', err)
   } finally {
     connectLoading.value = false
   }

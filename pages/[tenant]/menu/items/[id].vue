@@ -60,7 +60,14 @@ const route = useRoute()
 const menuStore = useEnhancedMenuStore()
 const { isFetching, isSubmitting, currentMenu, menuItems } = storeToRefs(menuStore)
 
-const itemId = route.params.id as string
+const itemId = computed(() => {
+  const id = route.params.id
+  if (!id || typeof id !== 'string') {
+    console.error('Invalid item ID in route params:', id)
+    return ''
+  }
+  return id
+})
 const menuItem = ref<any>(null)
 const error = ref<string>('')
 
@@ -72,6 +79,11 @@ const loadMenuItem = async () => {
   error.value = ''
 
   try {
+    if (!itemId.value) {
+      error.value = t('errors.invalidItemId') || 'Invalid item ID.'
+      return
+    }
+
     if (!currentMenu.value) {
       await menuStore.fetchMenus()
     }
@@ -82,12 +94,12 @@ const loadMenuItem = async () => {
     }
 
     // Try to find item in central items first
-    let item = menuItems.value.find((i: any) => i.id === itemId)
+    let item = menuItems.value.find((i: any) => i.id === itemId.value)
 
     if (!item) {
       // If not in current list, fetch items for this menu
       await menuStore.fetchMenuItems(currentMenu.value.id)
-      item = menuItems.value.find((i: any) => i.id === itemId)
+      item = menuItems.value.find((i: any) => i.id === itemId.value)
     }
 
     if (item) {
@@ -105,9 +117,9 @@ const handleUpdate = async (data: any) => {
   error.value = ''
 
   try {
-    if (!currentMenu.value) return
+    if (!currentMenu.value || !itemId.value) return
 
-    await menuStore.updateMenuItem(currentMenu.value.id, itemId, data)
+    await menuStore.updateMenuItem(currentMenu.value.id, itemId.value, data)
     await handleCancel()
   } catch (err: any) {
     console.error('Failed to update menu item:', err)

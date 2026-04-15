@@ -70,9 +70,9 @@ export const useOrderStore = defineStore('order', {
           cacheKey,
           async () => {
             const api = useApi()
-            const response = await api.get<{ data: any[], meta: any }>('/orders', { params })
+            const response = await api.get<any[]>('/orders', { params })
             // Map raw backend orders to our interface
-            return response.data.map((order: any) => ({
+            return (Array.isArray(response) ? response : (response as any).data || []).map((order: any) => ({
               ...order,
               customerName: order.user ? `${order.user.firstName} ${order.user.lastName}`.trim() : 'Anonymous',
               customerPhone: order.user?.phone || null,

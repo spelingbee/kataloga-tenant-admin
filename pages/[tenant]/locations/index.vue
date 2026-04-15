@@ -170,8 +170,6 @@ onMounted(async () => {
   // In Mini App mode, redirect to dashboard
   const isMiniAppMode = true // This could be configurable later
   if (isMiniAppMode) {
-    const route = useRoute()
-    const tenantSlug = route.params.tenant as string
     await navigateToTenant('/')
     return
   }

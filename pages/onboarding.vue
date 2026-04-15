@@ -30,12 +30,40 @@
       </div>
 
       <div class="onboarding-wizard__content">
-        <!-- Step 1: Email & Password -->
+        <!-- Step 1: Account Info -->
         <div v-if="currentStep === 1" class="wizard-step">
           <h2 class="wizard-step__title">Create Your Account</h2>
-          <p class="wizard-step__description">Enter your email and create a secure password</p>
+          <p class="wizard-step__description">Enter your details to get started</p>
           
           <form class="wizard-form" @submit.prevent="nextStep">
+            <div class="form-group">
+              <label for="firstName" class="form-group__label">First Name</label>
+              <input
+                id="firstName"
+                v-model="formData.firstName"
+                type="text"
+                class="form-group__input"
+                :class="{ 'form-group__input--error': errors.firstName }"
+                placeholder="John"
+                required
+              />
+              <span v-if="errors.firstName" class="form-group__error">{{ errors.firstName }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="lastName" class="form-group__label">Last Name</label>
+              <input
+                id="lastName"
+                v-model="formData.lastName"
+                type="text"
+                class="form-group__input"
+                :class="{ 'form-group__input--error': errors.lastName }"
+                placeholder="Doe"
+                required
+              />
+              <span v-if="errors.lastName" class="form-group__error">{{ errors.lastName }}</span>
+            </div>
+
             <div class="form-group">
               <label for="email" class="form-group__label">Email Address</label>
               <input
@@ -345,6 +373,8 @@ definePageMeta({
 interface FormData {
   email: string
   password: string
+  firstName: string
+  lastName: string
   storeName: string
   telegramBotToken: string
 }
@@ -376,6 +406,8 @@ const registrationResult = ref<RegistrationResult | null>(null)
 const formData = ref<FormData>({
   email: '',
   password: '',
+  firstName: '',
+  lastName: '',
   storeName: '',
   telegramBotToken: ''
 })
@@ -405,6 +437,14 @@ const validateStep = (step: number): boolean => {
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
         errors.value.email = 'Please provide a valid email address'
+        return false
+      }
+      if (!formData.value.firstName || formData.value.firstName.trim().length < 2) {
+        errors.value.firstName = 'First name must be at least 2 characters'
+        return false
+      }
+      if (!formData.value.lastName || formData.value.lastName.trim().length < 2) {
+        errors.value.lastName = 'Last name must be at least 2 characters'
         return false
       }
       if (!formData.value.password) {
@@ -473,21 +513,26 @@ const registerUser = async () => {
   loading.value = true
   
   try {
-    const response = await api.post<{ data: any }>('/auth/register-light', {
+    const response = await api.post<RegistrationResult>('/auth/register-light', {
       email: formData.value.email,
       password: formData.value.password,
+      firstName: formData.value.firstName,
+      lastName: formData.value.lastName,
       storeName: formData.value.storeName,
       telegramBotToken: formData.value.telegramBotToken || undefined
     })
     
-    registrationResult.value = response.data
+    registrationResult.value = response
     
     // Auto-login the user after successful registration
     try {
       await loginAfterRegistration()
     } catch (loginError) {
       console.error('Auto-login failed:', loginError)
-      // Continue to step 4 even if auto-login fails
+      // HB-3: Notify user and redirect to login instead of silently continuing
+      alert('Registration successful! Please log in manually.')
+      router.push('/login')
+      return
     }
     
     currentStep.value = 4
@@ -516,20 +561,16 @@ const registerUser = async () => {
 }
 
 const loginAfterRegistration = async () => {
-  if (!registrationResult.value?.tenant.slug) {
-    throw new Error('No tenant slug available')
-  }
-  
   try {
-    // Login using the tenant slug
-    const loginResponse = await api.post<{ data: { accessToken: string } }>(`/${registrationResult.value.tenant.slug}/auth/login`, {
+    // Login using the correct endpoint (no tenant slug in URL)
+    const loginResponse = await api.post<{ accessToken: string }>('/auth/login', {
       email: formData.value.email,
       password: formData.value.password
     })
     
     // Store the token
-    if (loginResponse.data.accessToken) {
-      api.setToken(loginResponse.data.accessToken)
+    if (loginResponse.accessToken) {
+      api.setToken(loginResponse.accessToken)
     }
   } catch (error) {
     console.error('Login after registration failed:', error)
@@ -555,9 +596,9 @@ const pollForConnection = async () => {
   const poll = async () => {
     try {
       // Check if tenant has a telegram chat ID set
-      const response = await api.get<{ data: { connected: boolean } }>(`/tenant-registration/check-telegram-connection/${registrationResult.value!.tenant.id}`)
+      const response = await api.get<{ connected: boolean }>(`/tenant-registration/check-telegram-connection/${registrationResult.value!.tenant.id}`)
       
-      if (response.data.connected) {
+      if (response.connected) {
         connectionStatus.value = 'connected'
         isPolling.value = false
         return

@@ -60,20 +60,15 @@ export const useAuth = () => {
    */
   const initAuth = async (): Promise<void> => {
     try {
-      const token = api.getToken()
-      if (token) {
-        try {
-          await fetchUser()
-        } catch (error) {
-          // Token invalid, clear it
-          api.clearToken()
-          authStore.user = null
-          authStore.isAuthenticated = false
-        }
-      }
+      // With httpOnly cookies, we might not have a token in localStorage
+      // but still be authenticated. Always try to fetch user if we suspect a session.
+      await fetchUser()
     } catch (error) {
-      console.error('Auth initialization error - API not available:', error)
-      // API service not ready yet, skip initialization
+      // No active session or token invalid
+      console.log('No active session found during initialization')
+      api.clearToken()
+      authStore.user = null
+      authStore.isAuthenticated = false
     }
   }
 

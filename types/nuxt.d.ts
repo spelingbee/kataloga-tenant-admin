@@ -4,7 +4,7 @@
  * Extends Nuxt app with custom plugins and services
  */
 
-import type { EnhancedApiService } from '~/services/enhanced-api.service';
+import type { ApiClient } from '~/utils/api'
 
 // Toast interface that matches what our plugins provide
 interface ToastInterface {
@@ -17,14 +17,14 @@ interface ToastInterface {
 
 declare module '#app' {
   interface NuxtApp {
-    $api: EnhancedApiService;
+    $api: ApiClient;
     $toast: ToastInterface;
   }
 }
 
 declare module 'vue' {
   interface ComponentCustomProperties {
-    $api: EnhancedApiService;
+    $api: ApiClient;
     $toast: ToastInterface;
   }
 }

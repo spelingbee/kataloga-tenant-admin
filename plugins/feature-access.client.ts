@@ -4,7 +4,7 @@
  */
 export default defineNuxtPlugin({
   name: 'feature-access',
-  dependsOn: ['enhanced-api'], // Wait for API to be ready
+  dependsOn: ['api'], // Wait for API to be ready
   async setup(nuxtApp) {
     // Fetch subscription data on app initialization
     try {

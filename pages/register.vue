@@ -2,152 +2,27 @@
   <div class="register-page">
     <div class="register-card">
       <div class="register-card__header">
-        <h1 class="register-card__title">Quick Setup Available!</h1>
-        <p class="register-card__subtitle">Get started faster with our new onboarding wizard</p>
+        <h1 class="register-card__title">Create Your Restaurant Account</h1>
+        <p class="register-card__subtitle">Set up your online menu in just a few steps</p>
       </div>
 
-      <div class="register-options">
-        <NuxtLink to="/onboarding" class="register-option register-option--primary">
-          <div class="register-option__icon">🚀</div>
-          <h3 class="register-option__title">Quick Setup (Recommended)</h3>
-          <p class="register-option__description">
-            Get your restaurant online in 5 minutes with our guided setup
-          </p>
-          <div class="register-option__features">
-            <div class="feature">✓ Step-by-step guidance</div>
-            <div class="feature">✓ Telegram bot integration</div>
-            <div class="feature">✓ Instant dashboard access</div>
-          </div>
-        </NuxtLink>
-
-        <div class="register-divider">
-          <span>or</span>
+      <NuxtLink to="/onboarding" class="register-option register-option--primary">
+        <div class="register-option__icon">🚀</div>
+        <h3 class="register-option__title">Quick Setup</h3>
+        <p class="register-option__description">
+          Get your restaurant online in 5 minutes with our guided wizard
+        </p>
+        <div class="register-option__features">
+          <div class="feature">✓ Step-by-step guidance</div>
+          <div class="feature">✓ Telegram bot integration</div>
+          <div class="feature">✓ Instant dashboard access</div>
         </div>
+        <div class="register-option__cta">Start Setup →</div>
+      </NuxtLink>
 
-        <button 
-          type="button" 
-          class="register-option register-option--secondary"
-          @click="showAdvancedForm = true"
-        >
-          <div class="register-option__icon">⚙️</div>
-          <h3 class="register-option__title">Advanced Setup</h3>
-          <p class="register-option__description">
-            Use the traditional registration form
-          </p>
-        </button>
+      <div class="register-footer">
+        <p>Already have an account? <NuxtLink to="/login" class="register-footer__link">Sign In</NuxtLink></p>
       </div>
-
-      <form 
-        v-if="showAdvancedForm" 
-        class="register-form" 
-        @submit.prevent="handleRegister"
-      >
-        <div class="form-group">
-          <label for="firstName" class="form-group__label">First Name</label>
-          <input
-            id="firstName"
-            v-model="formData.firstName"
-            type="text"
-            class="form-group__input"
-            :class="{ 'form-group__input--error': errors.firstName }"
-            placeholder="Enter your first name"
-            required
-          />
-          <span v-if="errors.firstName" class="form-group__error">{{ errors.firstName }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="lastName" class="form-group__label">Last Name</label>
-          <input
-            id="lastName"
-            v-model="formData.lastName"
-            type="text"
-            class="form-group__input"
-            :class="{ 'form-group__input--error': errors.lastName }"
-            placeholder="Enter your last name"
-            required
-          />
-          <span v-if="errors.lastName" class="form-group__error">{{ errors.lastName }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="email" class="form-group__label">Email</label>
-          <input
-            id="email"
-            v-model="formData.email"
-            type="email"
-            class="form-group__input"
-            :class="{ 'form-group__input--error': errors.email }"
-            placeholder="Enter your email"
-            required
-            autocomplete="email"
-          />
-          <span v-if="errors.email" class="form-group__error">{{ errors.email }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="tenantName" class="form-group__label">Restaurant Name</label>
-          <input
-            id="tenantName"
-            v-model="formData.tenantName"
-            type="text"
-            class="form-group__input"
-            :class="{ 'form-group__input--error': errors.tenantName }"
-            placeholder="Enter your restaurant name"
-            required
-          />
-          <span v-if="errors.tenantName" class="form-group__error">{{ errors.tenantName }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="password" class="form-group__label">Password</label>
-          <input
-            id="password"
-            v-model="formData.password"
-            type="password"
-            class="form-group__input"
-            :class="{ 'form-group__input--error': errors.password }"
-            placeholder="Enter your password"
-            required
-            autocomplete="new-password"
-          />
-          <span v-if="errors.password" class="form-group__error">{{ errors.password }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="confirmPassword" class="form-group__label">Confirm Password</label>
-          <input
-            id="confirmPassword"
-            v-model="formData.confirmPassword"
-            type="password"
-            class="form-group__input"
-            :class="{ 'form-group__input--error': errors.confirmPassword }"
-            placeholder="Confirm your password"
-            required
-            autocomplete="new-password"
-          />
-          <span v-if="errors.confirmPassword" class="form-group__error">{{ errors.confirmPassword }}</span>
-        </div>
-
-        <div v-if="errors.general" class="register-form__error">
-          {{ errors.general }}
-        </div>
-
-        <button
-          type="submit"
-          class="register-form__submit"
-          :disabled="loading"
-        >
-          {{ loading ? 'Creating Account...' : 'Create Account' }}
-        </button>
-
-        <div class="register-form__footer">
-          <p class="register-form__footer-text">
-            Already have an account?
-            <NuxtLink to="/login" class="register-form__footer-link">Sign In</NuxtLink>
-          </p>
-        </div>
-      </form>
     </div>
   </div>
 </template>
@@ -157,124 +32,6 @@ definePageMeta({
   layout: false,
   middleware: []
 })
-
-const showAdvancedForm = ref(false)
-
-const formData = ref({
-  firstName: '',
-  lastName: '',
-  email: '',
-  tenantName: '',
-  password: '',
-  confirmPassword: '',
-})
-
-const loading = ref(false)
-const errors = ref<{
-  firstName?: string
-  lastName?: string
-  email?: string
-  tenantName?: string
-  password?: string
-  confirmPassword?: string
-  general?: string
-}>({})
-
-const api = useApi()
-const router = useRouter()
-
-const validateForm = (): boolean => {
-  errors.value = {}
-  
-  if (!formData.value.firstName) {
-    errors.value.firstName = 'First name is required'
-    return false
-  }
-  
-  if (!formData.value.lastName) {
-    errors.value.lastName = 'Last name is required'
-    return false
-  }
-  
-  if (!formData.value.email) {
-    errors.value.email = 'Email is required'
-    return false
-  }
-  
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
-    errors.value.email = 'Please provide a valid email address'
-    return false
-  }
-  
-  if (!formData.value.tenantName) {
-    errors.value.tenantName = 'Restaurant name is required'
-    return false
-  }
-  
-  if (!formData.value.password) {
-    errors.value.password = 'Password is required'
-    return false
-  }
-  
-  if (formData.value.password.length < 6) {
-    errors.value.password = 'Password must be at least 6 characters long'
-    return false
-  }
-  
-  if (formData.value.password !== formData.value.confirmPassword) {
-    errors.value.confirmPassword = 'Passwords do not match'
-    return false
-  }
-  
-  return true
-}
-
-const handleRegister = async () => {
-  if (!validateForm()) {
-    return
-  }
-  
-  loading.value = true
-  errors.value = {}
-  
-  try {
-    // Call tenant registration endpoint
-    await api.post('/api/register-tenant', {
-      businessName: formData.value.tenantName,
-      businessType: 'RESTAURANT', // Default type
-      ownerEmail: formData.value.email,
-      ownerName: `${formData.value.firstName} ${formData.value.lastName}`,
-      ownerPhone: '+380000000000', // Placeholder, should be added to form
-      businessAddress: {
-        street: 'TBD',
-        city: 'TBD',
-        state: 'TBD',
-        zipCode: '00000',
-        country: 'Ukraine',
-      },
-      subscriptionPlan: {
-        id: 'basic',
-        name: 'Basic Plan',
-        currency: 'UAH',
-      },
-    })
-    
-    // Registration successful, redirect to login
-    await router.push('/login')
-  } catch (error: any) {
-    console.error('Registration error:', error)
-    
-    if (error.response?.status === 400) {
-      errors.value.general = error.response?.data?.message || 'Invalid registration data'
-    } else if (error.response?.status === 409) {
-      errors.value.general = 'Email or tenant name already exists'
-    } else {
-      errors.value.general = 'An error occurred during registration. Please try again.'
-    }
-  } finally {
-    loading.value = false
-  }
-}
 </script>
 
 <style scoped lang="scss">
@@ -291,7 +48,7 @@ const handleRegister = async () => {
 
 .register-card {
   width: 100%;
-  max-width: 600px;
+  max-width: 480px;
   padding: $spacing-xl;
   background: $bg-primary;
   border-radius: $radius-lg;
@@ -316,142 +73,21 @@ const handleRegister = async () => {
   color: $text-secondary;
 }
 
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-}
-
-.form-group__label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $text-primary;
-}
-
-.form-group__input {
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  font-size: 1rem;
-  color: $text-primary;
-  background: $bg-primary;
-  border: 1px solid $border-color;
-  border-radius: $radius-md;
-  transition: border-color $transition-base;
-  
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-  }
-  
-  &::placeholder {
-    color: $text-light;
-  }
-}
-
-.form-group__input--error {
-  border-color: $error-color;
-}
-
-.form-group__error {
-  font-size: 0.75rem;
-  color: $error-color;
-}
-
-.register-form__error {
-  padding: $spacing-sm $spacing-md;
-  font-size: 0.875rem;
-  color: $error-color;
-  background: rgba($error-color, 0.1);
-  border-radius: $radius-sm;
-  border-left: 3px solid $error-color;
-}
-
-.register-form__submit {
-  padding: $spacing-sm $spacing-md;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #ffffff;
-  background: $primary-color;
-  border: none;
-  border-radius: $radius-md;
-  cursor: pointer;
-  transition: background $transition-base;
-  
-  &:hover:not(:disabled) {
-    background: darken($primary-color, 10%);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.register-form__footer {
-  margin-top: $spacing-md;
-  text-align: center;
-}
-
-.register-form__footer-text {
-  margin: 0;
-  font-size: 0.875rem;
-  color: $text-secondary;
-}
-
-.register-form__footer-link {
-  color: $primary-color;
-  text-decoration: none;
-  font-weight: 500;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.register-options {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-  margin-bottom: $spacing-xl;
-}
-
 .register-option {
   display: block;
   padding: $spacing-lg;
   text-decoration: none;
-  border: 2px solid $border-color;
+  border: 2px solid $primary-color;
   border-radius: $radius-lg;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
   transition: all $transition-base;
   cursor: pointer;
-  background: $bg-primary;
-  
-  &:hover {
-    border-color: $primary-color;
-    transform: translateY(-2px);
-    box-shadow: $shadow-md;
-  }
-}
+  margin-bottom: $spacing-lg;
 
-.register-option--primary {
-  border-color: $primary-color;
-  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
-  
   &:hover {
     background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($primary-color, 0.15) 100%);
-  }
-}
-
-.register-option--secondary {
-  border: 2px solid $border-color;
-  
-  &:hover {
-    border-color: $secondary-color;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
   }
 }
 
@@ -477,6 +113,7 @@ const handleRegister = async () => {
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
+  margin-bottom: $spacing-md;
 }
 
 .feature {
@@ -485,24 +122,29 @@ const handleRegister = async () => {
   font-weight: 500;
 }
 
-.register-divider {
-  display: flex;
-  align-items: center;
+.register-option__cta {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.register-footer {
   text-align: center;
-  margin: $spacing-md 0;
-  
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: $border-color;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+
+  p {
+    margin: 0;
   }
-  
-  span {
-    padding: 0 $spacing-md;
-    color: $text-secondary;
-    font-size: $font-size-sm;
+}
+
+.register-footer__link {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
   }
 }
 </style>

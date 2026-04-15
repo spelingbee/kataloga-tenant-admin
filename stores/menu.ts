@@ -77,11 +77,10 @@ export const useMenuStore = defineStore('menu', {
         console.log('Menu API response:', response)
         
         // Handle the response format from backend
-        if (response.data && Array.isArray(response.data)) {
-          this.menus = response.data
-        } else if (Array.isArray(response)) {
-          // Fallback for direct array response
+        if (Array.isArray(response)) {
           this.menus = response
+        } else if (response && response.data && Array.isArray(response.data)) {
+          this.menus = response.data
         } else {
           this.menus = []
         }
@@ -141,14 +140,15 @@ export const useMenuStore = defineStore('menu', {
         if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString())
         if (params?.locationId) queryParams.append('locationId', params.locationId)
 
-        const response = await api.get<PaginatedResponse<MenuItem>>(
+        const response = await api.get<any>(
           `/menu/${menuId}/items?${queryParams.toString()}`
         )
 
-        this.menuItems = response.data
-        this.totalItems = response.total
-        this.currentPage = response.page
-        this.totalPages = response.totalPages
+        const items = Array.isArray(response) ? response : (response.data || [])
+        this.menuItems = items
+        this.totalItems = response.total || items.length
+        this.currentPage = response.page || 1
+        this.totalPages = response.totalPages || 1
       } catch (error: any) {
         // If the specific endpoint fails, try to get items from the current menu
         console.warn('Failed to fetch menu items from dedicated endpoint, using menu data:', error)
@@ -484,27 +484,27 @@ export const useMenuStore = defineStore('menu', {
     /**
      * Fetch menu items with pagination and filters
      */
-    async fetchMenuItems(params: PaginationParams & MenuItemFilters = {}) {
+    async fetchAllMenuItems(params: PaginationParams & MenuItemFilters = {}) {
       const { fetchWithCache } = useDataCache()
       this.loading = true
       this.error = null
 
       try {
         const cacheKey = `menu-items-${JSON.stringify(params)}`
-        const data = await fetchWithCache(
+        const items = await fetchWithCache(
           cacheKey,
           async () => {
             const api = useApi()
-            const response = await api.get<PaginatedResponse<MenuItem>>('/tenant-admin/menu-items', { params })
+            const response = await api.get<any>('/tenant-admin/menu-items', { params })
             return response
           },
           { ttl: 3 * 60 * 1000, staleWhileRevalidate: true }
         )
         
-        this.menuItems = data.data
-        this.totalItems = data.meta.total
-        this.currentPage = data.meta.page
-        this.totalPages = data.meta.totalPages
+        this.menuItems = Array.isArray(items) ? items : (items.data || [])
+        this.totalItems = items.total || (items.meta?.total) || this.menuItems.length
+        this.currentPage = items.page || (items.meta?.page) || 1
+        this.totalPages = items.totalPages || (items.meta?.totalPages) || 1
       } catch (error: any) {
         this.error = error.message || 'Failed to fetch menu items'
         console.error('Error fetching menu items:', error)

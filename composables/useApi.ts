@@ -1,13 +1,15 @@
 /**
- * Composable for Enhanced API access
- * Provides access to the Enhanced API Service instance
+ * Composable for API access
+ * Provides access to the API Client instance
  */
-import type { EnhancedApiService } from '~/services/enhanced-api.service';
+import type { ApiClient } from '~/utils/api'
 
-export function useEnhancedApi(): EnhancedApiService {
-  const { $api } = useNuxtApp();
-  return $api as EnhancedApiService;
+export function useApi(): ApiClient {
+  const nuxtApp = useNuxtApp()
+  
+  if (!nuxtApp.$api) {
+    throw new Error('API client not initialized. Make sure the api plugin is loaded.')
+  }
+  
+  return nuxtApp.$api as ApiClient
 }
-
-// Backward compatibility alias
-export const useApi = useEnhancedApi;

@@ -43,6 +43,8 @@ const menuStore = useEnhancedMenuStore()
 const { isSubmitting, currentMenu } = storeToRefs(menuStore)
 const error = ref<string>('')
 
+const route = useRoute()
+
 const handleCreate = async (data: any) => {
   error.value = ''
 
@@ -52,7 +54,9 @@ const handleCreate = async (data: any) => {
     }
 
     if (!currentMenu.value) {
-      error.value = t('errors.noMenuFound') || 'No menu found.'
+      const tenantSlug = route.params.tenant as string
+      error.value = t('errors.noMenuFound') || 'No menu found. Please contact support to set up your menu first.'
+      console.error('No menu available for tenant:', tenantSlug)
       return
     }
 
