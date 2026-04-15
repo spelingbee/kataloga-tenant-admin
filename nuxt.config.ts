@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3001',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3001',
       // Tenant extracted from path (app.kataloga.org/{tenant}) or subdomain (vip.kataloga.org)
       appDomain: process.env.NUXT_PUBLIC_APP_DOMAIN || 'kataloga.org'
     }

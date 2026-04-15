@@ -12,7 +12,7 @@ class ApiService {
     const config = useRuntimeConfig()
     
     this.axiosInstance = axios.create({
-      baseURL: config.public.apiBaseUrl as string,
+      baseURL: config.public.apiUrl as string,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',

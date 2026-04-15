@@ -62,7 +62,7 @@ export class MediaService {
         if (url.startsWith('http') || url.startsWith('data:')) return url
         
         const config = useRuntimeConfig()
-        const apiBase = config.public.apiBaseUrl as string
+        const apiBase = config.public.apiUrl as string;
         
         try {
             const origin = new URL(apiBase).origin
