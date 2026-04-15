@@ -239,12 +239,24 @@ const handleRegister = async () => {
   
   try {
     // Call tenant registration endpoint
-    await api.post('/tenant-registration/register', {
-      firstName: formData.value.firstName,
-      lastName: formData.value.lastName,
-      email: formData.value.email,
-      tenantName: formData.value.tenantName,
-      password: formData.value.password,
+    await api.post('/api/register-tenant', {
+      businessName: formData.value.tenantName,
+      businessType: 'RESTAURANT', // Default type
+      ownerEmail: formData.value.email,
+      ownerName: `${formData.value.firstName} ${formData.value.lastName}`,
+      ownerPhone: '+380000000000', // Placeholder, should be added to form
+      businessAddress: {
+        street: 'TBD',
+        city: 'TBD',
+        state: 'TBD',
+        zipCode: '00000',
+        country: 'Ukraine',
+      },
+      subscriptionPlan: {
+        id: 'basic',
+        name: 'Basic Plan',
+        currency: 'UAH',
+      },
     })
     
     // Registration successful, redirect to login
