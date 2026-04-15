@@ -84,7 +84,7 @@
               :placeholder="t('settings.botTokenPlaceholder')"
             />
             <p class="form-help">
-              {{ t('settings.botTokenHelp') }} <a href="https://t.me/BotFather" target="_blank">@BotFather</a>
+              {{ t('settings.botTokenHelp') }} <a href="https://t.me/BotFather" target="_blank">t.me/BotFather</a>
             </p>
           </div>
 

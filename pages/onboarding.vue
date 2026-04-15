@@ -129,8 +129,8 @@
                 <h4 class="bot-setup__guide-title">Step-by-step guide:</h4>
                 <ol class="bot-setup__steps">
                   <li>
-                    <strong>Open @BotFather</strong>
-                    <p>Search for "@BotFather" in Telegram or click the button below</p>
+                    <strong>Open t.me/BotFather</strong>
+                    <p>Search for "t.me/BotFather" in Telegram or click the button below</p>
                   </li>
                   <li>
                     <strong>Start creating your bot</strong>
@@ -162,7 +162,7 @@
                   class="btn btn--outline"
                 >
                   <Icon name="external-link" />
-                  Open @BotFather in Telegram
+                  Open t.me/BotFather in Telegram
                 </a>
                 
                 <div class="bot-setup__help">

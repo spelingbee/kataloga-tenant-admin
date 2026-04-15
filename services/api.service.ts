@@ -139,9 +139,20 @@ class ApiService {
         refreshToken,
       })
 
-      const { accessToken, refreshToken: newRefreshToken } = response.data
-      this.setToken(accessToken)
-      localStorage.setItem('tenant_refresh_token', newRefreshToken)
+      // Backend returns { success, statusCode, data: { accessToken, refreshToken }, error, meta }
+      // Extract from response.data.data
+      const responseData = response.data
+      if (responseData && responseData.data) {
+        const { accessToken, refreshToken: newRefreshToken } = responseData.data
+        this.setToken(accessToken)
+        localStorage.setItem('tenant_refresh_token', newRefreshToken)
+      } else if (responseData.accessToken) {
+        // Fallback for direct response
+        this.setToken(responseData.accessToken)
+        localStorage.setItem('tenant_refresh_token', responseData.refreshToken)
+      } else {
+        throw new Error('Invalid refresh response')
+      }
     } catch (error) {
       // Refresh failed, clear tokens
       this.clearToken()
