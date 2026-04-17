@@ -61,7 +61,12 @@ export const useOrderStore = defineStore('order', {
   actions: {
     async fetchOrders(params?: { status?: string; page?: number; limit?: number }) {
       const { fetchWithCache } = useDataCache()
-      this.loading = true
+      
+      // Only set UI loading if we don't have existing orders (SWR pattern)
+      if (this.orders.length === 0) {
+        this.loading = true
+      }
+      
       this.error = null
 
       try {

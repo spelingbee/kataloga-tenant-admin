@@ -28,9 +28,6 @@ export class MediaService {
 
         try {
             const response = await ($api as any).post('/upload/image', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
                 showProgress: true
             })
 
@@ -50,6 +47,27 @@ export class MediaService {
         } catch (error: any) {
             console.error('[MediaService] Upload failed:', error)
             throw error
+        }
+    }
+
+    /**
+     * Delete an image from the backend
+     * @param url The image URL or path to delete
+     */
+    async deleteImage(url: string): Promise<void> {
+        if (!url) return
+        
+        const { $api } = useNuxtApp()
+        
+        try {
+            // Send the full path/URL to the backend
+            // The backend controller will handle extraction of filename/folder
+            await ($api as any).delete('/upload/image', {
+                body: { url }
+            })
+        } catch (error: any) {
+            console.warn('[MediaService] Delete failed (may already be gone):', error)
+            // We usually don't want to block the UI if delete fails
         }
     }
 

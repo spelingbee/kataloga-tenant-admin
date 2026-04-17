@@ -75,7 +75,8 @@
     "configureSettings": "Настройка ресторана",
     "addMenuItem": "Добавить позицию меню",
     "manageCategories": "Управление категориями",
-    "viewAnalytics": "Просмотр аналитики"
+    "viewAnalytics": "Просмотр аналитики",
+    "manageCatalog": "Каталог товаров"
   },
   "menu": {
     "title": "Управление меню",
@@ -115,7 +116,19 @@
     "totalItems": "{totalItems} всего позиций",
     "backToMenu": "Назад в меню",
     "editItemSubtitle": "Обновите детали позиции меню",
-    "newItemSubtitle": "Создайте новую позицию для вашего меню"
+    "newItemSubtitle": "Создайте новую позицию для вашего меню",
+    "productSource": "Источник товара",
+    "createBrandNew": "Новый товар",
+    "pickFromCatalog": "Из каталога"
+  },
+  "catalog": {
+    "title": "Каталог товаров",
+    "subtitle": "Глобальный список товаров вашего заведения",
+    "addProduct": "Добавить товар",
+    "emptyTitle": "Каталог пуст",
+    "emptyDesc": "Добавьте товары в каталог, чтобы потом быстро добавлять их в различные меню.",
+    "selectProduct": "Выберите товар из каталога",
+    "searchPlaceholder": "Поиск товара в каталоге..."
   },
   "categories": {
     "title": "Управление категориями",

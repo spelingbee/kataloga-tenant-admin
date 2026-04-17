@@ -49,6 +49,12 @@ const handleCreate = async (data: any) => {
   error.value = ''
 
   try {
+    // Optimization: If we have menus in store but currentMenu isn't set, 
+    // pick the first one instead of making a new API request.
+    if (!currentMenu.value && menuStore.menus.length > 0) {
+      menuStore.currentMenu = menuStore.menus[0]
+    }
+
     if (!currentMenu.value) {
       await menuStore.fetchMenus()
     }

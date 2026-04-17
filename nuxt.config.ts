@@ -39,6 +39,9 @@ export default defineNuxtConfig({
           additionalData: '@use "~/assets/scss/variables" as *;'
         }
       }
+    },
+    build: {
+      minify: false
     }
   },
   
@@ -48,6 +51,10 @@ export default defineNuxtConfig({
       // Tenant extracted from path (app.kataloga.org/{tenant}) or subdomain (vip.kataloga.org)
       appDomain: process.env.NUXT_PUBLIC_APP_DOMAIN || 'kataloga.org'
     }
+  },
+  
+  nitro: {
+    minify: false
   },
   
   typescript: {

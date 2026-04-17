@@ -23,9 +23,10 @@ export const useFeatureAccess = () => {
     }
 
     // Check if feature is enabled in plan
-    const feature = subscription.plan.features?.find(
-      (f) => f.featureKey === featureKey && f.isEnabled
-    )
+    const features = subscription.plan.features
+    const feature = Array.isArray(features) 
+      ? features.find((f) => f.featureKey === featureKey && f.isEnabled)
+      : null
 
     return !!feature
   }

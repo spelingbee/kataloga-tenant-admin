@@ -17,14 +17,12 @@
 </template>
 
 <script setup lang="ts">
-import { unref } from 'vue'
-
 const { locale, locales, setLocale } = useI18n()
 
 const currentLocale = ref(locale.value)
 
 const availableLocales = computed(() => {
-  return unref(locales) as Array<{ code: string; name: string }>
+  return locales.value as Array<{ code: string; name: string }>
 })
 
 const changeLocale = async () => {

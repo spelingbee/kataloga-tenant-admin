@@ -303,6 +303,7 @@ import { useEnhancedMenuStore } from '~/stores/enhanced-menu'
 import { useCategoryStore } from '~/stores/category'
 import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import { useCurrency } from '~/composables/useCurrency'
+import { useMediaService } from '~/services/media.service'
 import LocationAvailabilityMatrix from './LocationAvailabilityMatrix.vue'
 import BulkMenuOperations from './BulkMenuOperations.vue'
 
@@ -313,6 +314,7 @@ const menuStore = useEnhancedMenuStore()
 const categoryStore = useCategoryStore()
 const router = useRouter()
 const { hasMultiLocation } = useFeatureAccess()
+const mediaService = useMediaService()
 
 // State
 const searchQuery = ref('')

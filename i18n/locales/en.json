@@ -69,7 +69,8 @@
     "justNow": "Just now",
     "minutesAgo": "{minutes}m ago",
     "hoursAgo": "{hours}h ago",
-    "daysAgo": "{days}d ago"
+    "daysAgo": "{days}d ago",
+    "manageCatalog": "Product Catalog"
   },
   "menu": {
     "title": "Menu Management",
@@ -109,7 +110,19 @@
     "totalItems": "{totalItems} total items",
     "backToMenu": "Back to Menu",
     "editItemSubtitle": "Update menu item details",
-    "newItemSubtitle": "Create a new position for your menu"
+    "newItemSubtitle": "Create a new position for your menu",
+    "productSource": "Product Source",
+    "createBrandNew": "New Product",
+    "pickFromCatalog": "From Catalog"
+  },
+  "catalog": {
+    "title": "Product Catalog",
+    "subtitle": "Global list of products in your establishment",
+    "addProduct": "Add Product",
+    "emptyTitle": "Catalog is Empty",
+    "emptyDesc": "Add products to the catalog to quickly add them to various menus later.",
+    "selectProduct": "Select from Catalog",
+    "searchPlaceholder": "Search catalog..."
   },
   "categories": {
     "title": "Category Management",

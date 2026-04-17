@@ -22,15 +22,21 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Add global error handler for unhandled errors
   if (import.meta.client) {
     window.addEventListener('error', (event) => {
+      // Ensure event is valid and has expected properties
+      const errorMessage = event.message || 'Unknown window error';
+      const filename = event.filename || 'unknown';
+      const lineno = event.lineno || 0;
+      const colno = event.colno || 0;
+
       enhancedLogger.logApiError(
-        new Error(event.message),
+        new Error(errorMessage),
         {
-          url: window.location.href,
+          url: typeof window !== 'undefined' ? window.location.href : 'unknown',
           requestId: `unhandled-${Date.now()}`,
           payload: {
-            filename: event.filename,
-            lineno: event.lineno,
-            colno: event.colno
+            filename,
+            lineno,
+            colno
           }
         },
         'Unhandled JavaScript error'

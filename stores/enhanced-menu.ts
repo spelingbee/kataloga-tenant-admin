@@ -15,6 +15,7 @@ import type {
   Menu, 
   MenuItem, 
   MenuItemParams,
+  Product,
   LocationAvailability,
   WidgetError 
 } from '~/types/business';
@@ -34,6 +35,7 @@ interface EnhancedMenuState {
   menus: Menu[];
   currentMenu: Menu | null;
   menuItems: MenuItem[];
+  catalogProducts: Product[]; // New field
   pagination: PaginationMeta | null;
   
   // Operation states
@@ -44,6 +46,7 @@ interface EnhancedMenuState {
   errors: {
     menus: ApiError | null;
     items: ApiError | null;
+    catalog: ApiError | null; // New field
     bulk: ApiError | null;
     locations: ApiError | null;
   };
@@ -66,6 +69,7 @@ export const useEnhancedMenuStore = defineStore('enhanced-menu', {
     menus: [],
     currentMenu: null,
     menuItems: [],
+    catalogProducts: [],
     pagination: null,
     
     // Operation states
@@ -76,6 +80,7 @@ export const useEnhancedMenuStore = defineStore('enhanced-menu', {
     errors: {
       menus: null,
       items: null,
+      catalog: null,
       bulk: null,
       locations: null,
     },
@@ -139,7 +144,10 @@ export const useEnhancedMenuStore = defineStore('enhanced-menu', {
      * Fetch all menus with error isolation (Requirement 6.1)
      */
     async fetchMenus(): Promise<void> {
-      this.isFetching = true;
+      // Only show loading if we don't have menus yet
+      if (this.menus.length === 0) {
+        this.isFetching = true;
+      }
       this.errors.menus = null;
       
       try {
@@ -169,10 +177,165 @@ export const useEnhancedMenuStore = defineStore('enhanced-menu', {
     },
 
     /**
+     * Fetch all products from the tenant catalog
+     */
+    async fetchCatalog(): Promise<void> {
+      if (this.catalogProducts.length === 0) {
+        this.isFetching = true;
+      }
+      this.errors.catalog = null;
+      
+      try {
+        const { $api } = useNuxtApp();
+        const products = await $api.get<Product[]>('/menu/catalog');
+        this.catalogProducts = products;
+      } catch (error) {
+        this.errors.catalog = error as ApiError;
+        this.catalogProducts = [];
+      } finally {
+        this.isFetching = false;
+      }
+    },
+
+    /**
+     * Create a new product in the global catalog
+     */
+    async createCatalogProduct(data: Partial<Product>): Promise<Product> {
+      this.isSubmitting = true;
+      this.errors.catalog = null;
+      
+      try {
+        const { $api } = useNuxtApp();
+        const newProduct = await $api.post<Product>('/menu/catalog', data, {
+          successMessage: 'Товар добавлен в каталог'
+        });
+        
+        this.catalogProducts.unshift(newProduct);
+        return newProduct;
+      } catch (error) {
+        this.errors.catalog = error as ApiError;
+        throw error;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    /**
+     * Update a product in the global catalog
+     */
+    async updateCatalogProduct(productId: string, data: Partial<Product>): Promise<Product> {
+      this.isSubmitting = true;
+      this.errors.catalog = null;
+      
+      try {
+        const { $api } = useNuxtApp();
+        const updatedProduct = await $api.patch<Product>(`/menu/catalog/${productId}`, data, {
+          successMessage: 'Товар обновлен'
+        });
+        
+        const index = this.catalogProducts.findIndex(p => p.id === productId);
+        if (index !== -1) {
+          this.catalogProducts[index] = updatedProduct;
+        }
+        
+        return updatedProduct;
+      } catch (error) {
+        this.errors.catalog = error as ApiError;
+        throw error;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    /**
+     * Delete (soft-delete) a product from the catalog
+     */
+    async deleteCatalogProduct(productId: string): Promise<void> {
+      this.isSubmitting = true;
+      this.errors.catalog = null;
+      
+      try {
+        const { $api } = useNuxtApp();
+        await $api.delete(`/menu/catalog/${productId}`, {
+          successMessage: 'Товар удален из каталога'
+        });
+        
+        this.catalogProducts = this.catalogProducts.filter(p => p.id !== productId);
+      } catch (error) {
+        this.errors.catalog = error as ApiError;
+        throw error;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    /**
+     * Create a new menu
+     */
+    async createMenu(data: Partial<Menu>): Promise<Menu> {
+      this.isSubmitting = true;
+      this.errors.menus = null;
+
+      try {
+        const { $api } = useNuxtApp();
+        const newMenu = await $api.post<Menu>('/menu', data, {
+          successMessage: 'Меню создано успешно'
+        });
+
+        this.menus.push(newMenu);
+        
+        if (!this.currentMenu) {
+          this.currentMenu = newMenu;
+        }
+
+        return newMenu;
+      } catch (error) {
+        this.errors.menus = error as ApiError;
+        throw error;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    /**
+     * Update an existing menu
+     */
+    async updateMenu(menuId: string, data: Partial<Menu>): Promise<Menu> {
+      this.isSubmitting = true;
+      this.errors.menus = null;
+
+      try {
+        const { $api } = useNuxtApp();
+        const updatedMenu = await $api.patch<Menu>(`/menu/${menuId}`, data, {
+          successMessage: 'Меню обновлено'
+        });
+
+        const index = this.menus.findIndex(m => m.id === menuId);
+        if (index !== -1) {
+          this.menus[index] = updatedMenu;
+        }
+
+        if (this.currentMenu?.id === menuId) {
+          this.currentMenu = updatedMenu;
+        }
+
+        return updatedMenu;
+      } catch (error) {
+        this.errors.menus = error as ApiError;
+        throw error;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    /**
      * Fetch menu items with pagination support (Requirement 6.1)
      */
     async fetchMenuItems(menuId: string, params?: MenuItemParams): Promise<void> {
-      this.isFetching = true;
+      // Only show loading if we don't have items for this menu yet
+      if (this.menuItems.length === 0) {
+        this.isFetching = true;
+      }
       this.errors.items = null;
       
       try {

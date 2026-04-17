@@ -36,6 +36,34 @@ export const useCurrency = () => {
     }
 
     /**
+     * Alias for formatPrice (for compatibility)
+     */
+    const formatCurrency = formatPrice
+
+    /**
+     * Format currency in compact form (e.g. "1.5K KGS")
+     */
+    const formatCompactCurrency = (amount: number | string | undefined | null): string => {
+        if (amount === undefined || amount === null) return `0${options.suffix}`
+        
+        const numericValue = typeof amount === 'string' ? parseFloat(amount) : amount
+        if (isNaN(numericValue)) return `0${options.suffix}`
+
+        const absValue = Math.abs(numericValue)
+        let formatted: string
+
+        if (absValue >= 1000000) {
+            formatted = (numericValue / 1000000).toFixed(1) + 'M'
+        } else if (absValue >= 1000) {
+            formatted = (numericValue / 1000).toFixed(1) + 'K'
+        } else {
+            formatted = numericValue.toFixed(0)
+        }
+
+        return `${options.prefix}${formatted}${options.suffix}`
+    }
+
+    /**
      * Raw currency symbol/code for input prefixes/suffixes
      */
     const symbol = computed(() => currencyCode.value)
@@ -43,6 +71,8 @@ export const useCurrency = () => {
 
     return {
         formatPrice,
+        formatCurrency,
+        formatCompactCurrency,
         symbol,
         suffix,
         currencyCode

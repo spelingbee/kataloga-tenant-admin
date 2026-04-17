@@ -67,20 +67,19 @@ export const useDashboardStore = defineStore('dashboard', {
      * Fetch dashboard metrics (menu items, categories)
      */
     async fetchMetrics(): Promise<void> {
-      this.loading = true
+      // Only show loading state on initial load (SWR pattern)
+      if (!this.metrics) {
+        this.loading = true
+      }
       this.error = null
       const api = useApi()
 
       try {
-        // Fetch menus with items
-        const menusResponse = await api.get<any>('/menu', {
-          params: { page: 1, limit: 100 }
-        })
-        
-        // Fetch categories count
-        const categoriesResponse = await api.get<any>('/tenant-admin/categories', {
-          params: { page: 1, limit: 1 }
-        })
+        // Fetch menus and categories in parallel
+        const [menusResponse, categoriesResponse] = await Promise.all([
+          api.get<any>('/menu', { params: { page: 1, limit: 100 } }),
+          api.get<any>('/tenant-admin/categories', { params: { page: 1, limit: 1 } })
+        ])
 
         // Calculate metrics from responses
         let totalMenuItems = 0
@@ -168,7 +167,10 @@ export const useDashboardStore = defineStore('dashboard', {
      * Fetch super admin dashboard metrics
      */
     async fetchSuperAdminMetrics(): Promise<void> {
-      this.loading = true
+      // Only show loading state on initial load (SWR pattern)
+      if (!this.superAdminMetrics) {
+        this.loading = true
+      }
       this.error = null
       const api = useApi()
 
@@ -203,8 +205,10 @@ export const useDashboardStore = defineStore('dashboard', {
       if (authStore.user?.role === 'SUPER_ADMIN') {
         await this.fetchSuperAdminMetrics()
       } else {
-        await this.fetchMetrics()
-        await this.fetchAnalytics()
+        await Promise.all([
+          this.fetchMetrics(),
+          this.fetchAnalytics()
+        ])
       }
     },
 

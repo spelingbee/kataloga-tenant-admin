@@ -76,26 +76,38 @@ export const useAuthStore = defineStore('auth', {
      * Logout current user
      */
     async logout(): Promise<void> {
+      if (this.loading) return // Prevent spamming
+      
       const api = useApi()
       
       try {
-        // Get refresh token for revocation
+        this.loading = true
+        
+        // Get refresh token for revocation BEFORE clearing
         const refreshToken = import.meta.client 
           ? localStorage.getItem('tenant_refresh_token') 
           : null
 
-        if (refreshToken) {
-          // Call logout endpoint to revoke refresh token
-          await api.post('/auth/logout', { refreshToken })
-        }
-      } catch (error) {
-        console.error('Logout error:', error)
-        // Continue with local logout even if API call fails
-      } finally {
-        // Clear local state
+        // OPTIMISTIC: Clear local state immediately for instant feedback
         this.user = null
         this.isAuthenticated = false
         api.clearToken()
+        
+        // Notify the server in the background (non-blocking if slow)
+        if (refreshToken) {
+          // We don't 'await' this so the UI can redirect immediately
+          api.post('/auth/logout', { refreshToken }).catch(err => {
+            console.warn('Background logout revocation failed:', err)
+          })
+        }
+      } catch (error) {
+        console.error('Logout error:', error)
+      } finally {
+        this.loading = false
+        // Final fallback to ensure state is clear
+        api.clearToken()
+        this.user = null
+        this.isAuthenticated = false
       }
     },
 

@@ -109,6 +109,19 @@
             </div>
           </button>
 
+          <!-- Catalog Management -->
+          <button class="main-action-button main-action-button--secondary" @click="navigateToTenant('/catalog')">
+            <div class="main-action-button__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <div class="main-action-button__content">
+              <h3 class="main-action-button__title">{{ t('catalog.title') || 'Каталог' }}</h3>
+              <p class="main-action-button__subtitle">{{ t('dashboard.manageCatalog') || 'Глобальный список товаров' }}</p>
+            </div>
+          </button>
+
           <!-- Settings -->
           <button class="main-action-button main-action-button--secondary" @click="navigateToTenant('/settings')">
             <div class="main-action-button__icon">

@@ -228,6 +228,7 @@ const settings = reactive({
   phone: '',
   address: '',
   telegramBotToken: '',
+  telegramBotUsername: '',
   telegramChatId: null as string | null,
   whatsappPhone: '',
   operatingHours: {
@@ -258,6 +259,7 @@ const refreshData = async () => {
     settings.phone = registrationInfo.ownerPhone || ''
     settings.address = registrationInfo.businessAddress || ''
     settings.telegramBotToken = tenantInfo.telegramBotToken || ''
+    settings.telegramBotUsername = tenantInfo.telegramBotUsername || ''
     settings.telegramChatId = tenantInfo.telegramChatId ? String(tenantInfo.telegramChatId) : null
     settings.whatsappPhone = tenantInfo.whatsappPhone || registrationInfo.ownerPhone || ''
     
@@ -290,6 +292,7 @@ const saveSettings = async () => {
     })
     
     alert(t('settings.saveSuccess'))
+    await refreshData() // Refresh to get updated bot username if it was changed
   } catch (err: any) {
     alert(err.message || t('settings.saveFailed'))
     console.error('Save settings error:', err)
@@ -306,10 +309,23 @@ const connectTelegramBot = async () => {
   
   connectLoading.value = true
   try {
-    const config = useRuntimeConfig()
-    const botUsername = config.public.telegramBotUsername || 'kataloga_bot'
-    
     const { $api } = useNuxtApp()
+    const config = useRuntimeConfig()
+    
+    // Attempt to get actual bot username for the provided token
+    let botUsername = ''
+    try {
+      const botInfo = await $api.get(`/auth/tenant/bot-info?token=${settings.telegramBotToken}`)
+      botUsername = botInfo.username
+      // Optionally update the state if it was empty
+      if (!settings.telegramBotUsername) {
+        settings.telegramBotUsername = botUsername
+      }
+    } catch (err) {
+      console.warn('Could not fetch bot info, falling back:', err)
+      botUsername = settings.telegramBotUsername || config.public.telegramBotUsername || 'kataloga_bot'
+    }
+    
     const data = await $api.get('/auth/tenant')
     const tenantId = data.tenant?.id || data.tenantId
     

@@ -152,11 +152,30 @@ export interface MenuItem {
   isActive: boolean;
   displayOrder?: number;
   menuId: string;
+  productId: string;
   categoryId?: string;
   category?: Category;
+  product?: Product;
   locations?: LocationAvailability[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  basePrice: number;
+  type: 'PHYSICAL' | 'VIRTUAL';
+  imageUrl?: string;
+  inStock: boolean;
+  tenantId: string;
+  categoryId?: string;
+  category?: Category;
+  createdAt: string;
+  updatedAt: string;
+  _count?: {
+    menuItems: number;
+  };
 }
 
 export interface LocationAvailability {

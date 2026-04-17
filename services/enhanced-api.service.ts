@@ -958,7 +958,6 @@ export class EnhancedApiService {
         return this.post<T>(endpoint, formData, {
             ...options,
             headers: {
-                'Content-Type': 'multipart/form-data',
                 ...options?.headers
             },
             onUploadProgress: (progressEvent) => {

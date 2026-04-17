@@ -19,6 +19,7 @@ export interface RequestOptions {
   bypassTenant?: boolean
   targetTenant?: string
   retries?: number
+  successMessage?: string
 }
 
 // Enhanced request configuration with unwrapping support
@@ -56,6 +57,7 @@ export class ApiClient {
   private isRefreshing = false
   private failedQueue: QueuedRequest[] = []
   private token: string | null = null
+  private isHandlingAuthFailure = false
 
   constructor(config: ApiClientConfig) {
     this.config = {
@@ -188,10 +190,13 @@ export class ApiClient {
       : null
 
     if (!refreshToken) {
+      console.warn('🔑 No refresh token found, skipping refresh attempt')
+      this.handleAuthFailure()
       return false
     }
 
     try {
+      console.log('🔐 Refreshing token...')
       // Call refresh endpoint
       const response = await $fetch<ApiResponse<{ accessToken: string; refreshToken: string }>>(
         `${this.config.baseURL}/auth/refresh`,
@@ -208,6 +213,7 @@ export class ApiClient {
       if (response.success && response.data) {
         const { accessToken, refreshToken: newRefreshToken } = response.data
         
+        console.log('✅ Token refresh successful')
         // Update tokens
         this.setToken(accessToken)
         if (import.meta.client && newRefreshToken) {
@@ -218,14 +224,44 @@ export class ApiClient {
         this.processQueue(null, accessToken)
         
         return true
+      } else {
+        console.error('❌ Token refresh failed (API Error):', response.error?.message)
+        throw new Error(response.error?.message || 'Token refresh failed')
       }
     } catch (error) {
-      console.error('Token refresh failed:', error)
-      this.clearToken()
+      console.error('❌ Token refresh process failed:', error)
+      this.handleAuthFailure()
       this.processQueue(error as Error, null)
     }
 
     return false
+  }
+
+  /**
+   * Handle terminal auth failure (clear state and redirect)
+   */
+  private handleAuthFailure(): void {
+    if (this.isHandlingAuthFailure) return
+    this.isHandlingAuthFailure = true
+
+    this.clearToken()
+    
+    // Notify auth store if available
+    if (this.authStore && this.authStore.clearUser) {
+      this.authStore.clearUser()
+    }
+
+    // Redirect to login on client side
+    if (import.meta.client) {
+      const tenantSlug = this.getCurrentTenant()
+      const loginPath = tenantSlug ? `/${tenantSlug}/login` : '/login'
+      
+      // Only redirect if not already on the login page
+      if (!window.location.pathname.includes('/login')) {
+        console.log(`🚀 Redirecting to login: ${loginPath}`)
+        window.location.href = loginPath
+      }
+    }
   }
 
   /**
@@ -269,27 +305,35 @@ export class ApiClient {
    * Determines if an error should be retried
    */
   private shouldRetryError(error: any, attempt: number): boolean {
-    if (attempt >= 3) {
+    if (attempt >= this.config.retries) {
       return false
     }
 
-    // Retry network errors
+    // Network errors (FetchError from ofetch)
     if (error.name === 'FetchError' || error.message?.includes('fetch')) {
       return true
     }
 
-    // Retry timeout errors
+    // Timeout errors
     if (error.name === 'AbortError' || error.message?.includes('timeout')) {
       return true
     }
 
-    const status = (error as any).status || (error as any).statusCode
+    // Extract status code from ofetch error
+    const status = error.response?.status || error.status || error.statusCode
+    
     if (status) {
-      // Retry 5xx server errors
+      // ❌ NEVER retry 400 Bad Request (client errors are usually permanent)
+      if (status === 400) return false
+
+      // ✅ Retry 5xx server errors (temporary issues)
       if (status >= 500) return true
       
-      // Retry specific 4xx errors
+      // ✅ Retry specific 4xx errors (rate limit or timeout)
       if (status === 408 || status === 429) return true
+      
+      // 401 Unauthorized is handled separately in makeRequest through token refresh
+      if (status === 401) return false
     }
 
     return false
@@ -298,9 +342,12 @@ export class ApiClient {
   /**
    * Get authenticated headers
    */
-  private async getAuthHeaders(config?: RequestOptions): Promise<Record<string, string>> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+  private async getAuthHeaders(config: EnhancedRequestConfig = {}): Promise<Record<string, string>> {
+    const headers: Record<string, string> = {}
+
+    // Only set JSON content type if not sending FormData
+    if (!(config.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json'
     }
 
     // Add tenant slug header
@@ -378,6 +425,18 @@ export class ApiClient {
     // Execute request with retry logic
     return this.executeWithRetry(
       async () => {
+        // Proactive auth check: if we need auth but have no tokens, skip and fail fast
+        if (useAuth && !config.skipAuthRefresh && import.meta.client) {
+          const hasAccessToken = !!this.getToken()
+          const hasRefreshToken = !!localStorage.getItem('tenant_refresh_token')
+          
+          if (!hasAccessToken && !hasRefreshToken) {
+            console.warn('🔑 No tokens detected, skipping request and redirecting...')
+            this.handleAuthFailure()
+            throw new Error('AUTHENTICATION_REQUIRED')
+          }
+        }
+
         const headers = useAuth ? await this.getAuthHeaders(config) : { 'Content-Type': 'application/json' }
 
         console.log(`🌐 API ${requestConfig.method || 'GET'} ${endpoint}`)
@@ -397,6 +456,20 @@ export class ApiClient {
 
           console.log(`✅ ${endpoint} OK`)
           
+          Object.assign(response, { statusCode: response.statusCode || 200 })
+
+          // Handle automatic success message (Requirement 10.5)
+          if (import.meta.client && unwrap && config.successMessage) {
+              try {
+                  const nuxtApp = useNuxtApp()
+                  if (nuxtApp.$toast) {
+                      nuxtApp.$toast.success(config.successMessage)
+                  }
+              } catch (e) {
+                  console.warn('Could not show success toast:', e)
+              }
+          }
+
           // Return unwrapped data or full response
           return unwrap ? this.unwrapResponse<T>(response) : response
         } catch (fetchError: any) {
@@ -410,7 +483,7 @@ export class ApiClient {
                 this.failedQueue.push({ resolve, reject })
               }).then(async (token) => {
                 // Retry with new token
-                const newHeaders = await this.getAuthHeaders()
+                const newHeaders = await this.getAuthHeaders(config)
                 const retryResponse = await $fetch<ApiResponse<T>>(url, {
                   method: requestConfig.method || 'GET',
                   headers: { ...newHeaders, ...requestConfig.headers },
@@ -429,7 +502,7 @@ export class ApiClient {
                 console.log('✅ Token refreshed, retrying request')
                 
                 // Retry with new token
-                const newHeaders = await this.getAuthHeaders()
+                const newHeaders = await this.getAuthHeaders(config)
                 const retryResponse = await $fetch<ApiResponse<T>>(url, {
                   method: requestConfig.method || 'GET',
                   headers: { ...newHeaders, ...requestConfig.headers },
@@ -535,6 +608,56 @@ export class ApiClient {
       unwrap: false
     }
     return this.makeRequest<T>(endpoint, config) as Promise<ApiResponse<T>>
+  }
+
+  /**
+   * Get paginated data
+   */
+  async getPaginated<T>(
+    endpoint: string,
+    params?: any,
+    options?: RequestOptions
+  ): Promise<any> {
+    const response = await this.getRaw<T[]>(endpoint, {
+      ...options,
+      params
+    });
+
+    if (!response.success) {
+      throw this.createTypedApiError(response.error!, response.meta);
+    }
+
+    return {
+      items: response.data || [],
+      pagination: response.meta.pagination!
+    };
+  }
+
+  /**
+   * Bulk operations with partial failure handling
+   */
+  async bulkOperation<T>(
+    endpoint: string,
+    items: any[],
+    options?: RequestOptions
+  ): Promise<any> {
+    const response = await this.postRaw<any>(endpoint, { items }, {
+      ...options
+    });
+
+    if (!response.success) {
+      throw this.createTypedApiError(response.error!, response.meta);
+    }
+
+    const data = response.data!;
+
+    return {
+      successful: data.successful || [],
+      failed: data.failed || [],
+      totalProcessed: items.length,
+      successCount: data.successful?.length || 0,
+      errorCount: data.failed?.length || 0
+    };
   }
 }
 
