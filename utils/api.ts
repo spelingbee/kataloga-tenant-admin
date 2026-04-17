@@ -20,6 +20,7 @@ export interface RequestOptions {
   targetTenant?: string
   retries?: number
   successMessage?: string
+  requiresAuth?: boolean // Whether this request MUST have tokens (defaults to true for non-auth endpoints)
 }
 
 // Enhanced request configuration with unwrapping support
@@ -441,12 +442,18 @@ export class ApiClient {
     return this.executeWithRetry(
       async () => {
         // Proactive auth check: if we need auth but have no tokens, skip and fail fast
-        if (useAuth && !config.skipAuthRefresh && import.meta.client) {
+        // Skip check for public endpoints: /auth/login, /auth/register, etc.
+        const isPublicAuthEndpoint = endpoint.includes('/auth/login') || 
+                                     endpoint.includes('/auth/register') || 
+                                     endpoint.includes('/auth/register-light')
+        const needsProactiveAuth = useAuth && !config.requiresAuth === false && !isPublicAuthEndpoint
+
+        if (needsProactiveAuth && !config.skipAuthRefresh && import.meta.client) {
           const hasAccessToken = !!this.getToken()
           const hasRefreshToken = !!localStorage.getItem('tenant_refresh_token')
           
           if (!hasAccessToken && !hasRefreshToken) {
-            console.warn('🔑 No tokens detected, skipping request and redirecting...')
+            console.warn(`🔑 No tokens detected, skipping request and redirecting for: ${endpoint}`)
             this.handleAuthFailure()
             throw new Error('AUTHENTICATION_REQUIRED')
           }
