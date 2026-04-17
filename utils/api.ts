@@ -92,7 +92,7 @@ export class ApiClient {
       const pathSegments = window.location.pathname.split('/').filter(Boolean)
       if (pathSegments.length > 0) {
         const tenantSlug = pathSegments[0]
-        const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin']
+        const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding']
         if (tenantSlug && !systemRoutes.includes(tenantSlug)) {
           return tenantSlug
         }
