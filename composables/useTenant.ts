@@ -21,7 +21,7 @@ export const useTenant = () => {
     const firstSegment = pathSegments[0]
     
     // Exclude system routes
-    const systemRoutes = ['error', 'api', 'admin', 'health', 'login']
+    const systemRoutes = ['error', 'api', 'admin', 'health', 'login', 'register', 'onboarding']
     if (systemRoutes.includes(firstSegment.toLowerCase())) {
       return null
     }

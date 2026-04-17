@@ -524,6 +524,10 @@ const registerUser = async () => {
     
     registrationResult.value = response
     
+    // Pre-seed the store with user data from registration (optimistic)
+    const authStore = useAuthStore()
+    authStore.setUser(response.user)
+    
     // Auto-login the user after successful registration
     try {
       await loginAfterRegistration()
@@ -563,14 +567,23 @@ const registerUser = async () => {
 const loginAfterRegistration = async () => {
   try {
     // Login using the correct endpoint (no tenant slug in URL)
-    const loginResponse = await api.post<{ accessToken: string }>('/auth/login', {
+    const loginResponse = await api.post<any>('/auth/login', {
       email: formData.value.email,
       password: formData.value.password
     })
     
-    // Store the token
+    // Store the tokens and update store state correctly
     if (loginResponse.accessToken) {
       api.setToken(loginResponse.accessToken)
+      
+      if (import.meta.client && loginResponse.refreshToken) {
+        localStorage.setItem('tenant_refresh_token', loginResponse.refreshToken)
+      }
+      
+      // Crucial: Update the actual store state so middleware knows we are logged in
+      const authStore = useAuthStore()
+      authStore.setUser(loginResponse.user)
+      authStore.isAuthenticated = true
     }
   } catch (error) {
     console.error('Login after registration failed:', error)

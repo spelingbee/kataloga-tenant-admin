@@ -25,6 +25,9 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: false,
     loading: false,
   }),
+  
+  // Internal state for request deduplication (not part of the reactive state)
+  _fetchPromise: null as Promise<User | null> | null,
 
   getters: {
     currentUser: (state) => state.user,
@@ -115,23 +118,35 @@ export const useAuthStore = defineStore('auth', {
      * Fetch current user profile
      */
     async fetchUser(): Promise<User | null> {
-      this.loading = true
-      const api = useApi()
-
-      try {
-        const user = await api.get<User>('/auth/profile', { skipAuthRefresh: true })
-
-        this.user = this.mapUser(user)
-        this.isAuthenticated = true
-
-        return user
-      } catch (error) {
-        this.user = null
-        this.isAuthenticated = false
-        throw error
-      } finally {
-        this.loading = false
+      // If a fetch is already in progress, return the existing promise
+      if (this._fetchPromise) {
+        return this._fetchPromise;
       }
+
+      this.loading = true;
+      const api = useApi();
+
+      // Create and store the promise
+      this._fetchPromise = (async () => {
+        try {
+          const user = await api.get<User>('/auth/profile', { skipAuthRefresh: true });
+
+          this.user = this.mapUser(user);
+          this.isAuthenticated = true;
+
+          return user;
+        } catch (error) {
+          this.user = null;
+          this.isAuthenticated = false;
+          throw error;
+        } finally {
+          this.loading = false;
+          // IMPORTANT: Clear the promise when done so subsequent calls can trigger a new fetch if needed
+          this._fetchPromise = null;
+        }
+      })();
+
+      return this._fetchPromise;
     },
 
     /**
