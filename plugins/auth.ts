@@ -14,9 +14,12 @@ export default defineNuxtPlugin({
         const route = useRoute()
         const { isPublicRoute } = await import('~/constants/routes')
         
+        // Use a more robust check for the current path (Nuxt route vs window location)
+        const currentPath = route.path || (import.meta.client ? window.location.pathname : '/')
+        
         // Skip profile fetch on public pages where it's not needed (like /register or /login)
-        if (isPublicRoute(route.path)) {
-          console.log(`[Auth Plugin] Skipping profile fetch for public route: ${route.path}`)
+        if (isPublicRoute(currentPath)) {
+          console.log(`[Auth Plugin] Skipping profile fetch for public route: ${currentPath}`)
           return
         }
 

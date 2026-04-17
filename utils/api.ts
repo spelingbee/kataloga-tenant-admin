@@ -261,8 +261,18 @@ export class ApiClient {
       const safeSlug = tenantSlug && !systemRoutes.includes(tenantSlug.toLowerCase()) ? tenantSlug : null
       const safeLoginPath = safeSlug ? `/${safeSlug}/login` : '/login'
       
+      // Safety check: Do not redirect if we are already on a public/system route (register, login, etc.)
+      const path = window.location.pathname
+      const firstSegment = path.split('/').filter(Boolean)[0]?.toLowerCase().trim()
+      const publicRoutes = ['login', 'register', 'onboarding', 'error']
+      
+      if (firstSegment && publicRoutes.includes(firstSegment)) {
+        console.warn(`🛑 Auth failure detected on public route (${path}), skipping redirect to avoid loops.`)
+        return
+      }
+
       // Only redirect if not already on the login page
-      if (!window.location.pathname.includes('/login')) {
+      if (!path.includes('/login')) {
         console.log(`🚀 Redirecting to login: ${safeLoginPath} (original was ${loginPath})`)
         window.location.href = safeLoginPath
       }

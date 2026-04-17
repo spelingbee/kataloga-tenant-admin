@@ -292,9 +292,17 @@ export class EnhancedApiService {
                         // Filter out system routes from slug
                         const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
                         const tenantSlug = slug && !systemRoutes.includes(slug.toLowerCase()) ? slug : null;
-                        
                         const redirectPath = tenantSlug ? `/${tenantSlug}/login` : '/login';
                         
+                        // Safety check: Do not redirect if we are already on a public/system route (register, login, etc.)
+                        const firstSegmentMatch = window.location.pathname.split('/').filter(Boolean)[0]?.toLowerCase().trim();
+                        const publicRoutesList = ['login', 'register', 'onboarding', 'error'];
+                        
+                        if (firstSegmentMatch && publicRoutesList.includes(firstSegmentMatch)) {
+                            console.warn(`🛑 [Enhanced API] Auth failure detected on public route, skipping redirect.`);
+                            return Promise.reject(refreshError);
+                        }
+
                         // Only redirect if not already on login page to avoid loops
                         if (!window.location.pathname.includes('/login')) {
                             window.location.href = redirectPath;
