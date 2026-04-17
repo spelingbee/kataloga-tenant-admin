@@ -92,8 +92,8 @@ export class ApiClient {
       const pathSegments = window.location.pathname.split('/').filter(Boolean)
       if (pathSegments.length > 0) {
         const tenantSlug = pathSegments[0]
-        const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding']
-        if (tenantSlug && !systemRoutes.includes(tenantSlug)) {
+        const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription']
+        if (tenantSlug && !systemRoutes.includes(tenantSlug.toLowerCase())) {
           return tenantSlug
         }
       }
@@ -256,10 +256,15 @@ export class ApiClient {
       const tenantSlug = this.getCurrentTenant()
       const loginPath = tenantSlug ? `/${tenantSlug}/login` : '/login'
       
+      // Filter out system routes again for safety during redirect
+      const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription']
+      const safeSlug = tenantSlug && !systemRoutes.includes(tenantSlug.toLowerCase()) ? tenantSlug : null
+      const safeLoginPath = safeSlug ? `/${safeSlug}/login` : '/login'
+      
       // Only redirect if not already on the login page
       if (!window.location.pathname.includes('/login')) {
-        console.log(`🚀 Redirecting to login: ${loginPath}`)
-        window.location.href = loginPath
+        console.log(`🚀 Redirecting to login: ${safeLoginPath} (original was ${loginPath})`)
+        window.location.href = safeLoginPath
       }
     }
   }

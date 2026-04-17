@@ -1,3 +1,5 @@
+import { isSystemRoute } from '~/constants/routes'
+
 /**
  * Composable for extracting tenant slug from URL path
  * 
@@ -18,13 +20,14 @@ export const useTenant = () => {
       return null
     }
     
-    const firstSegment = pathSegments[0]
+    const firstSegment = pathSegments[0].toLowerCase().trim()
     
-    // Exclude system routes
-    const systemRoutes = ['error', 'api', 'admin', 'health', 'login', 'register', 'onboarding']
-    if (systemRoutes.includes(firstSegment.toLowerCase())) {
+    // Exclude system routes using centralized constants
+    if (isSystemRoute(firstSegment)) {
       return null
     }
+    
+    return firstSegment
     
     return firstSegment
   }

@@ -11,6 +11,15 @@ export default defineNuxtPlugin({
     // (localStorage is not available on the server)
     if (import.meta.client) {
       try {
+        const route = useRoute()
+        const { isPublicRoute } = await import('~/constants/routes')
+        
+        // Skip profile fetch on public pages where it's not needed (like /register or /login)
+        if (isPublicRoute(route.path)) {
+          console.log(`[Auth Plugin] Skipping profile fetch for public route: ${route.path}`)
+          return
+        }
+
         const { initAuth } = useAuth()
         await initAuth()
       } catch (error) {

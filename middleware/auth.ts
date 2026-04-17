@@ -1,3 +1,5 @@
+import { isSystemRoute } from '~/constants/routes'
+
 /**
  * Auth Middleware
  * Protects routes that require authentication
@@ -13,6 +15,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Get tenant slug from path
   const tenantSlug = getTenantSlug(to.path)
   
+  // Use robust system route detection
+  const firstSegment = to.path.split('/').filter(Boolean)[0]
+  const isSystem = firstSegment && isSystemRoute(firstSegment)
+  
   // CRITICAL: Set tenant slug in API client for subsequent requests (like fetchUser)
   if (tenantSlug) {
     api.setTenant(tenantSlug)
@@ -20,7 +26,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   
   // If we're on a route that doesn't have a tenant slug (like /login or system routes),
   // we don't need to enforce auth here.
-  if (!tenantSlug) return
+  if (!tenantSlug || isSystem) return
 
   // Check if we are on the login route
   const isLoginRoute = to.path.includes('/login')

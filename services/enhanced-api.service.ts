@@ -79,9 +79,8 @@ export class EnhancedApiService {
                         const pathSegments = window.location.pathname.split('/').filter(Boolean);
                         if (pathSegments.length > 0) {
                             const tenantSlug = pathSegments[0];
-                            // Exclude system routes
-                            const systemRoutes = ['error', 'api', 'admin', 'health', 'login', 'register', 'onboarding'];
-                            if (!systemRoutes.includes(tenantSlug)) {
+                            const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
+                            if (!systemRoutes.includes(tenantSlug.toLowerCase())) {
                                 config.headers['X-Tenant-Slug'] = tenantSlug;
                             }
                         }
@@ -291,8 +290,8 @@ export class EnhancedApiService {
                         const slug = pathSegments.length > 0 ? pathSegments[0] : null;
                         
                         // Filter out system routes from slug
-                        const systemRoutes = ['error', 'api', 'admin', 'health', 'login', 'register', 'onboarding'];
-                        const tenantSlug = slug && !systemRoutes.includes(slug) ? slug : null;
+                        const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
+                        const tenantSlug = slug && !systemRoutes.includes(slug.toLowerCase()) ? slug : null;
                         
                         const redirectPath = tenantSlug ? `/${tenantSlug}/login` : '/login';
                         
