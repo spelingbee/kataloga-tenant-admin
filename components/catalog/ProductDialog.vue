@@ -184,13 +184,14 @@ const resolveImageUrl = (path?: string) => {
 
 <style scoped>
 .product-form {
-  padding: 0.5rem;
+  padding: $spacing-sm;
 }
 
 .product-form__grid {
   display: grid;
   grid-template-columns: 200px 1fr;
-  gap: 1.5rem;
+  gap: $spacing-xl;
+  align-items: start;
 }
 
 @media (max-width: 640px) {
@@ -200,53 +201,82 @@ const resolveImageUrl = (path?: string) => {
 }
 
 .form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  margin-bottom: $spacing-lg;
+  
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+  }
 }
 
 .form-input, .form-select {
   width: 100%;
-  padding: 0.625rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  font-size: 0.9375rem;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  background: $bg-primary;
+  color: $text-primary;
+  font-size: $font-size-base;
+  transition: all $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: $text-light;
+  }
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: $spacing-lg;
 }
 
 .checkbox-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: $bg-secondary;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
   cursor: pointer;
   user-select: none;
+  transition: all $transition-fast;
+  
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+  
+  span {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
 }
 
 .form-checkbox {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--primary-color);
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: $primary-color;
+  cursor: pointer;
 }
 
 .product-form__error {
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  background: var(--error-bg);
-  color: var(--error-text);
-  margin-bottom: 1.5rem;
-  font-size: 0.875rem;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  background: rgba($error-color, 0.1);
+  color: $error-color;
+  margin-bottom: $spacing-xl;
+  font-size: $font-size-sm;
+  border: 1px solid rgba($error-color, 0.2);
 }
 </style>

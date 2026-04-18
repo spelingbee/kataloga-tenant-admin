@@ -35,7 +35,10 @@
     "category": "Category",
     "image": "Image",
     "upload": "Upload",
-    "unlimited": "Unlimited"
+    "unlimited": "Unlimited",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "base": "base"
   },
   "auth": {
     "login": "Login",
@@ -113,7 +116,10 @@
     "newItemSubtitle": "Create a new position for your menu",
     "productSource": "Product Source",
     "createBrandNew": "New Product",
-    "pickFromCatalog": "From Catalog"
+    "pickFromCatalog": "Pick from Catalog",
+    "noMenusYet": "No Menus Yet",
+    "createFirstMenuDesc": "Create your first menu to start accepting orders",
+    "createMenu": "Create Menu"
   },
   "catalog": {
     "title": "Product Catalog",
@@ -121,8 +127,10 @@
     "addProduct": "Add Product",
     "emptyTitle": "Catalog is Empty",
     "emptyDesc": "Add products to the catalog to quickly add them to various menus later.",
-    "selectProduct": "Select from Catalog",
-    "searchPlaceholder": "Search catalog..."
+    "selectProduct": "Select from catalog",
+    "searchPlaceholder": "Search product in catalog...",
+    "usage": "Usage",
+    "menus": "menus"
   },
   "categories": {
     "title": "Category Management",

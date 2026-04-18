@@ -6,6 +6,7 @@
 
 .data-table__search {
   margin-bottom: $spacing-lg;
+  padding: 0 $spacing-md;
 }
 
 .data-table__search-input {
@@ -106,6 +107,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: $spacing-lg;
+  padding: 0 $spacing-md $spacing-md $spacing-md;
   flex-wrap: wrap;
   gap: $spacing-md;
 }

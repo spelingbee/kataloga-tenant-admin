@@ -102,15 +102,13 @@ onMounted(async () => {
       <p>{{ t('common.loading') }}</p>
     </div>
 
-    <div v-else-if="!menuStore.menus || menuStore.menus.length === 0" class="menu-page__empty-state">
-      <div class="empty-card">
-        <div class="empty-card__icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
-        </div>
-        <h2>{{ t('menu.noMenusYet') || 'У вас еще нет меню' }}</h2>
-        <p>{{ t('menu.createFirstMenuDesc') || 'Создайте свое первое меню, чтобы начать добавлять товары и категории.' }}</p>
+    <div v-else-if="!menuStore.menus || menuStore.menus.length === 0" class="menu-page__empty">
+      <div class="menu-page__empty-card">
+        <EmptyState
+          icon="📋"
+          :title="t('menu.noMenusYet')"
+          :description="t('menu.createFirstMenuDesc')"
+        />
         
         <div class="empty-card__form">
           <input 
