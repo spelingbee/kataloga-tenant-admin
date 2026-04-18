@@ -364,6 +364,8 @@
 </template>
 
 <script setup lang="ts">
+import Icon from "../components/ui/Icon.vue";
+
 definePageMeta({
   layout: false,
   middleware: []
