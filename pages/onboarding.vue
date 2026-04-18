@@ -81,20 +81,55 @@
 
             <div class="form-group">
               <label for="password" class="form-group__label">Password</label>
-              <input
-                id="password"
-                v-model="formData.password"
-                type="password"
-                class="form-group__input"
-                :class="{ 'form-group__input--error': errors.password }"
-                placeholder="Create a secure password"
-                required
-                autocomplete="new-password"
-              />
+              <div class="form-group__input-wrapper">
+                <input
+                  id="password"
+                  v-model="formData.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  class="form-group__input form-group__input--with-icon"
+                  :class="{ 'form-group__input--error': errors.password }"
+                  placeholder="Create a secure password"
+                  required
+                  autocomplete="new-password"
+                />
+                <button 
+                  type="button" 
+                  class="form-group__icon-btn"
+                  @click="showPassword = !showPassword"
+                  tabindex="-1"
+                >
+                  <Icon :name="showPassword ? 'eye-off' : 'eye'" size="18" />
+                </button>
+              </div>
               <span v-if="errors.password" class="form-group__error">{{ errors.password }}</span>
               <div class="form-group__hint">
                 Must be at least 6 characters with uppercase, lowercase, and number
               </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword" class="form-group__label">Confirm Password</label>
+              <div class="form-group__input-wrapper">
+                <input
+                  id="confirmPassword"
+                  v-model="formData.confirmPassword"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  class="form-group__input form-group__input--with-icon"
+                  :class="{ 'form-group__input--error': errors.confirmPassword }"
+                  placeholder="Repeat your password"
+                  required
+                  autocomplete="new-password"
+                />
+                <button 
+                  type="button" 
+                  class="form-group__icon-btn"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                  tabindex="-1"
+                >
+                  <Icon :name="showConfirmPassword ? 'eye-off' : 'eye'" size="18" />
+                </button>
+              </div>
+              <span v-if="errors.confirmPassword" class="form-group__error">{{ errors.confirmPassword }}</span>
             </div>
 
             <div class="wizard-actions">
@@ -375,6 +410,7 @@ definePageMeta({
 interface FormData {
   email: string
   password: string
+  confirmPassword: string
   firstName: string
   lastName: string
   storeName: string
@@ -402,19 +438,30 @@ interface RegistrationResult {
 const currentStep = ref(1)
 const loading = ref(false)
 const isPolling = ref(false)
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 const connectionStatus = ref<'pending' | 'connected' | 'failed'>('pending')
 const registrationResult = ref<RegistrationResult | null>(null)
 
 const formData = ref<FormData>({
   email: '',
   password: '',
+  confirmPassword: '',
   firstName: '',
   lastName: '',
   storeName: '',
   telegramBotToken: ''
 })
 
-const errors = ref<Partial<FormData>>({})
+const errors = ref<{
+  email?: string
+  password?: string
+  confirmPassword?: string
+  firstName?: string
+  lastName?: string
+  storeName?: string
+  telegramBotToken?: string
+}>({})
 
 const steps = [
   { id: 1, label: 'Account' },
@@ -459,6 +506,10 @@ const validateStep = (step: number): boolean => {
       }
       if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.value.password)) {
         errors.value.password = 'Password must contain uppercase, lowercase, and number'
+        return false
+      }
+      if (formData.value.password !== formData.value.confirmPassword) {
+        errors.value.confirmPassword = 'Passwords do not match'
         return false
       }
       break
@@ -797,6 +848,40 @@ const goToDashboard = () => {
 
 .wizard-form {
   text-align: left;
+}
+
+.form-group__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-group__input--with-icon {
+  padding-right: 40px;
+}
+
+.form-group__icon-btn {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: color $transition-base;
+  z-index: 10;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  &:focus {
+    outline: none;
+    color: $primary-color;
+  }
 }
 
 .form-group {
