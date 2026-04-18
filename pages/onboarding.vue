@@ -351,7 +351,6 @@
           <p class="wizard-step__description">
             Your restaurant is now set up and ready to receive orders. Here's what you can do next:
           </p>
-          
           <div class="success-features">
             <div class="success-feature">
               <Icon name="check" class="success-feature__icon" />
