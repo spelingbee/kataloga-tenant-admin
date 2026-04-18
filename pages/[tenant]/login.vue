@@ -41,6 +41,12 @@
           {{ errors.general }}
         </div>
 
+        <div class="auth-links-alt">
+          <nuxt-link :to="`/${route.params.tenant}/forgot-password`" class="auth-link-alt">
+            {{ $t('auth.forgotPasswordLink', 'Забыли пароль?') }}
+          </nuxt-link>
+        </div>
+
         <button
           type="submit"
           class="login-form__submit"
@@ -246,6 +252,21 @@ const handleLogin = async () => {
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+.auth-links-alt {
+  text-align: right;
+  margin-top: -$spacing-sm;
+}
+
+.auth-link-alt {
+  font-size: 0.8125rem;
+  color: $primary-color;
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
   }
 }
 </style>

@@ -72,11 +72,27 @@ export const useAuth = () => {
     }
   }
 
+  /**
+   * Request password reset link
+   */
+  const forgotPassword = async (email: string): Promise<void> => {
+    await authStore.forgotPassword(email)
+  }
+
+  /**
+   * Reset password with token
+   */
+  const resetPassword = async (token: string, newPassword: string): Promise<void> => {
+    await authStore.resetPassword(token, newPassword)
+  }
+
   return {
     login,
     logout,
     fetchUser,
     initAuth,
+    forgotPassword,
+    resetPassword,
     isAuthenticated,
     currentUser,
     isTenantAdmin,

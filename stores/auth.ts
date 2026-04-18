@@ -166,6 +166,32 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
+     * Request password reset link
+     */
+    async forgotPassword(email: string): Promise<void> {
+      this.loading = true
+      const api = useApi()
+      try {
+        await api.post('/auth/forgot-password', { email })
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Reset password with token
+     */
+    async resetPassword(token: string, newPassword: string): Promise<void> {
+      this.loading = true
+      const api = useApi()
+      try {
+        await api.post('/auth/reset-password', { token, newPassword })
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
      * Map user data from API response (handles snake_case fallback)
      */
     mapUser(user: any): User {
