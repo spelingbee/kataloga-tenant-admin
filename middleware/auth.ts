@@ -38,7 +38,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     } catch (error) {
       // Profile fetch failed (no active session cookie)
       if (!isLoginRoute) {
-        return navigateTo(`/${tenantSlug}/login`)
+        return navigateTo(`/t/${tenantSlug}/login`)
       }
     }
   }
@@ -47,12 +47,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // 1. If we are on the login route and ALREADY authenticated, redirect to dashboard
   if (isLoginRoute && stillAuthenticated) {
-    return navigateTo(`/${tenantSlug}`)
+    return navigateTo(`/t/${tenantSlug}`)
   }
 
   // 2. If we are NOT on a login route and NOT authenticated, redirect to login
   if (!isLoginRoute && !stillAuthenticated) {
-    return navigateTo(`/${tenantSlug}/login`)
+    return navigateTo(`/t/${tenantSlug}/login`)
   }
 
   // Verify user has correct role (OWNER, ADMIN, TENANT_ADMIN, or TENANT_STAFF)
@@ -61,8 +61,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!validRoles.includes(authStore.user.role)) {
       // User doesn't have tenant admin/staff role
       api.clearToken()
-      authStore.clearUser()
-      return navigateTo(`/${tenantSlug}/login`)
+      return navigateTo(`/t/${tenantSlug}/login`)
     }
   }
 })

@@ -2,32 +2,34 @@
   <div class="register-page">
     <div class="register-card">
       <div class="register-card__header">
-        <h1 class="register-card__title">Create Your Restaurant Account</h1>
-        <p class="register-card__subtitle">Set up your online menu in just a few steps</p>
+        <h1 class="register-card__title">{{ t('onboarding.account.title') }}</h1>
+        <p class="register-card__subtitle">{{ t('onboarding.subtitle') }}</p>
       </div>
 
       <NuxtLink to="/onboarding" class="register-option register-option--primary">
         <div class="register-option__icon">🚀</div>
-        <h3 class="register-option__title">Quick Setup</h3>
+        <h3 class="register-option__title">{{ t('onboarding.quickSetup') }}</h3>
         <p class="register-option__description">
-          Get your restaurant online in 5 minutes with our guided wizard
+          {{ t('onboarding.quickSetupDescription') }}
         </p>
         <div class="register-option__features">
-          <div class="feature">✓ Step-by-step guidance</div>
-          <div class="feature">✓ Telegram bot integration</div>
-          <div class="feature">✓ Instant dashboard access</div>
+          <div class="feature">✓ {{ t('onboarding.quickSetupFeature1') }}</div>
+          <div class="feature">✓ {{ t('onboarding.quickSetupFeature2') }}</div>
+          <div class="feature">✓ {{ t('onboarding.quickSetupFeature3') }}</div>
         </div>
-        <div class="register-option__cta">Start Setup →</div>
+        <div class="register-option__cta">{{ t('onboarding.getStartedFaster') }} →</div>
       </NuxtLink>
 
       <div class="register-footer">
-        <p>Already have an account? <NuxtLink to="/login" class="register-footer__link">Sign In</NuxtLink></p>
+        <p>{{ t('auth.alreadyHaveAccount') }} <NuxtLink to="/login" class="register-footer__link">{{ t('auth.signIn') }}</NuxtLink></p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
+
 definePageMeta({
   layout: false,
   middleware: []

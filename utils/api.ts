@@ -92,6 +92,12 @@ export class ApiClient {
     if (import.meta.client) {
       const pathSegments = window.location.pathname.split('/').filter(Boolean)
       if (pathSegments.length > 0) {
+        // First check for /t/[slug] pattern
+        if (pathSegments[0].toLowerCase() === 't' && pathSegments.length >= 2) {
+          return pathSegments[1]
+        }
+
+        // Fallback to first segment (legacy)
         const tenantSlug = pathSegments[0]
         const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription']
         if (tenantSlug && !systemRoutes.includes(tenantSlug.toLowerCase())) {
@@ -255,12 +261,12 @@ export class ApiClient {
     // Redirect to login on client side
     if (import.meta.client) {
       const tenantSlug = this.getCurrentTenant()
-      const loginPath = tenantSlug ? `/${tenantSlug}/login` : '/login'
+      const loginPath = tenantSlug ? `/t/${tenantSlug}/login` : '/login'
       
       // Filter out system routes again for safety during redirect
       const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription']
       const safeSlug = tenantSlug && !systemRoutes.includes(tenantSlug.toLowerCase()) ? tenantSlug : null
-      const safeLoginPath = safeSlug ? `/${safeSlug}/login` : '/login'
+      const safeLoginPath = safeSlug ? `/t/${safeSlug}/login` : '/login'
       
       // Safety check: Do not redirect if we are already on a public/system route (register, login, etc.)
       const path = window.location.pathname

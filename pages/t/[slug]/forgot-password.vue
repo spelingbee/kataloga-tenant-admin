@@ -10,7 +10,7 @@
 
       <div v-if="success" class="success-message">
         <div class="success-icon">Check</div>
-        <nuxt-link :to="`/${tenantSlug}/login`" class="login-form__submit link-btn">
+        <nuxt-link :to="`/t/${tenantSlug}/login`" class="login-form__submit link-btn">
           {{ $t('auth.backToLogin', 'Вернуться ко входу') }}
         </nuxt-link>
       </div>
@@ -40,7 +40,7 @@
         </button>
 
         <div class="auth-links">
-          <nuxt-link :to="`/${tenantSlug}/login`" class="auth-link">
+          <nuxt-link :to="`/t/${tenantSlug}/login`" class="auth-link">
             {{ $t('auth.backToLogin', 'Вернуться ко входу') }}
           </nuxt-link>
         </div>
@@ -58,7 +58,7 @@ definePageMeta({
 const { t } = useI18n()
 const { forgotPassword } = useAuth()
 const route = useRoute()
-const tenantSlug = computed(() => route.params.tenant as string)
+const tenantSlug = computed(() => route.params.slug as string)
 
 const email = ref('')
 const loading = ref(false)

@@ -38,7 +38,8 @@
     "unlimited": "Неограниченно",
     "inStock": "В наличии",
     "outOfStock": "Нет в наличии",
-    "base": "базовая"
+    "base": "базовая",
+    "allRightsReserved": "Все права защищены."
   },
   "auth": {
     "login": "Вход",
@@ -510,5 +511,19 @@
     "next": "Вперед",
     "page": "Страница {page} из {totalPages}",
     "totalItems": "{totalItems} всего элементов"
+  },
+  "landing": {
+    "title": "Управляйте вашим рестораном с Kataloga",
+    "subtitle": "Все инструменты для роста вашего гастрономического бизнеса в одном месте",
+    "getStarted": "Начать",
+    "findDashboard": "Найти мою панель",
+    "registerDescription": "Создайте аккаунт и запустите свой ресторан онлайн за считанные минуты.",
+    "loginDescription": "Уже есть аккаунт? Введите название вашего заведения для входа.",
+    "enterSlug": "Введите slug ресторана",
+    "slugPlaceholder": "напр. marios-pizza",
+    "go": "Перейти",
+    "invalidSlug": "Слаг слишком короткий",
+    "slugRequired": "Пожалуйста, введите название",
+    "back": "Назад"
   }
 }

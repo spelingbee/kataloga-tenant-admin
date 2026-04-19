@@ -35,7 +35,8 @@
     "category": "Категория",
     "image": "Сүрөт",
     "upload": "Жүктөө",
-    "unlimited": "Чексиз"
+    "unlimited": "Чексиз",
+    "allRightsReserved": "Бардык укуктар корголгон."
   },
   "auth": {
     "login": "Кирүү",
@@ -490,5 +491,19 @@
     "next": "Кийинки",
     "page": "Барак {page} / {totalPages}",
     "totalItems": "Жалпы {totalItems} элемент"
+  },
+  "landing": {
+    "title": "Kataloga менен рестораныңызды башкарыңыз",
+    "subtitle": "Сиздин гастрономиялык бизнесиңизди өстүрүү үчүн бардык куралдар бир жерде",
+    "getStarted": "Баштоо",
+    "findDashboard": "Менин панелимди табуу",
+    "registerDescription": "Аккаунт түзүп, рестораныңызды бир нече мүнөттө онлайн иштетиңиз.",
+    "loginDescription": "Аккаунтуңуз барбы? Кирүү үчүн мекеменин аталышын киргизиңиз.",
+    "enterSlug": "Ресторандын слагын киргизиңиз",
+    "slugPlaceholder": "мис. marios-pizza",
+    "go": "Кирүү",
+    "invalidSlug": "Слаг өтө кыска",
+    "slugRequired": "Сураныч, аталышын киргизиңиз",
+    "back": "Артка"
   }
 }

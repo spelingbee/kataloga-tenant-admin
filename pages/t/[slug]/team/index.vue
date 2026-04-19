@@ -17,7 +17,7 @@
             <li>{{ t('team.featureLocked.benefit4') }}</li>
           </ul>
         </div>
-        <NuxtLink to="/subscription" class="team-page__upgrade-btn">
+        <NuxtLink :to="tenantPath('/subscription')" class="team-page__upgrade-btn">
           {{ t('team.featureLocked.viewPlans') }}
         </NuxtLink>
       </div>
@@ -151,6 +151,7 @@ import { ref, onMounted } from 'vue'
 import { useTeamStore } from '~/stores/team'
 import { useAuthStore } from '~/stores/auth'
 import { useFeatureAccess } from '~/composables/useFeatureAccess'
+import { useNavigation } from '~/composables/useNavigation'
 import type { User, UserRole } from '~/types'
 import { FeatureKey } from '~/types'
 import TeamMemberList from '~/components/team/TeamMemberList.vue'
@@ -166,6 +167,7 @@ definePageMeta({
 const teamStore = useTeamStore()
 const authStore = useAuthStore()
 const { hasMultiUser, requireFeature } = useFeatureAccess()
+const { tenantPath } = useNavigation()
 
 const showInviteModal = ref(false)
 const showRoleModal = ref(false)
@@ -249,9 +251,9 @@ onMounted(() => {
   const isMiniAppMode = true // This could be configurable later
   if (isMiniAppMode) {
     const route = useRoute()
-    const tenantSlug = route.params.tenant
+    const tenantSlug = route.params.slug
     if (tenantSlug && typeof tenantSlug === 'string') {
-      navigateTo(`/${tenantSlug}`)
+      navigateTo(`/t/${tenantSlug}`)
     } else {
       navigateTo('/')
     }

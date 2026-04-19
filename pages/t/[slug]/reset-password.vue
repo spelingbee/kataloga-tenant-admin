@@ -10,7 +10,7 @@
 
       <div v-if="success" class="success-message">
         <p>{{ $t('auth.resetPasswordSuccess', 'Пароль успешно изменен') }}</p>
-        <nuxt-link :to="`/${tenantSlug}/login`" class="login-form__submit link-btn">
+        <nuxt-link :to="`/t/${tenantSlug}/login`" class="login-form__submit link-btn">
           {{ $t('auth.signIn', 'Войти') }}
         </nuxt-link>
       </div>
@@ -72,7 +72,7 @@ const { t } = useI18n()
 const { resetPassword } = useAuth()
 const route = useRoute()
 const router = useRouter()
-const tenantSlug = computed(() => route.params.tenant as string)
+const tenantSlug = computed(() => route.params.slug as string)
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -118,7 +118,7 @@ const handleSubmit = async () => {
     
     // Auto redirect after 3 seconds
     setTimeout(() => {
-      router.push(`/${tenantSlug.value}/login`)
+      router.push(`/t/${tenantSlug.value}/login`)
     }, 3000)
   } catch (err: any) {
     console.error('Reset password error:', err)

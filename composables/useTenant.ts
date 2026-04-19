@@ -20,14 +20,17 @@ export const useTenant = () => {
       return null
     }
     
+    // Check if path follows the /t/[slug] pattern
+    if (pathSegments[0].toLowerCase() === 't' && pathSegments.length >= 2) {
+      return pathSegments[1].toLowerCase().trim()
+    }
+
     const firstSegment = pathSegments[0].toLowerCase().trim()
     
     // Exclude system routes using centralized constants
     if (isSystemRoute(firstSegment)) {
       return null
     }
-    
-    return firstSegment
     
     return firstSegment
   }

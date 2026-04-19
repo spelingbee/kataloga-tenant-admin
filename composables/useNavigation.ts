@@ -20,7 +20,7 @@ export const useNavigation = () => {
     // Remove leading slash if present
     const cleanPath = path.startsWith('/') ? path.slice(1) : path
     
-    return `/${tenantSlug}/${cleanPath}`
+    return `/t/${tenantSlug}/${cleanPath}`
   }
   
   /**

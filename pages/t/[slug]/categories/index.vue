@@ -130,7 +130,7 @@ import { useCategoryStore } from '~/stores/category'
 import CategoryList from '~/components/category/CategoryList.vue'
 import CategoryForm from '~/components/category/CategoryForm.vue'
 import type { Category } from '~/types'
-import {PageHeader} from "../../../components/ui";
+import {PageHeader} from "~/components/ui";
 
 const { t } = useI18n()
 const { navigateToTenant } = useNavigation()

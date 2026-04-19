@@ -196,7 +196,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import {PageHeader} from "../../../components/ui";
+import {PageHeader} from "~/components/ui";
 
 definePageMeta({
   middleware: ['auth']

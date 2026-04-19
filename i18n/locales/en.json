@@ -38,7 +38,8 @@
     "unlimited": "Unlimited",
     "inStock": "In Stock",
     "outOfStock": "Out of Stock",
-    "base": "base"
+    "base": "base",
+    "allRightsReserved": "All rights reserved."
   },
   "auth": {
     "login": "Login",
@@ -504,5 +505,19 @@
     "next": "Next",
     "page": "Page {page} of {totalPages}",
     "totalItems": "{totalItems} total items"
+  },
+  "landing": {
+    "title": "Empower Your Restaurant with Kataloga",
+    "subtitle": "All the tools to scale your culinary business in one digital workspace",
+    "getStarted": "Get Started",
+    "findDashboard": "Find My Dashboard",
+    "registerDescription": "Create an account and launch your restaurant online in minutes.",
+    "loginDescription": "Already have an account? Enter your business name to sign in.",
+    "enterSlug": "Enter Restaurant Slug",
+    "slugPlaceholder": "e.g. marios-pizza",
+    "go": "Go",
+    "invalidSlug": "Slug is too short",
+    "slugRequired": "Please enter a slug",
+    "back": "Back"
   }
 }

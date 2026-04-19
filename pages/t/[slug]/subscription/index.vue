@@ -92,9 +92,9 @@ onMounted(() => {
   const isMiniAppMode = true // This could be configurable later
   if (isMiniAppMode) {
     const route = useRoute()
-    const tenantSlug = route.params.tenant
+    const tenantSlug = route.params.slug
     if (tenantSlug && typeof tenantSlug === 'string') {
-      navigateTo(`/${tenantSlug}`)
+      navigateTo(`/t/${tenantSlug}`)
     } else {
       navigateTo('/')
     }

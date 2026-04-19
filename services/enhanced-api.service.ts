@@ -78,10 +78,16 @@ export class EnhancedApiService {
                     if (import.meta.client) {
                         const pathSegments = window.location.pathname.split('/').filter(Boolean);
                         if (pathSegments.length > 0) {
-                            const tenantSlug = pathSegments[0];
-                            const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
-                            if (!systemRoutes.includes(tenantSlug.toLowerCase())) {
-                                config.headers['X-Tenant-Slug'] = tenantSlug;
+                            // First check for /t/[slug] pattern
+                            if (pathSegments[0].toLowerCase() === 't' && pathSegments.length >= 2) {
+                                config.headers['X-Tenant-Slug'] = pathSegments[1];
+                            } else {
+                                // Fallback to first segment (legacy)
+                                const tenantSlug = pathSegments[0];
+                                const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
+                                if (!systemRoutes.includes(tenantSlug.toLowerCase())) {
+                                    config.headers['X-Tenant-Slug'] = tenantSlug;
+                                }
                             }
                         }
                     }
@@ -288,12 +294,17 @@ export class EnhancedApiService {
     
                         // Get current tenant slug to preserve it in the URL
                         const pathSegments = window.location.pathname.split('/').filter(Boolean);
-                        const slug = pathSegments.length > 0 ? pathSegments[0] : null;
+                        let tenantSlug = null;
                         
-                        // Filter out system routes from slug
-                        const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
-                        const tenantSlug = slug && !systemRoutes.includes(slug.toLowerCase()) ? slug : null;
-                        const redirectPath = tenantSlug ? `/${tenantSlug}/login` : '/login';
+                        if (pathSegments[0]?.toLowerCase() === 't' && pathSegments.length >= 2) {
+                            tenantSlug = pathSegments[1];
+                        } else if (pathSegments.length > 0) {
+                            const slug = pathSegments[0];
+                            const systemRoutes = ['error', 'api', 'admin', 'health', 'super-admin', 'login', 'register', 'onboarding', 'subscription'];
+                            tenantSlug = slug && !systemRoutes.includes(slug.toLowerCase()) ? slug : null;
+                        }
+                        
+                        const redirectPath = tenantSlug ? `/t/${tenantSlug}/login` : '/login';
                         
                         // Safety check: Do not redirect if we are already on a public/system route (register, login, etc.)
                         const firstSegmentMatch = window.location.pathname.split('/').filter(Boolean)[0]?.toLowerCase().trim();

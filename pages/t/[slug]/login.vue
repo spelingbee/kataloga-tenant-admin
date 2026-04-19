@@ -42,7 +42,7 @@
         </div>
 
         <div class="auth-links-alt">
-          <nuxt-link :to="`/${route.params.tenant}/forgot-password`" class="auth-link-alt">
+          <nuxt-link :to="`/t/${route.params.slug}/forgot-password`" class="auth-link-alt">
             {{ $t('auth.forgotPasswordLink', 'Забыли пароль?') }}
           </nuxt-link>
         </div>
@@ -116,10 +116,10 @@ const handleLogin = async () => {
   try {
     await login(email.value, password.value)
     const { getTenantSlug } = useTenant()
-    const tenantSlug = getTenantSlug() || route.params.tenant as string
+    const tenantSlug = getTenantSlug() || route.params.slug as string
     
     if (tenantSlug) {
-      await router.push(`/${tenantSlug}`)
+      await router.push(`/t/${tenantSlug}`)
     } else {
       await router.push('/')
     }

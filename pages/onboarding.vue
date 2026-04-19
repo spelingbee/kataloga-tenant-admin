@@ -711,14 +711,14 @@ const getRestaurantUrl = () => {
   if (!registrationResult.value?.tenant.slug) return ''
   
   const baseUrl = window.location.origin.replace(':3001', ':3000') // Assuming frontend runs on 3000
-  return `${baseUrl}/${registrationResult.value.tenant.slug}`
+  return `${baseUrl}/t/${registrationResult.value.tenant.slug}`
 }
 
 const goToDashboard = () => {
   if (registrationResult.value?.tenant.slug) {
     // Add a small delay to show the success message
     setTimeout(() => {
-      router.push(`/${registrationResult.value!.tenant.slug}`)
+      router.push(`/t/${registrationResult.value!.tenant.slug}`)
     }, 1000)
   } else {
     router.push('/')

@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { FeatureKey } from '~/types'
-import {PageHeader} from "../../../components/ui";
+import {PageHeader} from "~/components/ui";
 
 const { t } = useI18n()
 

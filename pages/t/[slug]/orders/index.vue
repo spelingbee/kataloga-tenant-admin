@@ -149,7 +149,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useOrderStore } from '~/stores/order'
 import { useNavigation } from '~/composables/useNavigation'
-import {PageHeader} from "../../../components/ui";
+import {PageHeader} from "~/components/ui";
 
 const { t } = useI18n()
 
